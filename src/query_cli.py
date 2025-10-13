@@ -5,11 +5,11 @@ from typing import List, Dict, Tuple
 from .utils import load_cfg, get_logger, ensure_dir, norm_win_abs
 from .ollama_client import OllamaClient
 from .multimodal_fusion import fuse_scores, mmr_select, read_jsonl
+from .zh_utils import normalize_zh, is_cjk_name
 import open_clip, torch
 from PIL import Image
 
 def cosine_rows(A, b):
-    # A: (N,D), b: (D,)
     A = np.asarray(A, dtype=np.float32)
     b = np.asarray(b, dtype=np.float32)
     nb = np.linalg.norm(b) + 1e-9
@@ -25,15 +25,14 @@ def smart_keywords(q: str, weight: float=1.2) -> List[str]:
     return kws
 
 def robust_json_find(s: str):
-    # find first {...} block
     m = re.search(r'\{.*\}', s, flags=re.S)
     if not m:
         return None
+    txt = m.group(0)
     try:
-        return json.loads(m.group(0))
+        return json.loads(txt)
     except Exception:
-        # try to sanitize trailing commas
-        txt = re.sub(r',\s*}', '}', m.group(0))
+        txt = re.sub(r',\s*}', '}', txt)
         txt = re.sub(r',\s*]', ']', txt)
         try:
             return json.loads(txt)
@@ -44,15 +43,15 @@ def llm_expand_terms(cfg, model_tag: str, question: str):
     client = OllamaClient(cfg["ollama_base_url"], timeout=int(cfg.get("embed_timeout",120)), keep_alive=cfg.get("embed_keep_alive","10m"))
     sys_prompt = "你是检索前的查询理解器。仅输出JSON，不要解释。"
     prompt = (
-        "请阅读用户问题，抽取可用于检索的关键信息。\n"
-        "把指令性词（如“所有记录/全部信息/请/如何”等）忽略，只保留用于命中的实体、别名、关键词、可能的时间限定。\n"
-        "输出JSON，字段：\n"
-        "{\n"
-        "  \"keywords\": [\"必搜词\",\"核心实体\"],\n"
-        "  \"synonyms\": [\"别名或同义词\"],\n"
-        "  \"exclude\": [\"应当排除的词\"],\n"
-        "  \"time\": \"可选时间范围描述，如 2025年10月/最近一周\"\n"
-        "}\n"
+        "请阅读用户问题，抽取可用于检索的关键信息。"
+        "把指令性词（如“所有记录/全部信息/请/如何”等）忽略，只保留用于命中的实体、别名、关键词、可能的时间限定。"
+        "输出JSON，字段："
+        "{"
+        "  \"keywords\": [\"必搜词\",\"核心实体\"],"
+        "  \"synonyms\": [\"别名或同义词\"],"
+        "  \"exclude\": [\"应当排除的词\"],"
+        "  \"time\": \"可选时间范围描述，如 2025年10月/最近一周\""
+        "}"
         f"问题：{question}"
     )
     try:
@@ -62,24 +61,19 @@ def llm_expand_terms(cfg, model_tag: str, question: str):
     obj = robust_json_find(out or "")
     if not obj:
         return None
-    kws = obj.get("keywords") or []
-    syns = obj.get("synonyms") or []
-    exc = obj.get("exclude") or []
-    tm  = obj.get("time") or ""
-    # normalize tokens
     def norm(ts):
         res = []
-        for t in ts:
+        for t in ts or []:
             t = str(t).strip()
             if not t: continue
             if t in CN_INSTR_STOP: continue
             res.append(t)
         return res
     return {
-        "keywords": norm(kws),
-        "synonyms": norm(syns),
-        "exclude": norm(exc),
-        "time": tm.strip()
+        "keywords": norm(obj.get("keywords")),
+        "synonyms": norm(obj.get("synonyms")),
+        "exclude": norm(obj.get("exclude")),
+        "time": (obj.get("time") or "").strip()
     }
 
 def load_dense(data_dir):
@@ -88,31 +82,22 @@ def load_dense(data_dir):
     ids_path = os.path.join(data_dir, "ids.json")
     ids = json.load(open(ids_path, "r", encoding="utf-8"))
     meta = json.load(open(meta_path, "r", encoding="utf-8")) if os.path.exists(meta_path) else {"count": len(ids), "dim": 0}
-    # derive dim and count safely
-    file_size = os.path.getsize(emb_path)  # bytes
+    file_size = os.path.getsize(emb_path)
     dim = int(meta.get("dim") or 0)
     if dim <= 0:
-        # best-effort guess: prefer common dims
         commons = [3072, 2048, 1536, 1024, 768, 512, 384]
-        guessed = None
-        for d in commons:
-            if file_size % (4*d) == 0:
-                guessed = d
-                break
-        dim = guessed or 768
+        dim = next((d for d in commons if file_size % (4*d) == 0), 768)
     count_from_size = file_size // (4 * dim)
     count_meta = int(meta.get("count", len(ids)))
     count = min(count_from_size, count_meta, len(ids))
     try:
         arr = np.memmap(emb_path, dtype=np.float32, mode="r", shape=(count, dim))
     except (OSError, ValueError):
-        # fallback: flat then reshape minimal
         flat = np.memmap(emb_path, dtype=np.float32, mode="r")
         total = flat.size
         count_from_flat = total // dim
         count = min(count, count_from_flat, len(ids))
         arr = flat[:count*dim].reshape(count, dim)
-    # clamp ids to count
     if len(ids) != count:
         ids = ids[:count]
     return arr, ids
@@ -153,7 +138,7 @@ def normalize_tokens(q: str):
     toks = re.findall(r"[一-龥A-Za-z0-9_]+", q)
     out = []
     for t in toks:
-        if t in CN_INSTR_STOP:  # drop instruction-like tokens
+        if t in CN_INSTR_STOP:
             continue
         if re.search(r"[A-Za-z]", t):
             out.append(t.upper())
@@ -167,7 +152,6 @@ def expand_terms(tokens):
         if t.upper() in AGI_SYNONYMS:
             for s in AGI_SYNONYMS[t.upper()]:
                 expanded.add(s.upper() if re.search(r"[A-Za-z]", s) else s)
-        # map Chinese back to acronym
         for k, syns in AGI_SYNONYMS.items():
             if t in syns:
                 expanded.add(k)
@@ -247,6 +231,49 @@ def build_context(chosen_chunks: List[Dict], images_used: List[Dict], cfg, num_c
             ctx_parts.append("【相关图片】" + "；".join(extras))
     return "\n\n".join(ctx_parts)
 
+def hyde_expand(cfg, model_tag: str, question: str):
+    client = OllamaClient(cfg["ollama_base_url"], timeout=int(cfg.get("embed_timeout",120)), keep_alive=cfg.get("embed_keep_alive","10m"))
+    sys_prompt = "请撰写一段与用户问题高度相关的说明性段落（用于检索，不必真实），不超过200字。"
+    try:
+        txt = client.generate(model_tag, question, temperature=0.2, system=sys_prompt)
+        return txt.strip()
+    except Exception:
+        return ""
+
+def prf_terms(vec, X, top_idx, k=10):
+    # 取初选文档的 tf-idf 权重总和，挑前 k 个词作为扩展
+    if len(top_idx) == 0:
+        return []
+    sub = X[top_idx]
+    s = np.asarray(sub.sum(axis=0)).ravel()
+    try:
+        feats = vec.get_feature_names_out()
+    except Exception:
+        return []
+    order = np.argsort(-s)[:k]
+    return [feats[i] for i in order]
+
+def fuzzy_scores(prelim_idx, chunks, q):
+    try:
+        from rapidfuzz import fuzz
+    except Exception:
+        return np.zeros(len(chunks), dtype=np.float32)
+    nq = normalize_zh(q)
+    scores = np.zeros(len(chunks), dtype=np.float32)
+    for i in prelim_idx:
+        t = normalize_zh(chunks[i].get("text","")[:500])
+        scores[i] = fuzz.partial_ratio(nq, t) / 100.0
+    return scores
+
+def cross_rerank(pairs, model_name="BAAI/bge-reranker-v2-m3"):
+    try:
+        from sentence_transformers import CrossEncoder
+    except Exception:
+        return None
+    ce = CrossEncoder(model_name, trust_remote_code=True)
+    scores = ce.predict(pairs, show_progress_bar=False)
+    return np.array(scores, dtype=np.float32)
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default="config.yaml")
@@ -256,6 +283,7 @@ def main():
     parser.add_argument("--gamma", type=float, default=0.8, help="文本向量权重")
     parser.add_argument("--wimg", type=float, default=0.25, help="图像通道权重")
     parser.add_argument("--wbool", type=float, default=0.6, help="关键词/组合布尔通道权重")
+    parser.add_argument("--wfuzzy", type=float, default=0.5, help="模糊匹配通道权重")
     parser.add_argument("--images-only", action="store_true")
 
     parser.add_argument("--mmr", type=float, default=0.5)
@@ -267,6 +295,8 @@ def main():
     parser.add_argument("--smart-query", action="store_true")
     parser.add_argument("--sqw", type=float, default=1.2)
     parser.add_argument("--llm-expand", action="store_true", help="使用本地 LLM 抽取关键词/别名/时间等后再检索")
+    parser.add_argument("--hyde", action="store_true", help="启用 HyDE：先生成一段假想文档再做向量检索")
+    parser.add_argument("--prf", action="store_true", help="启用 PRF：用初选文档自动扩展查询词")
 
     parser.add_argument("--strict-mode", choices=["off","exact","smart"], default="off")
 
@@ -277,6 +307,10 @@ def main():
     parser.add_argument("--wclause", type=float, default=0.8)
     parser.add_argument("--wn", type=float, default=0.9)
     parser.add_argument("--wq", type=float, default=1.0)
+
+    parser.add_argument("--cross-rerank", action="store_true", help="使用交叉编码器重排 TopK")
+    parser.add_argument("--reranker", default="BAAI/bge-reranker-v2-m3")
+    parser.add_argument("--rerank-k", type=int, default=50)
 
     parser.add_argument("--debug-dir", default=None)
     parser.add_argument("--model", default=None, help="用于回答/扩展/LLM抽取的本地模型（Ollama tag）")
@@ -308,7 +342,7 @@ def main():
     images = load_images(data_dir)
     link_graph = load_link_graph(data_dir)
 
-    # === LLM 预处理（去指令词、抽取实体/别名/时间等）===
+    # LLM 预处理
     llm_info = None
     if args.llm_expand and args.model:
         llm_info = llm_expand_terms(cfg, args.model, q)
@@ -326,6 +360,13 @@ def main():
         kws = smart_keywords(q, weight=args.sqw)
         if kws:
             q_eff = q_eff + " " + " ".join(kws)
+
+    # HyDE：合成段落并一起编码
+    hyde_txt = ""
+    if args.hyde and args.model and args.mode in ["dense","hybrid"]:
+        hyde_txt = hyde_expand(cfg, args.model, q)
+        if hyde_txt:
+            q_eff = q_eff + " " + hyde_txt
 
     N = len(chunks)
     scores_word = None
@@ -349,9 +390,7 @@ def main():
     if args.mode == "hybrid" and not getattr(args, "images_only", False) and args.wimg > 0:
         s_img, img_ids, img_recs = image_query_to_scores(cfg, q_eff, data_dir, images, args.wimg)
         if s_img is not None:
-            img_map = {}
-            for sim, rec in zip(s_img, img_recs):
-                img_map[rec["source_path"]] = float(sim)
+            img_map = {rec["source_path"]: float(sim) for sim, rec in zip(s_img, img_recs)}
             scores_img = np.zeros(N, dtype=np.float32)
             for i, rec in enumerate(chunks):
                 sp = rec["source_path"]
@@ -379,7 +418,7 @@ def main():
             print(f"{abs_path}  (score={s_img[i]:.4f})")
         return
 
-    # Keyword expansions for boolean channel
+    # Boolean channel
     base_tokens = normalize_tokens(q_eff)
     if llm_info:
         base_tokens += [t for t in (llm_info.get("keywords", []) + llm_info.get("synonyms", [])) if t not in CN_INSTR_STOP]
@@ -387,9 +426,9 @@ def main():
     combos = make_combos(expanded, max_combo=2)
 
     prelim = set()
-    if scores_word is not None: prelim.update(np.argsort(-scores_word)[:100])
-    if scores_char is not None: prelim.update(np.argsort(-scores_char)[:100])
-    if scores_dense is not None: prelim.update(np.argsort(-scores_dense)[:100])
+    if scores_word is not None: prelim.update(np.argsort(-scores_word)[:200])
+    if scores_char is not None: prelim.update(np.argsort(-scores_char)[:200])
+    if scores_dense is not None: prelim.update(np.argsort(-scores_dense)[:200])
     if not prelim:
         prelim = set(range(N))
     prelim = list(prelim)
@@ -399,26 +438,56 @@ def main():
         rec = chunks[i]
         scores_bool[i] = bool_channel_score(rec.get("text",""), expanded, combos)
 
+    # Fuzzy channel on prelim
+    scores_fuzzy = fuzzy_scores(prelim, chunks, q)
+
     scores = fuse_scores(
-        {"word":scores_word, "char":scores_char, "dense":scores_dense, "img":scores_img, "bool":scores_bool},
-        {"word":args.alpha, "char":args.beta, "dense":args.gamma, "img":args.wimg, "bool":args.wbool}
+        {"word":scores_word, "char":scores_char, "dense":scores_dense, "img":scores_img, "bool":scores_bool, "fuzzy":scores_fuzzy},
+        {"word":args.alpha, "char":args.beta, "dense":args.gamma, "img":args.wimg, "bool":args.wbool, "fuzzy":args.wfuzzy}
     )
     if scores is None:
         print("没有可融合的分数，请确认已构建对应索引。")
         return
 
     order = np.argsort(-scores)
-    if args.strict_mode == "exact":
-        mask = np.array([ (re.search(re.escape(q), chunks[i]["text"]) is not None) for i in range(len(chunks)) ])
-        order = [i for i in order if mask[i]]
-    elif args.strict_mode == "smart":
-        kws = expanded
-        mask = np.array([ all(k.upper() in chunks[i]["text"].upper() for k in kws) for i in range(len(chunks)) ]) if kws else np.ones(len(chunks), dtype=bool)
-        order = [i for i in order if mask[i]]
 
-    idx_top = order[:min(200, len(order))]
-    cands = [(i, float(scores[i])) for i in idx_top[:args.top]]
-    chosen_idx = [i for (i, _) in cands]
+    # PRF：基于初选做二次词扩展并重算 lexical
+    if args.prf and args.mode in ["tfidf","hybrid"]:
+        idx_seed = order[: min(100, len(order))]
+        extra_terms = prf_terms(vec_word, X_word, idx_seed, k=10)
+        if extra_terms:
+            q_eff2 = q_eff + " " + " ".join(extra_terms)
+            vq2 = vec_word.transform([q_eff2])
+            scores_word2 = (X_word @ vq2.T).toarray().ravel()
+            vqc2 = vec_char.transform([q_eff2])
+            scores_char2 = (X_char @ vqc2.T).toarray().ravel()
+            scores = fuse_scores(
+                {"word":scores_word2, "char":scores_char2, "dense":scores_dense, "img":scores_img, "bool":scores_bool, "fuzzy":scores_fuzzy},
+                {"word":args.alpha, "char":args.beta, "dense":args.gamma, "img":args.wimg, "bool":args.wbool, "fuzzy":args.wfuzzy}
+            )
+            order = np.argsort(-scores)
+
+    # strict filters
+    if False:  # keep code path for completeness; currently we rely on expansions
+        pass
+
+    # choose top
+    idx_top = order[:min(max(args.top*6, 60), len(order))]
+    if args.cross_rerank:
+        pairs = []
+        for i in idx_top[:args.rerank_k]:
+            txt = chunks[i]["text"][:args.ctx_chars]
+            pairs.append((q, txt))
+        rr = cross_rerank(pairs, model_name=args.reranker)
+        if rr is not None:
+            # rerank only a subset; pick final top by reranker
+            order_local = np.argsort(-rr)[:args.top]
+            chosen_idx = [idx_top[:args.rerank_k][j] for j in order_local]
+        else:
+            chosen_idx = list(idx_top[:args.top])
+    else:
+        chosen_idx = list(idx_top[:args.top])
+
     chosen_chunks = [chunks[i] for i in chosen_idx]
 
     images_used = []
@@ -451,25 +520,26 @@ def main():
                 f.write(f"llm_keywords: {', '.join(llm_info.get('keywords', []))}\n")
                 f.write(f"llm_synonyms: {', '.join(llm_info.get('synonyms', []))}\n")
                 f.write(f"llm_time: {llm_info.get('time','')}\n")
+            if hyde_txt:
+                f.write(f"hyde: {hyde_txt}\n")
             f.write(f"q_eff: {q_eff}\n")
-            f.write(f"expanded_terms: {', '.join(expanded)}\n")
-            f.write(f"combos: {json.dumps(combos, ensure_ascii=False)}\n")
+            f.write(f"expanded_terms: {', '.join(expand_terms(normalize_tokens(q_eff)))}\n")
         cands_json = []
         for i in chosen_idx:
             cands_json.append({
                 "id": chunks[i]["id"],
-                "source_path": chunks[i]["source_path"],
-                "score": float(scores[i])
+                "source_path": chunks[i]["source_path"]
             })
         with open(os.path.join(debug_dir, "candidates.json"), "w", encoding="utf-8") as f:
             json.dump(cands_json, f, ensure_ascii=False, indent=2)
         pipe = {
             "mode": args.mode,
-            "weights": {"alpha":args.alpha, "beta":args.beta, "gamma":args.gamma, "wimg":args.wimg, "wbool":args.wbool},
+            "weights": {"alpha":args.alpha, "beta":args.beta, "gamma":args.gamma, "wimg":args.wimg, "wbool":args.wbool, "wfuzzy":args.wfuzzy},
             "mmr": args.mmr, "neighbors": args.neighbors,
             "strict_mode": args.strict_mode,
             "top": args.top, "num_ctx": args.num_ctx, "ctx_chars": args.ctx_chars,
-            "llm_expand": args.llm_expand
+            "llm_expand": args.llm_expand, "hyde": args.hyde, "prf": args.prf,
+            "cross_rerank": args.cross_rerank, "reranker": args.reranker, "rerank_k": args.rerank_k
         }
         with open(os.path.join(debug_dir, "pipeline.json"), "w", encoding="utf-8") as f:
             json.dump(pipe, f, ensure_ascii=False, indent=2)

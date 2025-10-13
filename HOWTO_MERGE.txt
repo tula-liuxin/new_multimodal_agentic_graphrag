@@ -1,0 +1,12 @@
+# 覆盖/合并说明
+# 1) 将 src/query_cli.py 覆盖到你的项目同名文件
+# 2) 新增 src/zh_utils.py
+# 3) 在 requirements.txt 追加以下依赖（或 pip install -r requirements.additions.txt）:
+#    jieba, OpenCC, rapidfuzz, dateparser, sentence-transformers
+#
+# 新增能力：
+#   --llm-expand  # LLM抽取关键词/别名/时间（忽略指令词）
+#   --hyde        # HyDE 假想文档增强（提升模糊检索）
+#   --prf         # Pseudo-Relevance Feedback 词扩展
+#   --wfuzzy      # 模糊匹配通道权重（RapidFuzz）
+#   --cross-rerank --reranker BAAI/bge-reranker-v2-m3 --rerank-k 50

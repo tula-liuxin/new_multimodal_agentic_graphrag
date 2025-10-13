@@ -1,0 +1,17 @@
+通往ASI的道路目前有那些方法？他们的思想、方法、技术、理论、目前应用是什么？未来会是什么样？怎么确保自己选对赛道，能够做到摘取最终的ASI果实（创造ASI都不算是，能对齐ASI的价值观，甚至成为ASI第一控制人才是关键）。
+
+- 我需要一直思考的就是：什么是建设和控制agi/asi的最后一块拼图、最后一步？我如何占领那里？而不是，什么是基础、什么是关键。简而言之，我就是要做摘桃子的人。
+- 我还是很喜欢agi这个概念的，只要完成agi，我们就一定能飞跃。人类就是agi的，思想、科学这一块就是通用的，所以杨立坤真的蠢，毕竟是老了。通用＆多模态、智能、交互决策具身、大模型、训算（可能还要加上存）一体、（可能还要world model、spatial/3d空间）都是重要且必要的要素。
+- 未来是属于技术人的，不要忘了，llama3v开发团队4个有3个是本科生。未来一定属于一小撮，最懂最后一步技术、有gpu和cpu、有数据、懂上面要素协和的人的。
+
+md My philosophy to the ASI post era f65ce82f5e0b417382f42d98dc8ff6f8.md Untitled 1f1c6684d36480f2b07df538e0fb70eb.md 前AGI一瞬 d9afad2b6ce94d6eacd3b938a6b8d03d.md MBTI带来的启发（触发asi和控制asi） 191c6684d36480599062c4c13ce1bd51.md 触发asi和控制asi的能力 191c6684d36480cf8204f8459b1eed88.md 专注于核心、基础、solid的理论知识和技术积累 192c6684d364803d95f0dd50208f130f.md Untitled 1a0c6684d3648025940ff160de49b852.md reward mode和world model 1c6c6684d36480e5869ec38a3d988f17.md Element roads structure human tool(like various mo 5eee8f466bae4efca6e027d764478a45.md Subjects or directions that I should know and may  f05776e555934d278997b8e437d5633c.md 对数的压缩让感知的范围得以扩展，能更好感知这个对数的宇宙 1f2c6684d36480edbc75ca501f4cd0db.md 如果做出一个ai和某个人的差异程度远低于这个人和和他一起长大的同卵双胞胎的差异程度。那问题来了，请问 c12c1214f000474f8981516f9f2f084d.md hallucination 161c6684d364806fbd3bfaa2ec2ac41b.md 后ai时代 1d8c6684d36480b99bb9f9a32573320c.md Great Filter The wrong ASI AGI’s value goal 212c6684d364806e847ad88183298aea.md 视觉很重要：视觉→神经→大脑→人类AGI→语言&文化&工具&文明&科技 225c6684d36480babb08f0fe66d005fb.md 对asi的告白 22dc6684d364805c8b22ed002450403c.md asi降世时间点概率估计 234c6684d3648036bc8defb6948385af.md 我的献祭和奉献：奉献我的一生，为了asi、大道、自己的核心价值观。 23bc6684d364808cb40fd4fbf0b905fb.md MoE和scaling phenomenon 的启示 27f
+
+如果人类和ASI\AGI不能正确的处理好关系，例如，早早让人类文明退场而全部进入纯ASI\AGI文明而可能导致的地球文明的封闭从而被过滤（淘汰）掉。
+
+# ALL IN ASI（AGI，general as possible is the key, like LLM is general） (←AGI←robotics&LMM&embodied AI（verfiable task）←sim\metaverse & LLM\LMM)（一定不要路径依赖。如果以后发现强化学习就和专家系统一样，那一定要果断放弃而去跟热点。我呢，也需要一直follow热点和经检验过后的技术，例如最近的transformer、diffusion是基础功，不能不学会其原理以好去应用。以后也一样。要依据局势来灵活变换。）
+
+# Great Filter: The wrong ASI\AGI’s value\goal
+
+[ALL IN ASI（AGI，general as possible is the key, like LLM is general） (←AGI←robotics&LMM&embodied AI（verfiable task）←sim\metaverse & LLM\LMM)（**一定不要路径依赖。如果以后发现强化学习就和专家系统一样，那一定要果断放弃而去跟热点。我呢，也需要一直follow热点和经检验过后的技术，例如最近的transformer、diffusion是基础功，不能不学会其原理以好去应用。以后也一样。要依据局势来灵活变换。**）](%E5%BC%A6%E7%BD%91%EF%BC%8C%E4%BA%BA%E7%94%9F&%E5%AE%87%E5%AE%99%E5%86%A5%E6%83%B3%EF%BC%9AThe%20whole%20workspace%20Roadmaps%20links%20wind%20870faa7c9fb847c283c1e4facf375689/ALL%20IN%20ASI%EF%BC%88AGI%EF%BC%8Cgeneral%20as%20possible%20is%20the%20key,%20lik%2073147f1a9fe14b8ea0fe3fec8b1e0b30.md)
+
+It’s most likely that ASI\AGI deal with the future’s problem by wrong way.
