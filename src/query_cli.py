@@ -9,6 +9,7 @@ import open_clip, torch
 from PIL import Image
 
 def cosine_rows(A, b):
+    # A: (N,D), b: (D,)
     A = np.asarray(A, dtype=np.float32)
     b = np.asarray(b, dtype=np.float32)
     nb = np.linalg.norm(b) + 1e-9
@@ -16,39 +17,104 @@ def cosine_rows(A, b):
     sim = (A @ b) / (na * nb)
     return sim
 
+CN_INSTR_STOP = {"所有记录","所有信息","全部信息","全部记录","总体","完整","汇总","总结","整理","如何","怎么","请","帮我","需要","希望","想要","请给出","的","关于","相关","最近","本周","本月","下一步","目标","安排","计划","日程","行程","ToDo","待办","OKR"}
+
 def smart_keywords(q: str, weight: float=1.2) -> List[str]:
     toks = re.findall(r"[一-龥A-Za-z0-9_]+", q)
-    stop = {"的","了","和","与","及","在","有","是","我","我们","最近","计划","安排","日程","行程","目标","待办","下一步","本周","周计划","月计划","所有","全部","信息","记录"}
-    kws = [t for t in toks if t not in stop and len(t) >= 2]
+    kws = [t for t in toks if t not in CN_INSTR_STOP and len(t) >= 2]
     return kws
 
-INSTRUCTION_PATTERNS = [
-    r"的所有记录", r"的所有信息", r"全部记录", r"全部信息", r"所有记录", r"所有信息",
-    r"完整记录", r"完整信息", r"有哪些", r"怎么", r"如何", r"请", r"帮我",
-    r"总结", r"概括", r"列举", r"整理", r"汇总", r"归纳"
-]
+def robust_json_find(s: str):
+    # find first {...} block
+    m = re.search(r'\{.*\}', s, flags=re.S)
+    if not m:
+        return None
+    try:
+        return json.loads(m.group(0))
+    except Exception:
+        # try to sanitize trailing commas
+        txt = re.sub(r',\s*}', '}', m.group(0))
+        txt = re.sub(r',\s*]', ']', txt)
+        try:
+            return json.loads(txt)
+        except Exception:
+            return None
 
-def sanitize_question(q: str) -> str:
-    s = q
-    for pat in INSTRUCTION_PATTERNS:
-        s = re.sub(pat, " ", s)
-    s = re.sub(r"\s+", " ", s).strip()
-    return s
+def llm_expand_terms(cfg, model_tag: str, question: str):
+    client = OllamaClient(cfg["ollama_base_url"], timeout=int(cfg.get("embed_timeout",120)), keep_alive=cfg.get("embed_keep_alive","10m"))
+    sys_prompt = "你是检索前的查询理解器。仅输出JSON，不要解释。"
+    prompt = (
+        "请阅读用户问题，抽取可用于检索的关键信息。\n"
+        "把指令性词（如“所有记录/全部信息/请/如何”等）忽略，只保留用于命中的实体、别名、关键词、可能的时间限定。\n"
+        "输出JSON，字段：\n"
+        "{\n"
+        "  \"keywords\": [\"必搜词\",\"核心实体\"],\n"
+        "  \"synonyms\": [\"别名或同义词\"],\n"
+        "  \"exclude\": [\"应当排除的词\"],\n"
+        "  \"time\": \"可选时间范围描述，如 2025年10月/最近一周\"\n"
+        "}\n"
+        f"问题：{question}"
+    )
+    try:
+        out = client.generate(model_tag, prompt, temperature=0.1, system=sys_prompt)
+    except Exception as e:
+        return None
+    obj = robust_json_find(out or "")
+    if not obj:
+        return None
+    kws = obj.get("keywords") or []
+    syns = obj.get("synonyms") or []
+    exc = obj.get("exclude") or []
+    tm  = obj.get("time") or ""
+    # normalize tokens
+    def norm(ts):
+        res = []
+        for t in ts:
+            t = str(t).strip()
+            if not t: continue
+            if t in CN_INSTR_STOP: continue
+            res.append(t)
+        return res
+    return {
+        "keywords": norm(kws),
+        "synonyms": norm(syns),
+        "exclude": norm(exc),
+        "time": tm.strip()
+    }
 
 def load_dense(data_dir):
     emb_path = os.path.join(data_dir, "embeddings.npy")
     meta_path = os.path.join(data_dir, "embed_meta.json")
     ids_path = os.path.join(data_dir, "ids.json")
     ids = json.load(open(ids_path, "r", encoding="utf-8"))
-    meta = json.load(open(meta_path, "r", encoding="utf-8"))
-    dim = int(meta.get("dim", 0))
-    fbytes = os.path.getsize(emb_path)
+    meta = json.load(open(meta_path, "r", encoding="utf-8")) if os.path.exists(meta_path) else {"count": len(ids), "dim": 0}
+    # derive dim and count safely
+    file_size = os.path.getsize(emb_path)  # bytes
+    dim = int(meta.get("dim") or 0)
     if dim <= 0:
-        # 尝试从文件与 ids 推断
-        dim = max(1, fbytes // (4 * max(1, len(ids))))
-    count_by_file = fbytes // (4 * dim)
-    count = int(count_by_file)
-    arr = np.memmap(emb_path, dtype=np.float32, mode="r", shape=(count, dim))
+        # best-effort guess: prefer common dims
+        commons = [3072, 2048, 1536, 1024, 768, 512, 384]
+        guessed = None
+        for d in commons:
+            if file_size % (4*d) == 0:
+                guessed = d
+                break
+        dim = guessed or 768
+    count_from_size = file_size // (4 * dim)
+    count_meta = int(meta.get("count", len(ids)))
+    count = min(count_from_size, count_meta, len(ids))
+    try:
+        arr = np.memmap(emb_path, dtype=np.float32, mode="r", shape=(count, dim))
+    except (OSError, ValueError):
+        # fallback: flat then reshape minimal
+        flat = np.memmap(emb_path, dtype=np.float32, mode="r")
+        total = flat.size
+        count_from_flat = total // dim
+        count = min(count, count_from_flat, len(ids))
+        arr = flat[:count*dim].reshape(count, dim)
+    # clamp ids to count
+    if len(ids) != count:
+        ids = ids[:count]
     return arr, ids
 
 def load_tfidf(data_dir):
@@ -87,6 +153,8 @@ def normalize_tokens(q: str):
     toks = re.findall(r"[一-龥A-Za-z0-9_]+", q)
     out = []
     for t in toks:
+        if t in CN_INSTR_STOP:  # drop instruction-like tokens
+            continue
         if re.search(r"[A-Za-z]", t):
             out.append(t.upper())
         else:
@@ -99,6 +167,7 @@ def expand_terms(tokens):
         if t.upper() in AGI_SYNONYMS:
             for s in AGI_SYNONYMS[t.upper()]:
                 expanded.add(s.upper() if re.search(r"[A-Za-z]", s) else s)
+        # map Chinese back to acronym
         for k, syns in AGI_SYNONYMS.items():
             if t in syns:
                 expanded.add(k)
@@ -188,8 +257,6 @@ def main():
     parser.add_argument("--wimg", type=float, default=0.25, help="图像通道权重")
     parser.add_argument("--wbool", type=float, default=0.6, help="关键词/组合布尔通道权重")
     parser.add_argument("--images-only", action="store_true")
-    parser.add_argument("--must", type=str, default="", help="空格分隔的强制包含关键词（AND）")
-    parser.add_argument("--no-sanitize", action="store_true", help="不清洗指令性词串（默认会清洗）")
 
     parser.add_argument("--mmr", type=float, default=0.5)
     parser.add_argument("--neighbors", type=int, default=1)
@@ -199,6 +266,7 @@ def main():
 
     parser.add_argument("--smart-query", action="store_true")
     parser.add_argument("--sqw", type=float, default=1.2)
+    parser.add_argument("--llm-expand", action="store_true", help="使用本地 LLM 抽取关键词/别名/时间等后再检索")
 
     parser.add_argument("--strict-mode", choices=["off","exact","smart"], default="off")
 
@@ -211,7 +279,7 @@ def main():
     parser.add_argument("--wq", type=float, default=1.0)
 
     parser.add_argument("--debug-dir", default=None)
-    parser.add_argument("--model", default=None, help="用于回答/扩展的本地模型（Ollama tag）")
+    parser.add_argument("--model", default=None, help="用于回答/扩展/LLM抽取的本地模型（Ollama tag）")
 
     parser.add_argument("question", nargs="+")
 
@@ -219,8 +287,7 @@ def main():
     cfg = load_cfg(args.config)
     logger = get_logger()
 
-    q_raw = " ".join(args.question)
-    q = q_raw if args.no-sanitize else sanitize_question(q_raw)  # noqa
+    q = " ".join(args.question)
     data_dir = cfg["data_dir"]
     input_dir = cfg["input_dir"]
     debug_dir = args.debug_dir or cfg.get("debug_dir")
@@ -229,20 +296,9 @@ def main():
     if len(chunks) == 0:
         print("没有可用的 chunks（请先运行 ingest）。")
         return
-
     dense, ids = None, None
     if args.mode in ["dense","hybrid"]:
-        try:
-            dense, ids = load_dense(data_dir)
-        except Exception as e:
-            print(f"[warn] 加载 embeddings 失败：{e}。将暂时禁用 dense 通道。")
-            dense, ids = None, None
-
-    if dense is not None and dense.shape[0] != len(chunks):
-        print(f"[warn] embeddings 数量({dense.shape[0]}) 与 chunks 数量({len(chunks)}) 不一致。"
-              f"通常是 ingest 之后没有重新 embed 导致。建议重新执行 embed。此次查询将临时禁用 dense 通道。")
-        dense = None
-
+        dense, ids = load_dense(data_dir)
     vec_word, X_word = None, None
     vec_char, X_char = None, None
     if args.mode in ["tfidf","hybrid"]:
@@ -252,11 +308,24 @@ def main():
     images = load_images(data_dir)
     link_graph = load_link_graph(data_dir)
 
+    # === LLM 预处理（去指令词、抽取实体/别名/时间等）===
+    llm_info = None
+    if args.llm_expand and args.model:
+        llm_info = llm_expand_terms(cfg, args.model, q)
+
     q_eff = q
+    seed_terms = []
+    if llm_info:
+        seed_terms += llm_info.get("keywords", [])
+        seed_terms += llm_info.get("synonyms", [])
+        seed_terms = [t for t in seed_terms if t not in CN_INSTR_STOP]
+        if seed_terms:
+            q_eff = q + " " + " ".join(seed_terms)
+
     if args.smart_query:
         kws = smart_keywords(q, weight=args.sqw)
         if kws:
-            q_eff = q + " " + " ".join(kws)
+            q_eff = q_eff + " " + " ".join(kws)
 
     N = len(chunks)
     scores_word = None
@@ -270,7 +339,7 @@ def main():
         vqc = vec_char.transform([q_eff])
         scores_char = (X_char @ vqc.T).toarray().ravel()
 
-    if args.mode in ["dense","hybrid"] and dense is not None:
+    if args.mode in ["dense","hybrid"]:
         client = OllamaClient(cfg["ollama_base_url"], timeout=int(cfg.get("embed_timeout",120)), keep_alive=cfg.get("embed_keep_alive","10m"))
         qemb = client.embeddings(cfg["embed_model"], [q_eff])[0]
         qemb = np.array(qemb, dtype=np.float32)
@@ -310,32 +379,20 @@ def main():
             print(f"{abs_path}  (score={s_img[i]:.4f})")
         return
 
+    # Keyword expansions for boolean channel
     base_tokens = normalize_tokens(q_eff)
+    if llm_info:
+        base_tokens += [t for t in (llm_info.get("keywords", []) + llm_info.get("synonyms", [])) if t not in CN_INSTR_STOP]
     expanded = expand_terms(base_tokens)
     combos = make_combos(expanded, max_combo=2)
 
-    # MUST tokens (AND filter)
-    must_tokens = [t for t in args.must.split() if t.strip()]
-    if must_tokens:
-        def has_all(text):
-            T = text.upper()
-            return all(m.upper() in T for m in must_tokens)
-        # 先做一个靠前过滤（轻量）
-        pass
-
     prelim = set()
-    if scores_word is not None: prelim.update(np.argsort(-scores_word)[:1000])
-    if scores_char is not None: prelim.update(np.argsort(-scores_char)[:1000])
-    if scores_dense is not None: prelim.update(np.argsort(-scores_dense)[:1000])
+    if scores_word is not None: prelim.update(np.argsort(-scores_word)[:100])
+    if scores_char is not None: prelim.update(np.argsort(-scores_char)[:100])
+    if scores_dense is not None: prelim.update(np.argsort(-scores_dense)[:100])
     if not prelim:
         prelim = set(range(N))
     prelim = list(prelim)
-
-    # 应用 MUST 过滤（如果有）
-    if must_tokens:
-        prelim = [i for i in prelim if all(m.upper() in chunks[i].get("text","").upper() for m in must_tokens)]
-        if not prelim:
-            prelim = [i for i in range(N) if all(m.upper() in chunks[i].get("text","").upper() for m in must_tokens)]
 
     scores_bool = np.zeros(N, dtype=np.float32)
     for i in prelim:
@@ -376,7 +433,7 @@ def main():
     if args.model:
         sys_prompt = "你是可靠的企业内检索与问答助手。回答要基于提供的上下文，若没有证据，请直说不知道。"
         client = OllamaClient(cfg["ollama_base_url"], timeout=int(cfg.get("embed_timeout",120)), keep_alive=cfg.get("embed_keep_alive","10m"))
-        prompt = f"问题：{q_raw}\n\n（检索关键词已自动清洗：{q}）\n\n参考上下文：\n{ctx}\n\n请用中文直接回答。"
+        prompt = f"问题：{q}\n\n参考上下文：\n{ctx}\n\n请用中文直接回答。"
         try:
             answer = client.generate(args.model, prompt, temperature=0.2, system=sys_prompt)
         except Exception as e:
@@ -387,12 +444,15 @@ def main():
     if debug_dir:
         os.makedirs(debug_dir, exist_ok=True)
         with open(os.path.join(debug_dir, "query.txt"), "w", encoding="utf-8") as f:
-            f.write(f"question_raw: {q_raw}\n")
-            f.write(f"question_sanitized: {q}\n")
+            f.write(f"question: {q}\n")
             if args.smart_query:
                 f.write(f"smart_keywords: {' '.join(smart_keywords(q))}\n")
+            if llm_info:
+                f.write(f"llm_keywords: {', '.join(llm_info.get('keywords', []))}\n")
+                f.write(f"llm_synonyms: {', '.join(llm_info.get('synonyms', []))}\n")
+                f.write(f"llm_time: {llm_info.get('time','')}\n")
+            f.write(f"q_eff: {q_eff}\n")
             f.write(f"expanded_terms: {', '.join(expanded)}\n")
-            f.write(f"must_tokens: {', '.join(must_tokens)}\n")
             f.write(f"combos: {json.dumps(combos, ensure_ascii=False)}\n")
         cands_json = []
         for i in chosen_idx:
@@ -408,7 +468,8 @@ def main():
             "weights": {"alpha":args.alpha, "beta":args.beta, "gamma":args.gamma, "wimg":args.wimg, "wbool":args.wbool},
             "mmr": args.mmr, "neighbors": args.neighbors,
             "strict_mode": args.strict_mode,
-            "top": args.top, "num_ctx": args.num_ctx, "ctx_chars": args.ctx_chars
+            "top": args.top, "num_ctx": args.num_ctx, "ctx_chars": args.ctx_chars,
+            "llm_expand": args.llm_expand
         }
         with open(os.path.join(debug_dir, "pipeline.json"), "w", encoding="utf-8") as f:
             json.dump(pipe, f, ensure_ascii=False, indent=2)
