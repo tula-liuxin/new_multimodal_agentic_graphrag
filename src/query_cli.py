@@ -8,60 +8,8 @@ from .multimodal_fusion import fuse_scores, mmr_select, read_jsonl
 import open_clip, torch
 from PIL import Image
 
-# --- Keyword expansion & boolean scoring helpers ---
-AGI_SYNONYMS = {
-    "AGI": ["AGI", "通用人工智能", "人工通用智能", "强人工智能", "通用智能"],
-    "ASI": ["ASI", "超人工智能", "超强智能", "超级智能"],
-    "LLM": ["LLM", "大型语言模型", "大语言模型", "大模型", "语言模型"],
-}
-
-def normalize_tokens(q: str):
-    toks = re.findall(r"[一-龥A-Za-z0-9_]+", q)
-    out = []
-    for t in toks:
-        if re.search(r"[A-Za-z]", t):
-            out.append(t.upper())
-        else:
-            out.append(t)
-    return out
-
-def expand_terms(tokens):
-    expanded = set(tokens)
-    for t in list(tokens):
-        if t.upper() in AGI_SYNONYMS:
-            for s in AGI_SYNONYMS[t.upper()]:
-                expanded.add(s.upper() if re.search(r"[A-Za-z]", s) else s)
-        for k, syns in AGI_SYNONYMS.items():
-            if t in syns:
-                expanded.add(k)
-    return list(expanded)
-
-def make_combos(tokens, max_combo=2):
-    toks = [t for t in tokens if len(t) >= 2]
-    combos = set()
-    n = len(toks)
-    for i in range(n):
-        for j in range(i+1, n):
-            combos.add(tuple(sorted([toks[i], toks[j]])))
-            if max_combo >= 3:
-                for k in range(j+1, n):
-                    combos.add(tuple(sorted([toks[i], toks[j], toks[k]])))
-    return list(combos)
-
-def bool_channel_score(text: str, tokens, combos):
-    if not text:
-        return 0.0
-    t = text.upper()
-    hits = sum(1 for tok in tokens if tok.upper() in t)
-    frac = 0.0 if len(tokens)==0 else hits/len(tokens)
-    combo_hits = 0
-    for c in combos:
-        if all(tok.upper() in t for tok in c):
-            combo_hits += 1
-    combo_frac = combo_hits / max(1, len(combos))
-    return 0.6*frac + 0.4*combo_frac
-
 def cosine_rows(A, b):
+    # A: (N,D), b: (D,)
     A = np.asarray(A, dtype=np.float32)
     b = np.asarray(b, dtype=np.float32)
     nb = np.linalg.norm(b) + 1e-9
@@ -70,8 +18,10 @@ def cosine_rows(A, b):
     return sim
 
 def smart_keywords(q: str, weight: float=1.2) -> List[str]:
+    # 低成本解析：中文分块 + 英文词
     toks = re.findall(r"[一-龥A-Za-z0-9_]+", q)
-    stop = {"的","了","和","与","及","在","有","是","我","我们","最近","计划"}
+    # 简单去停用
+    stop = {"的","了","和","与","及","在","有","是","我","我们","最近","计划","安排","日程","行程","目标","待办","下一步","本周","周计划","月计划"}
     kws = [t for t in toks if t not in stop and len(t) >= 2]
     return kws
 
@@ -110,6 +60,60 @@ def load_link_graph(data_dir):
         return json.load(open(p, "r", encoding="utf-8"))
     return {"nodes":{}, "edges":[]}
 
+# --- Keyword expansion & boolean scoring helpers ---
+AGI_SYNONYMS = {
+    "AGI": ["AGI", "通用人工智能", "人工通用智能", "强人工智能", "通用智能"],
+    "ASI": ["ASI", "超人工智能", "超强智能", "超级智能"],
+    "LLM": ["LLM", "大型语言模型", "大语言模型", "大模型", "语言模型"],
+}
+
+def normalize_tokens(q: str):
+    toks = re.findall(r"[一-龥A-Za-z0-9_]+", q)
+    out = []
+    for t in toks:
+        if re.search(r"[A-Za-z]", t):
+            out.append(t.upper())
+        else:
+            out.append(t)
+    return out
+
+def expand_terms(tokens):
+    expanded = set(tokens)
+    for t in list(tokens):
+        if t.upper() in AGI_SYNONYMS:
+            for s in AGI_SYNONYMS[t.upper()]:
+                expanded.add(s.upper() if re.search(r"[A-Za-z]", s) else s)
+        # map Chinese back to acronym
+        for k, syns in AGI_SYNONYMS.items():
+            if t in syns:
+                expanded.add(k)
+    return list(expanded)
+
+def make_combos(tokens, max_combo=2):
+    toks = [t for t in tokens if len(t) >= 2]
+    combos = set()
+    n = len(toks)
+    for i in range(n):
+        for j in range(i+1, n):
+            combos.add(tuple(sorted([toks[i], toks[j]])))
+            if max_combo >= 3:
+                for k in range(j+1, n):
+                    combos.add(tuple(sorted([toks[i], toks[j], toks[k]])))
+    return list(combos)
+
+def bool_channel_score(text: str, tokens, combos):
+    if not text:
+        return 0.0
+    t = text.upper()
+    hits = sum(1 for tok in tokens if tok.upper() in t)
+    frac = hits / len(tokens) if len(tokens) else 0.0
+    combo_hits = 0
+    for c in combos:
+        if all(tok.upper() in t for tok in c):
+            combo_hits += 1
+    combo_frac = combo_hits / max(1, len(combos))
+    return 0.6 * frac + 0.4 * combo_frac
+
 def image_query_to_scores(cfg, q: str, data_dir: str, images, wimg: float):
     ids_path = os.path.join(data_dir, "image_ids.json")
     emb_path = os.path.join(data_dir, "image_embeddings.npy")
@@ -135,8 +139,29 @@ def image_query_to_scores(cfg, q: str, data_dir: str, images, wimg: float):
             tfeat = tfeat.detach().cpu().float().numpy()[0]
         else:
             return None, None, None
-    sims = cosine_rows(img_vecs, tfeat)
+    sims = (img_vecs @ tfeat) / ((np.linalg.norm(img_vecs, axis=1) + 1e-9) * (np.linalg.norm(tfeat) + 1e-9))
     return sims, img_ids, images
+
+def build_context(chosen_chunks: List[Dict], images_used: List[Dict], cfg, num_ctx: int, ctx_chars: int):
+    ctx_parts = []
+    total = 0
+    for rec in chosen_chunks:
+        t = rec["text"]
+        if total + len(t) > num_ctx:
+            t = t[:max(0, num_ctx-total)]
+        ctx_parts.append(t[:ctx_chars])
+        total += len(t)
+        if total >= num_ctx:
+            break
+    for im in images_used:
+        extras = []
+        if im.get("caption"):
+            extras.append(f"字幕：{im['caption']}")
+        if im.get("ocr_text"):
+            extras.append(f"OCR：{im['ocr_text'][:200]}")
+        if extras:
+            ctx_parts.append("【相关图片】" + "；".join(extras))
+    return "\n\n".join(ctx_parts)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -147,6 +172,7 @@ def main():
     parser.add_argument("--gamma", type=float, default=0.8, help="文本向量权重")
     parser.add_argument("--wimg", type=float, default=0.25, help="图像通道权重")
     parser.add_argument("--wbool", type=float, default=0.6, help="关键词/组合布尔通道权重")
+    parser.add_argument("--images-only", action="store_true")
 
     parser.add_argument("--mmr", type=float, default=0.5)
     parser.add_argument("--neighbors", type=int, default=1)
@@ -203,11 +229,6 @@ def main():
         if kws:
             q_eff = q + " " + " ".join(kws)
 
-    # 关键词扩展（含 AGI/ASI 等）
-    base_tokens = normalize_tokens(q_eff)
-    expanded = expand_terms(base_tokens)
-    combos = make_combos(expanded, max_combo=2)
-
     N = len(chunks)
     scores_word = None
     scores_char = None
@@ -227,7 +248,7 @@ def main():
         scores_dense = cosine_rows(dense, qemb)
 
     img_info = None
-    if args.mode == "hybrid" and not args.images_only and args.wimg > 0:
+    if args.mode == "hybrid" and not getattr(args, "images_only", False) and args.wimg > 0:
         s_img, img_ids, img_recs = image_query_to_scores(cfg, q_eff, data_dir, images, args.wimg)
         if s_img is not None:
             img_map = {}
@@ -236,10 +257,10 @@ def main():
             scores_img = np.zeros(N, dtype=np.float32)
             for i, rec in enumerate(chunks):
                 sp = rec["source_path"]
+                base_dir = os.path.dirname(sp)
                 if sp in img_map:
                     scores_img[i] = img_map[sp]
                 else:
-                    base_dir = os.path.dirname(sp)
                     best = 0.0
                     for k, v in img_map.items():
                         if os.path.dirname(k) == base_dir:
@@ -247,7 +268,24 @@ def main():
                     scores_img[i] = best
             img_info = (s_img, img_ids, img_recs)
 
-    # 初选候选（减少布尔扫描开销）：从各通道取前 100 的并集
+    if getattr(args, "images_only", False):
+        s_img, img_ids, img_recs = image_query_to_scores(cfg, q_eff, data_dir, images, args.wimg)
+        if s_img is None:
+            print("未找到图像索引（先运行 imgindex）。")
+            return
+        order = np.argsort(-s_img)[:args.top]
+        print("图片检索 Top:")
+        for i in order:
+            rec = img_recs[i]
+            abs_path = norm_win_abs(os.path.join(cfg["input_dir"], rec["source_path"]))
+            print(f"{abs_path}  (score={s_img[i]:.4f})")
+        return
+
+    # Keyword expansions for boolean channel
+    base_tokens = normalize_tokens(q_eff)
+    expanded = expand_terms(base_tokens)
+    combos = make_combos(expanded, max_combo=2)
+
     prelim = set()
     if scores_word is not None: prelim.update(np.argsort(-scores_word)[:100])
     if scores_char is not None: prelim.update(np.argsort(-scores_char)[:100])
@@ -270,7 +308,6 @@ def main():
         return
 
     order = np.argsort(-scores)
-
     if args.strict_mode == "exact":
         mask = np.array([ (re.search(re.escape(q), chunks[i]["text"]) is not None) for i in range(len(chunks)) ])
         order = [i for i in order if mask[i]]
@@ -280,10 +317,8 @@ def main():
         order = [i for i in order if mask[i]]
 
     idx_top = order[:min(200, len(order))]
-    cands = [(i, float(scores[i])) for i in idx_top]
-    selected = [i for (i, _) in cands[:args.top]]
-
-    chosen_idx = selected[:args.top]
+    cands = [(i, float(scores[i])) for i in idx_top[:args.top]]
+    chosen_idx = [i for (i, _) in cands]
     chosen_chunks = [chunks[i] for i in chosen_idx]
 
     images_used = []
@@ -292,26 +327,7 @@ def main():
         img_order = np.argsort(-s_img)[:args.top]
         images_used = [img_recs[i] for i in img_order if s_img[i] > 0]
 
-    # 构造上下文
-    total = 0
-    ctx_parts = []
-    for rec in chosen_chunks:
-        t = rec["text"]
-        if total + len(t) > args.num_ctx:
-            t = t[:max(0, args.num_ctx-total)]
-        ctx_parts.append(t)
-        total += len(t)
-        if total >= args.num_ctx:
-            break
-    for im in images_used:
-        extras = []
-        if im.get("caption"):
-            extras.append(f"字幕：{im['caption']}")
-        if im.get("ocr_text"):
-            extras.append(f"OCR：{im['ocr_text'][:200]}")
-        if extras:
-            ctx_parts.append("【相关图片】" + "；".join(extras))
-    ctx = "\n\n".join(ctx_parts)
+    ctx = build_context(chosen_chunks, images_used, cfg, args.num_ctx, args.ctx_chars)
 
     answer = ""
     if args.model:
@@ -325,6 +341,7 @@ def main():
     else:
         answer = ctx
 
+    debug_dir = debug_dir or None
     if debug_dir:
         os.makedirs(debug_dir, exist_ok=True)
         with open(os.path.join(debug_dir, "query.txt"), "w", encoding="utf-8") as f:
@@ -359,6 +376,7 @@ def main():
                 json.dump(images_used, f, ensure_ascii=False, indent=2)
 
     print(answer.strip())
+
     used_paths = set()
     for rec in chosen_chunks:
         used_paths.add(norm_win_abs(os.path.join(input_dir, rec["source_path"])))
