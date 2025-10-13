@@ -1,11 +1,10 @@
-# 所有键都可被环境变量 NMAGR_<key> 覆盖（字符串），例如：NMAGR_enable_ocr=true
 project_root: "C:\\MyNotion\\new_multimodal_agentic_graphrag"
 input_dir: "C:\\MyNotion\\MyNotion20251007"
 data_dir: "C:\\MyNotion\\new_multimodal_agentic_graphrag\\data"
 debug_dir: "C:\\MyNotion\\new_multimodal_agentic_graphrag\\debug"
 
-# OCR / captions（可选）
-enable_ocr: false
+# OCR / captions（已默认开启 OCR）
+enable_ocr: true
 ocr_lang: "chi_sim+eng"
 ocr_psm: 6
 enable_image_captions: false
@@ -30,5 +29,5 @@ image_workers: 6
 # TF-IDF / 切片
 max_chars: 1200
 overlap_chars: 200
-tfidf_max_features: 100000
-char_ngram_range: [2, 5]
+tfidf_max_features: 200000
+char_ngram_range: [2, 6]

@@ -4,7 +4,6 @@ def run_graph(cfg, logger):
     data_dir = cfg["data_dir"]
     link_graph = os.path.join(data_dir, "link_graph.json")
     out_graph = os.path.join(data_dir, "graph.json")
-    # 最小实现：用 link_graph 直接作为 GraphRAG 的图（节点/边）
     try:
         with open(link_graph, "r", encoding="utf-8") as f:
             g = json.load(f)

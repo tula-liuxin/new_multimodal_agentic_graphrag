@@ -8,8 +8,60 @@ from .multimodal_fusion import fuse_scores, mmr_select, read_jsonl
 import open_clip, torch
 from PIL import Image
 
+# --- Keyword expansion & boolean scoring helpers ---
+AGI_SYNONYMS = {
+    "AGI": ["AGI", "通用人工智能", "人工通用智能", "强人工智能", "通用智能"],
+    "ASI": ["ASI", "超人工智能", "超强智能", "超级智能"],
+    "LLM": ["LLM", "大型语言模型", "大语言模型", "大模型", "语言模型"],
+}
+
+def normalize_tokens(q: str):
+    toks = re.findall(r"[一-龥A-Za-z0-9_]+", q)
+    out = []
+    for t in toks:
+        if re.search(r"[A-Za-z]", t):
+            out.append(t.upper())
+        else:
+            out.append(t)
+    return out
+
+def expand_terms(tokens):
+    expanded = set(tokens)
+    for t in list(tokens):
+        if t.upper() in AGI_SYNONYMS:
+            for s in AGI_SYNONYMS[t.upper()]:
+                expanded.add(s.upper() if re.search(r"[A-Za-z]", s) else s)
+        for k, syns in AGI_SYNONYMS.items():
+            if t in syns:
+                expanded.add(k)
+    return list(expanded)
+
+def make_combos(tokens, max_combo=2):
+    toks = [t for t in tokens if len(t) >= 2]
+    combos = set()
+    n = len(toks)
+    for i in range(n):
+        for j in range(i+1, n):
+            combos.add(tuple(sorted([toks[i], toks[j]])))
+            if max_combo >= 3:
+                for k in range(j+1, n):
+                    combos.add(tuple(sorted([toks[i], toks[j], toks[k]])))
+    return list(combos)
+
+def bool_channel_score(text: str, tokens, combos):
+    if not text:
+        return 0.0
+    t = text.upper()
+    hits = sum(1 for tok in tokens if tok.upper() in t)
+    frac = 0.0 if len(tokens)==0 else hits/len(tokens)
+    combo_hits = 0
+    for c in combos:
+        if all(tok.upper() in t for tok in c):
+            combo_hits += 1
+    combo_frac = combo_hits / max(1, len(combos))
+    return 0.6*frac + 0.4*combo_frac
+
 def cosine_rows(A, b):
-    # A: (N,D), b: (D,)
     A = np.asarray(A, dtype=np.float32)
     b = np.asarray(b, dtype=np.float32)
     nb = np.linalg.norm(b) + 1e-9
@@ -18,17 +70,20 @@ def cosine_rows(A, b):
     return sim
 
 def smart_keywords(q: str, weight: float=1.2) -> List[str]:
-    # 低成本解析：中文分块 + 英文词
     toks = re.findall(r"[一-龥A-Za-z0-9_]+", q)
-    # 简单去停用
     stop = {"的","了","和","与","及","在","有","是","我","我们","最近","计划"}
     kws = [t for t in toks if t not in stop and len(t) >= 2]
     return kws
 
 def load_dense(data_dir):
-    emb = np.memmap(os.path.join(data_dir, "embeddings.npy"), dtype=np.float32, mode="r")
-    ids = json.load(open(os.path.join(data_dir, "ids.json"), "r", encoding="utf-8"))
-    return emb, ids
+    emb_path = os.path.join(data_dir, "embeddings.npy")
+    meta_path = os.path.join(data_dir, "embed_meta.json")
+    ids_path = os.path.join(data_dir, "ids.json")
+    ids = json.load(open(ids_path, "r", encoding="utf-8"))
+    meta = json.load(open(meta_path, "r", encoding="utf-8"))
+    count, dim = int(meta.get("count", len(ids))), int(meta.get("dim", 0))
+    arr = np.memmap(emb_path, dtype=np.float32, mode="r", shape=(count, dim))
+    return arr, ids
 
 def load_tfidf(data_dir):
     vec = joblib.load(os.path.join(data_dir, "tfidf_vectorizer.joblib"))
@@ -56,13 +111,16 @@ def load_link_graph(data_dir):
     return {"nodes":{}, "edges":[]}
 
 def image_query_to_scores(cfg, q: str, data_dir: str, images, wimg: float):
-    # 使用同一 CLIP 文本编码器
     ids_path = os.path.join(data_dir, "image_ids.json")
     emb_path = os.path.join(data_dir, "image_embeddings.npy")
     if not (os.path.exists(ids_path) and os.path.exists(emb_path)):
         return None, None, None
     img_ids = json.load(open(ids_path, "r", encoding="utf-8"))
-    img_vecs = np.memmap(emb_path, dtype=np.float32, mode="r")
+    flat = np.memmap(emb_path, dtype=np.float32, mode="r")
+    if len(img_ids) == 0:
+        return None, None, None
+    dim = flat.size // len(img_ids)
+    img_vecs = flat.reshape(len(img_ids), dim)
     model_name = cfg.get("image_model_name", "ViT-L-14")
     pretrained = cfg.get("image_pretrained", "laion2b_s32b_b82k")
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -80,29 +138,6 @@ def image_query_to_scores(cfg, q: str, data_dir: str, images, wimg: float):
     sims = cosine_rows(img_vecs, tfeat)
     return sims, img_ids, images
 
-def build_context(chosen_chunks: List[Dict], images_used: List[Dict], cfg, num_ctx: int, ctx_chars: int):
-    # 拼接文本上下文（限制字符数），图像信息作为附加注释
-    ctx_parts = []
-    total = 0
-    for rec in chosen_chunks:
-        t = rec["text"]
-        if total + len(t) > num_ctx:
-            t = t[:max(0, num_ctx-total)]
-        ctx_parts.append(t)
-        total += len(t)
-        if total >= num_ctx:
-            break
-    # 附带图片 OCR/字幕简述
-    for im in images_used:
-        extras = []
-        if im.get("caption"):
-            extras.append(f"字幕：{im['caption']}")
-        if im.get("ocr_text"):
-            extras.append(f"OCR：{im['ocr_text'][:200]}")
-        if extras:
-            ctx_parts.append("【相关图片】" + "；".join(extras))
-    return "\n\n".join(ctx_parts)
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default="config.yaml")
@@ -111,7 +146,7 @@ def main():
     parser.add_argument("--beta", type=float, default=0.3, help="字 n-gram 权重")
     parser.add_argument("--gamma", type=float, default=0.8, help="文本向量权重")
     parser.add_argument("--wimg", type=float, default=0.25, help="图像通道权重")
-    parser.add_argument("--images-only", action="store_true")
+    parser.add_argument("--wbool", type=float, default=0.6, help="关键词/组合布尔通道权重")
 
     parser.add_argument("--mmr", type=float, default=0.5)
     parser.add_argument("--neighbors", type=int, default=1)
@@ -146,7 +181,6 @@ def main():
     input_dir = cfg["input_dir"]
     debug_dir = args.debug_dir or cfg.get("debug_dir")
 
-    # 载入资源
     chunks = load_chunks(data_dir)
     if len(chunks) == 0:
         print("没有可用的 chunks（请先运行 ingest）。")
@@ -163,14 +197,17 @@ def main():
     images = load_images(data_dir)
     link_graph = load_link_graph(data_dir)
 
-    # Query 扩展与 strict 规则
     q_eff = q
     if args.smart_query:
         kws = smart_keywords(q, weight=args.sqw)
         if kws:
             q_eff = q + " " + " ".join(kws)
 
-    # 计算分数
+    # 关键词扩展（含 AGI/ASI 等）
+    base_tokens = normalize_tokens(q_eff)
+    expanded = expand_terms(base_tokens)
+    combos = make_combos(expanded, max_combo=2)
+
     N = len(chunks)
     scores_word = None
     scores_char = None
@@ -184,8 +221,6 @@ def main():
         scores_char = (X_char @ vqc.T).toarray().ravel()
 
     if args.mode in ["dense","hybrid"]:
-        # 获取 query 向量（用文本嵌入模型）
-        from .ollama_client import OllamaClient
         client = OllamaClient(cfg["ollama_base_url"], timeout=int(cfg.get("embed_timeout",120)), keep_alive=cfg.get("embed_keep_alive","10m"))
         qemb = client.embeddings(cfg["embed_model"], [q_eff])[0]
         qemb = np.array(qemb, dtype=np.float32)
@@ -195,19 +230,16 @@ def main():
     if args.mode == "hybrid" and not args.images_only and args.wimg > 0:
         s_img, img_ids, img_recs = image_query_to_scores(cfg, q_eff, data_dir, images, args.wimg)
         if s_img is not None:
-            # 将图片分数映射到与文本 chunks 同一空间：通过 source_path 关联
             img_map = {}
             for sim, rec in zip(s_img, img_recs):
                 img_map[rec["source_path"]] = float(sim)
             scores_img = np.zeros(N, dtype=np.float32)
             for i, rec in enumerate(chunks):
                 sp = rec["source_path"]
-                # 同目录/同名关联（启发式）：若文本来自与图片相邻文件，给一点加成
-                base_dir = os.path.dirname(sp)
                 if sp in img_map:
                     scores_img[i] = img_map[sp]
                 else:
-                    # 简单邻近：同目录中的图片最大分
+                    base_dir = os.path.dirname(sp)
                     best = 0.0
                     for k, v in img_map.items():
                         if os.path.dirname(k) == base_dir:
@@ -215,62 +247,72 @@ def main():
                     scores_img[i] = best
             img_info = (s_img, img_ids, img_recs)
 
-    if args.images_only:
-        s_img, img_ids, img_recs = image_query_to_scores(cfg, q_eff, data_dir, images, args.wimg)
-        if s_img is None:
-            print("未找到图像索引（先运行 imgindex）。")
-            return
-        order = np.argsort(-s_img)[:args.top]
-        print("图片检索 Top:")
-        for i in order:
-            rec = img_recs[i]
-            abs_path = norm_win_abs(os.path.join(cfg["input_dir"], rec["source_path"]))
-            print(f"{abs_path}  (score={s_img[i]:.4f})")
-        return
+    # 初选候选（减少布尔扫描开销）：从各通道取前 100 的并集
+    prelim = set()
+    if scores_word is not None: prelim.update(np.argsort(-scores_word)[:100])
+    if scores_char is not None: prelim.update(np.argsort(-scores_char)[:100])
+    if scores_dense is not None: prelim.update(np.argsort(-scores_dense)[:100])
+    if not prelim:
+        prelim = set(range(N))
+    prelim = list(prelim)
 
-    # 融合
+    scores_bool = np.zeros(N, dtype=np.float32)
+    for i in prelim:
+        rec = chunks[i]
+        scores_bool[i] = bool_channel_score(rec.get("text",""), expanded, combos)
+
     scores = fuse_scores(
-        {"word":scores_word, "char":scores_char, "dense":scores_dense, "img":scores_img},
-        {"word":args.alpha, "char":args.beta, "dense":args.gamma, "img":args.wimg}
+        {"word":scores_word, "char":scores_char, "dense":scores_dense, "img":scores_img, "bool":scores_bool},
+        {"word":args.alpha, "char":args.beta, "dense":args.gamma, "img":args.wimg, "bool":args.wbool}
     )
     if scores is None:
         print("没有可融合的分数，请确认已构建对应索引。")
         return
 
     order = np.argsort(-scores)
-    # strict 过滤
+
     if args.strict_mode == "exact":
         mask = np.array([ (re.search(re.escape(q), chunks[i]["text"]) is not None) for i in range(len(chunks)) ])
         order = [i for i in order if mask[i]]
     elif args.strict_mode == "smart":
-        kws = smart_keywords(q)
-        mask = np.array([ all(k in chunks[i]["text"] for k in kws) for i in range(len(chunks)) ]) if kws else np.ones(len(chunks), dtype=bool)
+        kws = expanded
+        mask = np.array([ all(k.upper() in chunks[i]["text"].upper() for k in kws) for i in range(len(chunks)) ]) if kws else np.ones(len(chunks), dtype=bool)
         order = [i for i in order if mask[i]]
 
-    # MMR 去冗
     idx_top = order[:min(200, len(order))]
-    # 简单相似度矩阵（用 word+char 稀疏近似）
-    # 为降低开销，这里只用稠密融合后的标量，构造近似“相似度”
-    sim_mat = np.zeros((len(chunks), len(chunks)), dtype=np.float32)
     cands = [(i, float(scores[i])) for i in idx_top]
     selected = [i for (i, _) in cands[:args.top]]
-    # NOTE: 为简化，暂不计算片段间相似度矩阵；可在将来替换为余弦相似度
 
     chosen_idx = selected[:args.top]
     chosen_chunks = [chunks[i] for i in chosen_idx]
 
-    # 找到涉及到的图片（按同目录关联 & 最高分）
     images_used = []
     if img_info is not None:
         s_img, img_ids, img_recs = img_info
-        # 取前若干张
         img_order = np.argsort(-s_img)[:args.top]
         images_used = [img_recs[i] for i in img_order if s_img[i] > 0]
 
     # 构造上下文
-    ctx = build_context(chosen_chunks, images_used, cfg, args.num_ctx, args.ctx_chars)
+    total = 0
+    ctx_parts = []
+    for rec in chosen_chunks:
+        t = rec["text"]
+        if total + len(t) > args.num_ctx:
+            t = t[:max(0, args.num_ctx-total)]
+        ctx_parts.append(t)
+        total += len(t)
+        if total >= args.num_ctx:
+            break
+    for im in images_used:
+        extras = []
+        if im.get("caption"):
+            extras.append(f"字幕：{im['caption']}")
+        if im.get("ocr_text"):
+            extras.append(f"OCR：{im['ocr_text'][:200]}")
+        if extras:
+            ctx_parts.append("【相关图片】" + "；".join(extras))
+    ctx = "\n\n".join(ctx_parts)
 
-    # 生成回答（可选）
     answer = ""
     if args.model:
         sys_prompt = "你是可靠的企业内检索与问答助手。回答要基于提供的上下文，若没有证据，请直说不知道。"
@@ -281,10 +323,8 @@ def main():
         except Exception as e:
             answer = f"(生成失败，返回检索片段)\n\n" + ctx
     else:
-        # 直接输出上下文片段
         answer = ctx
 
-    # Debug 落盘
     if debug_dir:
         os.makedirs(debug_dir, exist_ok=True)
         with open(os.path.join(debug_dir, "query.txt"), "w", encoding="utf-8") as f:
@@ -292,7 +332,8 @@ def main():
             if args.smart_query:
                 f.write(f"smart_keywords: {' '.join(smart_keywords(q))}\n")
             f.write(f"q_eff: {q_eff}\n")
-        # 候选
+            f.write(f"expanded_terms: {', '.join(expanded)}\n")
+            f.write(f"combos: {json.dumps(combos, ensure_ascii=False)}\n")
         cands_json = []
         for i in chosen_idx:
             cands_json.append({
@@ -302,27 +343,22 @@ def main():
             })
         with open(os.path.join(debug_dir, "candidates.json"), "w", encoding="utf-8") as f:
             json.dump(cands_json, f, ensure_ascii=False, indent=2)
-        # pipeline
         pipe = {
             "mode": args.mode,
-            "weights": {"alpha":args.alpha, "beta":args.beta, "gamma":args.gamma, "wimg":args.wimg},
+            "weights": {"alpha":args.alpha, "beta":args.beta, "gamma":args.gamma, "wimg":args.wimg, "wbool":args.wbool},
             "mmr": args.mmr, "neighbors": args.neighbors,
             "strict_mode": args.strict_mode,
             "top": args.top, "num_ctx": args.num_ctx, "ctx_chars": args.ctx_chars
         }
         with open(os.path.join(debug_dir, "pipeline.json"), "w", encoding="utf-8") as f:
             json.dump(pipe, f, ensure_ascii=False, indent=2)
-        # contexts
         with open(os.path.join(debug_dir, "contexts.txt"), "w", encoding="utf-8") as f:
             f.write(ctx)
-        # images
         if images_used:
             with open(os.path.join(debug_dir, "images.json"), "w", encoding="utf-8") as f:
                 json.dump(images_used, f, ensure_ascii=False, indent=2)
 
-    # 输出答案 + 参考
     print(answer.strip())
-    # 参考只出现一次：列出实际用到的文本/图片绝对 Windows 路径
     used_paths = set()
     for rec in chosen_chunks:
         used_paths.add(norm_win_abs(os.path.join(input_dir, rec["source_path"])))

@@ -24,12 +24,16 @@ def run_imgaudit(cfg, logger, term: str, mode: str="clip"):
                 cnt += 1
         print(f"{mode} 覆盖命中：{cnt}")
     elif mode == "clip":
-        # 仅统计是否已经有 embedding
         if not (os.path.exists(img_ids_path) and os.path.exists(img_emb_path)):
             print("未找到 image 索引（先运行：python -m src.cli imgindex）")
             return
         ids = json.load(open(img_ids_path, "r", encoding="utf-8"))
-        emb = np.memmap(img_emb_path, dtype=np.float32, mode="r")
+        flat = np.memmap(img_emb_path, dtype=np.float32, mode="r")
+        if len(ids) == 0:
+            print("无 image ids")
+            return
+        dim = flat.size // len(ids)
+        emb = flat.reshape(len(ids), dim)
         print(f"image_ids: {len(ids)}，embeddings shape: {emb.shape}")
         print("示例路径：")
         for r in recs[:5]:

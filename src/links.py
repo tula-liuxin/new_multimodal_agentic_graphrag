@@ -29,7 +29,6 @@ def run_links(cfg, logger):
     nodes = {}
     edges = []
 
-    # 预扫描以显示进度
     file_list = []
     for dirpath, _, filenames in os.walk(input_dir):
         for fn in filenames:

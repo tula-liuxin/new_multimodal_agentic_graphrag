@@ -2,7 +2,6 @@ import os, json
 from .ollama_client import OllamaClient
 
 def run_captions(cfg, logger):
-    # 可选：为图片生成描述字幕（写回 images.jsonl 的 caption 字段）
     data_dir = cfg["data_dir"]
     images_path = os.path.join(data_dir, "images.jsonl")
 

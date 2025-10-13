@@ -23,5 +23,5 @@ python -m src.cli links --config $ConfigPath
 Write-Host "== graph ==" -ForegroundColor Green
 python -m src.cli graph --config $ConfigPath
 
-Write-Host "== query (dry) ==" -ForegroundColor Green
-python -m src.query_cli --mode hybrid --wimg 0.25 --top 2 --smart-query --num-ctx 1024 "罗建祥 联系方式"
+Write-Host "== query (AGI) ==" -ForegroundColor Green
+python -m src.query_cli --mode hybrid --alpha 0.4 --beta 0.6 --gamma 1.0 --wimg 0.10 --wbool 0.8 --top 5 --smart-query --num-ctx 2048 "ASI/AGI 路线与控制"

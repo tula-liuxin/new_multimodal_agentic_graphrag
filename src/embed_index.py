@@ -1,9 +1,9 @@
 import os, json, math
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm import tqdm
 from .utils import ensure_dir, get_logger, norm_win_abs
 from .ollama_client import OllamaClient
-from tqdm import tqdm
 
 def read_jsonl(path):
     with open(path, "r", encoding="utf-8") as f:
@@ -37,9 +37,7 @@ def run_embed(cfg, logger):
         return
 
     # 试探维度
-    dim = None
-    test_emb = client.embeddings(model, ["test"])[0]
-    dim = len(test_emb)
+    dim = len(client.embeddings(model, ["test"])[0])
 
     # memmap 逐批写入
     mm = np.memmap(emb_npy, dtype=np.float32, mode="w+", shape=(n, dim))

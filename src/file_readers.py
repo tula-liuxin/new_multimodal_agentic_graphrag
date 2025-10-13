@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup
 from pdfminer.high_level import extract_text as pdf_extract
 from pypdf import PdfReader
 from PIL import Image
-from .utils import win_long
 import pytesseract
+from .utils import win_long
 
 PREFERRED_ENCODINGS = ["utf-8", "gb18030", "gbk", "big5", "cp936", "latin-1"]
 
@@ -33,17 +33,14 @@ def read_text_fallback(path: str) -> str:
                 return f.read()
         except Exception:
             continue
-    # 最后兜底忽略错误
     with open(win_long(path), "r", encoding="utf-8", errors="ignore") as f:
         return f.read()
 
 def read_html(path: str) -> str:
     raw = read_text_fallback(path)
     soup = BeautifulSoup(raw, "lxml")
-    # 去脚本/样式
     for s in soup(["script","style","noscript"]):
         s.extract()
-    # 提取标题与正文
     text = []
     for h in soup.find_all(re.compile("^h[1-6]$")):
         text.append("#" * int(h.name[1]) + " " + h.get_text(" ", strip=True))
@@ -54,7 +51,6 @@ def read_pdf(path: str) -> str:
     try:
         return pdf_extract(win_long(path)) or ""
     except Exception:
-        # 备用库
         try:
             reader = PdfReader(win_long(path))
             out = []

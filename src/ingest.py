@@ -1,7 +1,7 @@
 import os, json, re
 from typing import List, Dict
-from .utils import ensure_dir, sha1, norm_win_abs
 from tqdm import tqdm
+from .utils import ensure_dir, sha1, norm_win_abs
 from .file_readers import read_text_auto, ocr_image
 from PIL import Image
 
@@ -12,7 +12,6 @@ def iter_chunks(text: str, max_chars=1200, overlap=200):
     if not text:
         return
     overlap = max(0, min(overlap, max_chars // 2))
-    # 按段落切，再对超长段落滑窗；逐条 yield，避免一次性占用内存
     paras = (p.strip() for p in re.split(r"\n\s*\n", text))
     for p in paras:
         if not p:
@@ -21,9 +20,7 @@ def iter_chunks(text: str, max_chars=1200, overlap=200):
             yield p
         else:
             s = 0
-            step = max_chars - overlap
-            if step <= 0:
-                step = max_chars
+            step = max(max_chars - overlap, 1)
             L = len(p)
             while s < L:
                 e = min(L, s + max_chars)
@@ -55,7 +52,6 @@ def run_ingest(cfg, logger):
     cnt_txt = 0
     cnt_img = 0
 
-    # 预扫描文件以显示进度
     all_files = list(walk_files(input_dir))
     with open(chunks_path, "w", encoding="utf-8") as f_txt, open(images_path, "w", encoding="utf-8") as f_img:
         for p in tqdm(all_files, desc="ingest 扫描", unit="file"):
@@ -65,7 +61,6 @@ def run_ingest(cfg, logger):
                 try:
                     text = read_text_auto(p)
                 except Exception as e:
-                    # 文件可能在扫描后被移动/删除，或长路径/权限问题
                     print(f"[warn] 无法读取文本文件: {p} ({e})")
                     continue
                 i = 0
@@ -83,7 +78,6 @@ def run_ingest(cfg, logger):
                 cnt_txt += 1
             elif ext in IMG_EXT:
                 try:
-                    from PIL import Image
                     with Image.open(p) as im:
                         w, h = im.size
                 except Exception:
@@ -91,7 +85,7 @@ def run_ingest(cfg, logger):
                 ocr_text = ""
                 if enable_ocr:
                     ocr_text = ocr_image(p, lang=ocr_lang, psm=ocr_psm)
-                rid = sha1(f"{rel}:image")
+                rid = sha1(f"{rel}:image}")
                 rec = {
                     "id": rid,
                     "source_path": rel,
@@ -102,6 +96,17 @@ def run_ingest(cfg, logger):
                     "caption": ""
                 }
                 f_img.write(json.dumps(rec, ensure_ascii=False) + "\n")
+                # 写入 OCR 作为文本 chunk，进入文本通道
+                if enable_ocr and ocr_text and ocr_text.strip():
+                    rid_txt = sha1(f"{rel}:image:ocr")
+                    rec_txt = {
+                        "id": rid_txt,
+                        "source_path": rel,
+                        "chunk_index": 0,
+                        "text": ocr_text,
+                        "modality": "image_ocr"
+                    }
+                    f_txt.write(json.dumps(rec_txt, ensure_ascii=False) + "\n")
                 cnt_img += 1
             else:
                 continue

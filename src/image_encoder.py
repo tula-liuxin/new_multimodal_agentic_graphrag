@@ -8,9 +8,10 @@ from .utils import get_logger
 from tqdm import tqdm
 
 class ImageDataset(Dataset):
-    def __init__(self, base_dir: str, image_records):
+    def __init__(self, base_dir: str, image_records, transform=None):
         self.base_dir = base_dir
         self.recs = image_records
+        self.transform = transform
     def __len__(self):
         return len(self.recs)
     def __getitem__(self, idx):
@@ -20,6 +21,8 @@ class ImageDataset(Dataset):
             img = Image.open(path).convert("RGB")
         except Exception:
             img = Image.new("RGB", (224, 224), (255,255,255))
+        if self.transform is not None:
+            img = self.transform(img)
         return img, idx
 
 def read_jsonl(path):
@@ -51,17 +54,17 @@ def run_imgindex(cfg, logger):
     model.eval()
     tokenizer = open_clip.get_tokenizer(model_name)
 
-    ds = ImageDataset(input_dir, recs)
-    def collate(batch):
-        imgs = [preprocess(x[0]) for x in batch]
-        idxs = [x[1] for x in batch]
-        return torch.stack(imgs, dim=0), torch.tensor(idxs, dtype=torch.long)
-
-    loader = DataLoader(ds, batch_size=batch, shuffle=False, num_workers=workers, collate_fn=collate)
+    ds = ImageDataset(input_dir, recs, transform=preprocess)
+    loader = DataLoader(ds, batch_size=batch, shuffle=False, num_workers=workers)
 
     # 推断维度
     with torch.no_grad():
-        x0, _ = next(iter(loader))
+        it = iter(loader)
+        try:
+            x0, _ = next(it)
+        except StopIteration:
+            logger.warning("images.jsonl 为空或无有效图片，跳过 imgindex。")
+            return
         x0 = x0.to(device)
         if precision == "fp16" and device == "cuda":
             with torch.cuda.amp.autocast():

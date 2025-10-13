@@ -1,0 +1,15 @@
+{
+  "mode": "hybrid",
+  "weights": {
+    "alpha": 0.5,
+    "beta": 0.3,
+    "gamma": 0.8,
+    "wimg": 0.25
+  },
+  "mmr": 0.5,
+  "neighbors": 1,
+  "strict_mode": "smart",
+  "top": 30,
+  "num_ctx": 28192,
+  "ctx_chars": 1200
+}

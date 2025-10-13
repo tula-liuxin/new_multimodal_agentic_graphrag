@@ -12,22 +12,34 @@ class OllamaClient:
         self.logger = get_logger()
 
     def embeddings(self, model: str, inputs: List[str]) -> List[List[float]]:
-        # 批量调用 /api/embeddings
-        url = f"{self.base}/api/embeddings"
-        payload = {"model": model, "prompt": inputs, "keep_alive": self.keep_alive}
-        r = self.session.post(url, data=json.dumps(payload), timeout=self.timeout)
-        r.raise_for_status()
-        data = r.json()
-        # 兼容数组/单条返回
-        if isinstance(data.get("embedding"), list) and all(isinstance(x, (int,float)) for x in data["embedding"]):
-            return [data["embedding"]]
-        if "embeddings" in data:
-            return data["embeddings"]
-        if "data" in data and isinstance(data["data"], list):
-            return [row.get("embedding", []) for row in data["data"]]
-        return []
+        \"\"\"批量嵌入：优先使用 /api/embed (input 支持 list)，失败再回退 /api/embeddings。\"\"\"
+        url_embed = f"{self.base}/api/embed"
+        payload = {"model": model, "input": inputs if isinstance(inputs, list) else [inputs], "keep_alive": self.keep_alive}
+        try:
+            r = self.session.post(url_embed, data=json.dumps(payload), timeout=self.timeout)
+            if r.status_code < 300:
+                data = r.json()
+                if "embeddings" in data and isinstance(data["embeddings"], list):
+                    return data["embeddings"]
+        except Exception as e:
+            self.logger.debug(f"/api/embed 调用失败，将回退 /api/embeddings：{e}")
+        # 回退逐条
+        url_old = f"{self.base}/api/embeddings"
+        out = []
+        for x in (inputs if isinstance(inputs, list) else [inputs]):
+            payload = {"model": model, "prompt": x, "keep_alive": self.keep_alive}
+            r = self.session.post(url_old, data=json.dumps(payload), timeout=self.timeout)
+            r.raise_for_status()
+            data = r.json()
+            if isinstance(data.get("embedding"), list):
+                out.append(data["embedding"])
+            elif "data" in data and isinstance(data["data"], list) and len(data["data"]) and "embedding" in data["data"][0]:
+                out.append(data["data"][0]["embedding"])
+            else:
+                raise RuntimeError("未知的 /api/embeddings 返回格式")
+        return out
 
-    def generate(self, model: str, prompt: str, temperature: float=0.3, system: str=None) -> str:
+    def generate(self, model: str, prompt: str, temperature: float=0.2, system: str=None) -> str:
         url = f"{self.base}/api/generate"
         payload = {"model": model, "prompt": prompt, "stream": False, "keep_alive": self.keep_alive, "options":{"temperature":temperature}}
         if system:

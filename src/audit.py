@@ -19,14 +19,12 @@ def run_audit(cfg, logger, term: str, alt: str=None, trad: bool=False):
     patt = re.compile(re.escape(term))
     patt_alt = re.compile(re.escape(alt)) if alt else None
 
-    # raw 级命中（粗略）
     for dirpath, _, fns in os.walk(input_dir):
         for fn in fns:
             if patt.search(fn) or (patt_alt and patt_alt.search(fn)):
                 rel = os.path.relpath(os.path.join(dirpath, fn), input_dir).replace("/", "\\")
                 raw_files_hit.add(rel)
 
-    # chunk 级命中
     for rec in read_jsonl(chunks_path):
         text = rec.get("text","")
         if patt.search(text) or (patt_alt and patt_alt.search(text)):
