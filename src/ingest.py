@@ -12,6 +12,7 @@ def iter_chunks(text: str, max_chars=1200, overlap=200):
     if not text:
         return
     overlap = max(0, min(overlap, max_chars // 2))
+    # 按段落切，再对超长段落滑窗；逐条 yield，避免一次性占用内存
     paras = (p.strip() for p in re.split(r"\n\s*\n", text))
     for p in paras:
         if not p:
@@ -20,7 +21,9 @@ def iter_chunks(text: str, max_chars=1200, overlap=200):
             yield p
         else:
             s = 0
-            step = max(max_chars - overlap, 1)
+            step = max_chars - overlap
+            if step <= 0:
+                step = max_chars
             L = len(p)
             while s < L:
                 e = min(L, s + max_chars)
@@ -52,6 +55,7 @@ def run_ingest(cfg, logger):
     cnt_txt = 0
     cnt_img = 0
 
+    # 预扫描文件以显示进度
     all_files = list(walk_files(input_dir))
     with open(chunks_path, "w", encoding="utf-8") as f_txt, open(images_path, "w", encoding="utf-8") as f_img:
         for p in tqdm(all_files, desc="ingest 扫描", unit="file"):
@@ -85,7 +89,7 @@ def run_ingest(cfg, logger):
                 ocr_text = ""
                 if enable_ocr:
                     ocr_text = ocr_image(p, lang=ocr_lang, psm=ocr_psm)
-                rid = sha1(f"{rel}:image}")
+                rid = sha1(f"{rel}:image")
                 rec = {
                     "id": rid,
                     "source_path": rel,
@@ -96,7 +100,9 @@ def run_ingest(cfg, logger):
                     "caption": ""
                 }
                 f_img.write(json.dumps(rec, ensure_ascii=False) + "\n")
-                # 写入 OCR 作为文本 chunk，进入文本通道
+                cnt_img += 1
+
+                # 若有 OCR 文本，将其作为额外文本 chunk 写入（提升图片相关检索的可见度）
                 if enable_ocr and ocr_text and ocr_text.strip():
                     rid_txt = sha1(f"{rel}:image:ocr")
                     rec_txt = {
@@ -107,7 +113,6 @@ def run_ingest(cfg, logger):
                         "modality": "image_ocr"
                     }
                     f_txt.write(json.dumps(rec_txt, ensure_ascii=False) + "\n")
-                cnt_img += 1
             else:
                 continue
 

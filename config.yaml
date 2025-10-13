@@ -13,8 +13,8 @@ caption_model: "qwen2.5vl:latest"
 # Ollama（文本嵌入/生成）
 ollama_base_url: "http://127.0.0.1:11434"
 embed_model: "nomic-embed-text"
-embed_batch: 128
-embed_concurrency: 2
+embed_batch: 256
+embed_concurrency: 3
 embed_num_thread: 8
 embed_keep_alive: "10m"
 embed_timeout: 120
