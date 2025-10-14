@@ -11,7 +11,7 @@
   "mmr": 0.3,
   "neighbors": 2,
   "strict_mode": "off",
-  "top": 30,
+  "top": 10,
   "num_ctx": 24000,
   "ctx_chars": 600,
   "llm_expand": true,

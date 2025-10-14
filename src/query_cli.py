@@ -1,565 +1,312 @@
-import argparse, os, json, re, math, time, sys
-import numpy as np
-import joblib
-from typing import List, Dict, Tuple
-from .utils import load_cfg, get_logger, ensure_dir, norm_win_abs
+
+import os, sys, json, base64, argparse, numpy as np
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import List, Dict, Any, Tuple
+from .utils import (
+    get_logger, load_cfg, read_jsonl, ensure_dir,
+    chunk_path, chunk_ids_path, chunk_emb_path,
+    image_list_path, image_emb_path, links_path, norm_win_abs
+)
 from .ollama_client import OllamaClient
-from .multimodal_fusion import fuse_scores, mmr_select, read_jsonl
-from .zh_utils import normalize_zh, is_cjk_name
-import open_clip, torch
-from PIL import Image
 
-def cosine_rows(A, b):
-    A = np.asarray(A, dtype=np.float32)
-    b = np.asarray(b, dtype=np.float32)
-    nb = np.linalg.norm(b) + 1e-9
-    na = np.linalg.norm(A, axis=1) + 1e-9
-    sim = (A @ b) / (na * nb)
-    return sim
+def build_rel_index(chunks: List[Dict[str, Any]]):
+    rel_to_idxs = {}
+    for i, r in enumerate(chunks):
+        rel = r.get("rel","")
+        rel_to_idxs.setdefault(rel, []).append(i)
+    # sort by chunk ordinal if present
+    for rel, idxs in rel_to_idxs.items():
+        idxs.sort(key=lambda i: chunks[i].get("chunk", 0))
+    return rel_to_idxs
 
-CN_INSTR_STOP = {"所有记录","所有信息","全部信息","全部记录","总体","完整","汇总","总结","整理","如何","怎么","请","帮我","需要","希望","想要","请给出","的","关于","相关","最近","本周","本月","下一步","目标","安排","计划","日程","行程","ToDo","待办","OKR"}
-
-def smart_keywords(q: str, weight: float=1.2) -> List[str]:
-    toks = re.findall(r"[一-龥A-Za-z0-9_]+", q)
-    kws = [t for t in toks if t not in CN_INSTR_STOP and len(t) >= 2]
-    return kws
-
-def robust_json_find(s: str):
-    m = re.search(r'\{.*\}', s, flags=re.S)
-    if not m:
-        return None
-    txt = m.group(0)
+def pick_neighbors(idx: int, chunks: List[Dict[str, Any]], rel_to_idxs, k: int):
+    if k <= 0: return []
+    rel = chunks[idx].get("rel","")
+    order = rel_to_idxs.get(rel, [])
+    if not order: return []
+    # find position of idx in order
     try:
-        return json.loads(txt)
-    except Exception:
-        txt = re.sub(r',\s*}', '}', txt)
-        txt = re.sub(r',\s*]', ']', txt)
-        try:
-            return json.loads(txt)
-        except Exception:
-            return None
-
-def llm_expand_terms(cfg, model_tag: str, question: str):
-    client = OllamaClient(cfg["ollama_base_url"], timeout=int(cfg.get("embed_timeout",120)), keep_alive=cfg.get("embed_keep_alive","10m"))
-    sys_prompt = "你是检索前的查询理解器。仅输出JSON，不要解释。"
-    prompt = (
-        "请阅读用户问题，抽取可用于检索的关键信息。"
-        "把指令性词（如“所有记录/全部信息/请/如何”等）忽略，只保留用于命中的实体、别名、关键词、可能的时间限定。"
-        "输出JSON，字段："
-        "{"
-        "  \"keywords\": [\"必搜词\",\"核心实体\"],"
-        "  \"synonyms\": [\"别名或同义词\"],"
-        "  \"exclude\": [\"应当排除的词\"],"
-        "  \"time\": \"可选时间范围描述，如 2025年10月/最近一周\""
-        "}"
-        f"问题：{question}"
-    )
-    try:
-        out = client.generate(model_tag, prompt, temperature=0.1, system=sys_prompt)
-    except Exception as e:
-        return None
-    obj = robust_json_find(out or "")
-    if not obj:
-        return None
-    def norm(ts):
-        res = []
-        for t in ts or []:
-            t = str(t).strip()
-            if not t: continue
-            if t in CN_INSTR_STOP: continue
-            res.append(t)
-        return res
-    return {
-        "keywords": norm(obj.get("keywords")),
-        "synonyms": norm(obj.get("synonyms")),
-        "exclude": norm(obj.get("exclude")),
-        "time": (obj.get("time") or "").strip()
-    }
-
-def load_dense(data_dir):
-    emb_path = os.path.join(data_dir, "embeddings.npy")
-    meta_path = os.path.join(data_dir, "embed_meta.json")
-    ids_path = os.path.join(data_dir, "ids.json")
-    ids = json.load(open(ids_path, "r", encoding="utf-8"))
-    meta = json.load(open(meta_path, "r", encoding="utf-8")) if os.path.exists(meta_path) else {"count": len(ids), "dim": 0}
-    file_size = os.path.getsize(emb_path)
-    dim = int(meta.get("dim") or 0)
-    if dim <= 0:
-        commons = [3072, 2048, 1536, 1024, 768, 512, 384]
-        dim = next((d for d in commons if file_size % (4*d) == 0), 768)
-    count_from_size = file_size // (4 * dim)
-    count_meta = int(meta.get("count", len(ids)))
-    count = min(count_from_size, count_meta, len(ids))
-    try:
-        arr = np.memmap(emb_path, dtype=np.float32, mode="r", shape=(count, dim))
-    except (OSError, ValueError):
-        flat = np.memmap(emb_path, dtype=np.float32, mode="r")
-        total = flat.size
-        count_from_flat = total // dim
-        count = min(count, count_from_flat, len(ids))
-        arr = flat[:count*dim].reshape(count, dim)
-    if len(ids) != count:
-        ids = ids[:count]
-    return arr, ids
-
-def load_tfidf(data_dir):
-    vec = joblib.load(os.path.join(data_dir, "tfidf_vectorizer.joblib"))
-    X = joblib.load(os.path.join(data_dir, "tfidf_matrix.joblib"))
-    return vec, X
-
-def load_char(data_dir):
-    vec = joblib.load(os.path.join(data_dir, "tfidf_char_vectorizer.joblib"))
-    X = joblib.load(os.path.join(data_dir, "tfidf_char_matrix.joblib"))
-    return vec, X
-
-def load_chunks(data_dir):
-    return [json.loads(l) for l in open(os.path.join(data_dir, "chunks.jsonl"), "r", encoding="utf-8").read().splitlines() if l.strip()]
-
-def load_images(data_dir):
-    p = os.path.join(data_dir, "images.jsonl")
-    if not os.path.exists(p):
+        pos = order.index(idx)
+    except ValueError:
         return []
-    return [json.loads(l) for l in open(p, "r", encoding="utf-8").read().splitlines() if l.strip()]
-
-def load_link_graph(data_dir):
-    p = os.path.join(data_dir, "link_graph.json")
-    if os.path.exists(p):
-        return json.load(open(p, "r", encoding="utf-8"))
-    return {"nodes":{}, "edges":[]}
-
-# --- Keyword expansion & boolean scoring helpers ---
-AGI_SYNONYMS = {
-    "AGI": ["AGI", "通用人工智能", "人工通用智能", "强人工智能", "通用智能"],
-    "ASI": ["ASI", "超人工智能", "超强智能", "超级智能"],
-    "LLM": ["LLM", "大型语言模型", "大语言模型", "大模型", "语言模型"],
-}
-
-def normalize_tokens(q: str):
-    toks = re.findall(r"[一-龥A-Za-z0-9_]+", q)
     out = []
-    for t in toks:
-        if t in CN_INSTR_STOP:
-            continue
-        if re.search(r"[A-Za-z]", t):
-            out.append(t.upper())
-        else:
-            out.append(t)
+    # take k neighbors around pos
+    left = pos - 1
+    right = pos + 1
+    while (left >= 0 or right < len(order)) and len(out) < k:
+        if left >= 0:
+            out.append(order[left]); left -= 1
+            if len(out) >= k: break
+        if right < len(order):
+            out.append(order[right]); right += 1
     return out
 
-def expand_terms(tokens):
-    expanded = set(tokens)
-    for t in list(tokens):
-        if t.upper() in AGI_SYNONYMS:
-            for s in AGI_SYNONYMS[t.upper()]:
-                expanded.add(s.upper() if re.search(r"[A-Za-z]", s) else s)
-        for k, syns in AGI_SYNONYMS.items():
-            if t in syns:
-                expanded.add(k)
-    return list(expanded)
+def folder_siblings(rel: str, chunks: List[Dict[str, Any]], rel_to_idxs, k: int):
+    if k <= 0: return []
+    folder = os.path.dirname(rel)
+    cands = []
+    for r, idxs in rel_to_idxs.items():
+        if os.path.dirname(r) == folder and r != rel:
+            # pick the first chunk (0) if exists
+            for i in idxs:
+                if chunks[i].get("chunk", 0) == 0:
+                    cands.append(i)
+                    break
+    return cands[:k]
 
-def make_combos(tokens, max_combo=2):
-    toks = [t for t in tokens if len(t) >= 2]
-    combos = set()
-    n = len(toks)
-    for i in range(n):
-        for j in range(i+1, n):
-            combos.add(tuple(sorted([toks[i], toks[j]])))
-            if max_combo >= 3:
-                for k in range(j+1, n):
-                    combos.add(tuple(sorted([toks[i], toks[j], toks[k]])))
-    return list(combos)
+def link_expansion(rel: str, links: List[Dict[str, Any]], rel_to_idxs, chunks: List[Dict[str, Any]], k: int = 3):
+    if k <= 0 or not links: return []
+    # build map
+    src2dst = {row.get("src",""): row.get("dst",[]) for row in links}
+    dsts = src2dst.get(rel, [])
+    out = []
+    for d in dsts:
+        idxs = rel_to_idxs.get(d, [])
+        if idxs:
+            out.append(idxs[0])  # first chunk
+        if len(out) >= k: break
+    return out
 
-def bool_channel_score(text: str, tokens, combos):
-    if not text:
-        return 0.0
-    t = text.upper()
-    hits = sum(1 for tok in tokens if tok.upper() in t)
-    frac = hits / len(tokens) if len(tokens) else 0.0
-    combo_hits = 0
-    for c in combos:
-        if all(tok.upper() in t for tok in c):
-            combo_hits += 1
-    combo_frac = combo_hits / max(1, len(combos))
-    return 0.6 * frac + 0.4 * combo_frac
+def load_memmap(fp: str, dim: int = None):
+    if not os.path.exists(fp): return None, 0, 0
+    sz = os.path.getsize(fp)
+    if dim is None:
+        for d in (384, 512, 768, 1024, 1536):
+            if sz % (4*d) == 0:
+                n = sz // (4*d)
+                return np.memmap(fp, dtype=np.float32, mode="r", shape=(n, d)), n, d
+        return None, 0, 0
+    else:
+        n = sz // (4*dim)
+        return np.memmap(fp, dtype=np.float32, mode="r", shape=(n, dim)), n, dim
 
-def image_query_to_scores(cfg, q: str, data_dir: str, images, wimg: float):
-    ids_path = os.path.join(data_dir, "image_ids.json")
-    emb_path = os.path.join(data_dir, "image_embeddings.npy")
-    if not (os.path.exists(ids_path) and os.path.exists(emb_path)):
-        return None, None, None
-    img_ids = json.load(open(ids_path, "r", encoding="utf-8"))
-    flat = np.memmap(emb_path, dtype=np.float32, mode="r")
-    if len(img_ids) == 0:
-        return None, None, None
-    dim = flat.size // len(img_ids)
-    img_vecs = flat.reshape(len(img_ids), dim)
-    model_name = cfg.get("image_model_name", "ViT-L-14")
-    pretrained = cfg.get("image_pretrained", "laion2b_s32b_b82k")
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model, _, preprocess = open_clip.create_model_and_transforms(model_name, pretrained=pretrained, device=device)
-    tok = open_clip.get_tokenizer(model_name)
-    with torch.no_grad():
-        txt = tok([q])
-        txt = torch.tensor(txt).to(device) if not isinstance(txt, torch.Tensor) else txt.to(device)
-        if hasattr(model, "encode_text"):
-            tfeat = model.encode_text(txt)
-            tfeat = tfeat / tfeat.norm(dim=-1, keepdim=True)
-            tfeat = tfeat.detach().cpu().float().numpy()[0]
-        else:
-            return None, None, None
-    sims = (img_vecs @ tfeat) / ((np.linalg.norm(img_vecs, axis=1) + 1e-9) * (np.linalg.norm(tfeat) + 1e-9))
-    return sims, img_ids, images
+def expand_query(q: str) -> List[str]:
+    q = q.strip()
+    toks = [q]
+    for sep in ["，", "。", "；", ";", " ", "、"]:
+        if sep in q:
+            toks.extend([t for t in q.split(sep) if t])
+    uniq, seen = [], set()
+    for t in toks:
+        t = t.strip()
+        if not t or t in seen: continue
+        seen.add(t); uniq.append(t)
+    return uniq[:8]
 
-def build_context(chosen_chunks: List[Dict], images_used: List[Dict], cfg, num_ctx: int, ctx_chars: int):
-    ctx_parts = []
-    total = 0
-    for rec in chosen_chunks:
-        t = rec["text"]
-        if total + len(t) > num_ctx:
-            t = t[:max(0, num_ctx-total)]
-        ctx_parts.append(t[:ctx_chars])
-        total += len(t)
-        if total >= num_ctx:
-            break
-    for im in images_used:
-        extras = []
-        if im.get("caption"):
-            extras.append(f"字幕：{im['caption']}")
-        if im.get("ocr_text"):
-            extras.append(f"OCR：{im['ocr_text'][:200]}")
-        if extras:
-            ctx_parts.append("【相关图片】" + "；".join(extras))
-    return "\n\n".join(ctx_parts)
+def topk_dot(A: np.ndarray, q: np.ndarray, k: int = 20) -> List[Tuple[int, float]]:
+    s = A @ q
+    idx = np.argpartition(-s, min(k, len(s)-1))[:k]
+    idx = idx[np.argsort(-s[idx])]
+    return [(int(i), float(s[i])) for i in idx]
 
-def hyde_expand(cfg, model_tag: str, question: str):
-    client = OllamaClient(cfg["ollama_base_url"], timeout=int(cfg.get("embed_timeout",120)), keep_alive=cfg.get("embed_keep_alive","10m"))
-    sys_prompt = "请撰写一段与用户问题高度相关的说明性段落（用于检索，不必真实），不超过200字。"
-    try:
-        txt = client.generate(model_tag, question, temperature=0.2, system=sys_prompt)
-        return txt.strip()
-    except Exception:
-        return ""
+def b64image(path: str) -> str:
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode("ascii")
 
-def prf_terms(vec, X, top_idx, k=10):
-    # 取初选文档的 tf-idf 权重总和，挑前 k 个词作为扩展
-    if len(top_idx) == 0:
-        return []
-    sub = X[top_idx]
-    s = np.asarray(sub.sum(axis=0)).ravel()
-    try:
-        feats = vec.get_feature_names_out()
-    except Exception:
-        return []
-    order = np.argsort(-s)[:k]
-    return [feats[i] for i in order]
-
-def fuzzy_scores(prelim_idx, chunks, q):
-    try:
-        from rapidfuzz import fuzz
-    except Exception:
-        return np.zeros(len(chunks), dtype=np.float32)
-    nq = normalize_zh(q)
-    scores = np.zeros(len(chunks), dtype=np.float32)
-    for i in prelim_idx:
-        t = normalize_zh(chunks[i].get("text","")[:500])
-        scores[i] = fuzz.partial_ratio(nq, t) / 100.0
-    return scores
-
-def cross_rerank(pairs, model_name="BAAI/bge-reranker-v2-m3"):
-    try:
-        from sentence_transformers import CrossEncoder
-    except Exception:
-        return None
-    ce = CrossEncoder(model_name, trust_remote_code=True)
-    scores = ce.predict(pairs, show_progress_bar=False)
-    return np.array(scores, dtype=np.float32)
+def post_filter(question: str, cands: List[Dict[str, Any]], model: str, workers: int, timeout: int, base_url: str) -> List[Dict[str, Any]]:
+    if not cands: return []
+    client = OllamaClient(base_url)
+    prompt_tpl = (
+        "你是筛选助手。判断下方片段是否和用户问题相关，哪怕只有一点点相关也回答 YES，否则 NO。\n"
+        "问题：{q}\n"
+        "片段：{t}\n"
+        "仅输出 YES 或 NO。"
+    )
+    kept = []
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        fut2i = {}
+        for i, c in enumerate(cands):
+            t = c.get("text", "")[:1200] or c.get("ocr", "")[:1200]
+            fut = ex.submit(client.generate, model, prompt_tpl.format(q=question, t=t), None, timeout)
+            fut2i[fut] = i
+        for fut in as_completed(fut2i):
+            i = fut2i[fut]
+            try:
+                resp = fut.result()
+            except Exception:
+                continue
+            if "YES" in (resp or "").upper():
+                kept.append(cands[i])
+    return kept
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="config.yaml")
-    parser.add_argument("--mode", choices=["tfidf","dense","hybrid"], default="hybrid")
-    parser.add_argument("--alpha", type=float, default=0.5, help="词面 TF-IDF 权重")
-    parser.add_argument("--beta", type=float, default=0.3, help="字 n-gram 权重")
-    parser.add_argument("--gamma", type=float, default=0.8, help="文本向量权重")
-    parser.add_argument("--wimg", type=float, default=0.25, help="图像通道权重")
-    parser.add_argument("--wbool", type=float, default=0.6, help="关键词/组合布尔通道权重")
-    parser.add_argument("--wfuzzy", type=float, default=0.5, help="模糊匹配通道权重")
-    parser.add_argument("--images-only", action="store_true")
+    log = get_logger("query")
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--smart-query", action="store_true")
+    ap.add_argument("--sqw", type=float, default=1.0)
+    ap.add_argument("--text-first", type=int, default=6, dest="text_first")
+    ap.add_argument("--wtext", type=float, default=1.0)
+    ap.add_argument("--wimg", type=float, default=0.25)
+    ap.add_argument("--top", type=int, default=12)
+    ap.add_argument("--num-ctx", type=int, default=16000, dest="num_ctx")
+    ap.add_argument("--ctx-chars", type=int, default=900, dest="ctx_chars")
+    ap.add_argument("--neighbors", type=int, default=0)
+    ap.add_argument("--folder-neighbors", type=int, default=0, dest="folder_neighbors")
+    ap.add_argument("--embed-model", type=str, default="bge-m3:latest", dest="embed_model")
+    ap.add_argument("--model", type=str, default="qwen3:4b-instruct-2507-fp16", help="最终回答模型")
+    ap.add_argument("--post-filter", action="store_true", dest="post_filter")
+    ap.add_argument("--pf-model", type=str, default="qwen2.5:3b-instruct", dest="pf_model")
+    ap.add_argument("--pf-workers", type=int, default=4, dest="pf_workers")
+    ap.add_argument("--pf-timeout", type=int, default=20, dest="pf_timeout")
+    ap.add_argument("--pf-min-keep", type=int, default=6, dest="pf_min_keep")
+    ap.add_argument("--vl-answer", action="store_true", dest="vl_answer")
+    ap.add_argument("--max-images", type=int, default=3, dest="max_images")
+    ap.add_argument("--gen-timeout", type=int, default=300, dest="gen_timeout")
+    ap.add_argument("--debug-dir", required=True, type=str, dest="debug_dir")
+    ap.add_argument("question", type=str)
+    args = ap.parse_args()
 
-    parser.add_argument("--mmr", type=float, default=0.5)
-    parser.add_argument("--neighbors", type=int, default=1)
-    parser.add_argument("--link-hop", action="store_true")
-    parser.add_argument("--link-depth", type=int, default=1)
-    parser.add_argument("--folder-neighbors", type=int, default=0)
-
-    parser.add_argument("--smart-query", action="store_true")
-    parser.add_argument("--sqw", type=float, default=1.2)
-    parser.add_argument("--llm-expand", action="store_true", help="使用本地 LLM 抽取关键词/别名/时间等后再检索")
-    parser.add_argument("--hyde", action="store_true", help="启用 HyDE：先生成一段假想文档再做向量检索")
-    parser.add_argument("--prf", action="store_true", help="启用 PRF：用初选文档自动扩展查询词")
-
-    parser.add_argument("--strict-mode", choices=["off","exact","smart"], default="off")
-
-    parser.add_argument("--top", type=int, default=3)
-    parser.add_argument("--num-ctx", type=int, default=28000)
-    parser.add_argument("--ctx-chars", type=int, default=1200)
-
-    parser.add_argument("--wclause", type=float, default=0.8)
-    parser.add_argument("--wn", type=float, default=0.9)
-    parser.add_argument("--wq", type=float, default=1.0)
-
-    parser.add_argument("--cross-rerank", action="store_true", help="使用交叉编码器重排 TopK")
-    parser.add_argument("--reranker", default="BAAI/bge-reranker-v2-m3")
-    parser.add_argument("--rerank-k", type=int, default=50)
-
-    parser.add_argument("--debug-dir", default=None)
-    parser.add_argument("--model", default=None, help="用于回答/扩展/LLM抽取的本地模型（Ollama tag）")
-
-    parser.add_argument("question", nargs="+")
-
-    args = parser.parse_args()
-    cfg = load_cfg(args.config)
-    logger = get_logger()
-
-    q = " ".join(args.question)
+    cfg = load_cfg()
+    base_url = cfg.get("ollama_base_url", "http://127.0.0.1:11434")
     data_dir = cfg["data_dir"]
-    input_dir = cfg["input_dir"]
-    debug_dir = args.debug_dir or cfg.get("debug_dir")
+    ensure_dir(args.debug_dir)
 
-    chunks = load_chunks(data_dir)
-    if len(chunks) == 0:
-        print("没有可用的 chunks（请先运行 ingest）。")
-        return
-    dense, ids = None, None
-    if args.mode in ["dense","hybrid"]:
-        dense, ids = load_dense(data_dir)
-    vec_word, X_word = None, None
-    vec_char, X_char = None, None
-    if args.mode in ["tfidf","hybrid"]:
-        vec_word, X_word = load_tfidf(data_dir)
-        vec_char, X_char = load_char(data_dir)
+    X, n, dim = load_memmap(chunk_emb_path(data_dir))
+    ids = read_jsonl(chunk_ids_path(data_dir))
+    chunks = read_jsonl(chunk_path(data_dir))
+    if X is None or not ids or not chunks:
+        log.warning("文本语义召回失败：缺少嵌入或索引文件（请先运行 python -m src.cli all）。")
+        X = None
+        n = dim = 0
 
-    images = load_images(data_dir)
-    link_graph = load_link_graph(data_dir)
+    Xi, ni, dimi = load_memmap(image_emb_path(data_dir))
+    images = read_jsonl(image_list_path(data_dir))
 
-    # LLM 预处理
-    llm_info = None
-    if args.llm_expand and args.model:
-        llm_info = llm_expand_terms(cfg, args.model, q)
-
-    q_eff = q
-    seed_terms = []
-    if llm_info:
-        seed_terms += llm_info.get("keywords", [])
-        seed_terms += llm_info.get("synonyms", [])
-        seed_terms = [t for t in seed_terms if t not in CN_INSTR_STOP]
-        if seed_terms:
-            q_eff = q + " " + " ".join(seed_terms)
-
+    client = OllamaClient(base_url)
+    queries = [args.question]
     if args.smart_query:
-        kws = smart_keywords(q, weight=args.sqw)
-        if kws:
-            q_eff = q_eff + " " + " ".join(kws)
+        queries = expand_query(args.question)
 
-    # HyDE：合成段落并一起编码
-    hyde_txt = ""
-    if args.hyde and args.model and args.mode in ["dense","hybrid"]:
-        hyde_txt = hyde_expand(cfg, args.model, q)
-        if hyde_txt:
-            q_eff = q_eff + " " + hyde_txt
-
-    N = len(chunks)
-    scores_word = None
-    scores_char = None
-    scores_dense = None
-    scores_img = None
-
-    if args.mode in ["tfidf","hybrid"]:
-        vq = vec_word.transform([q_eff])
-        scores_word = (X_word @ vq.T).toarray().ravel()
-        vqc = vec_char.transform([q_eff])
-        scores_char = (X_char @ vqc.T).toarray().ravel()
-
-    if args.mode in ["dense","hybrid"]:
-        client = OllamaClient(cfg["ollama_base_url"], timeout=int(cfg.get("embed_timeout",120)), keep_alive=cfg.get("embed_keep_alive","10m"))
-        qemb = client.embeddings(cfg["embed_model"], [q_eff])[0]
-        qemb = np.array(qemb, dtype=np.float32)
-        scores_dense = cosine_rows(dense, qemb)
-
-    img_info = None
-    if args.mode == "hybrid" and not getattr(args, "images_only", False) and args.wimg > 0:
-        s_img, img_ids, img_recs = image_query_to_scores(cfg, q_eff, data_dir, images, args.wimg)
-        if s_img is not None:
-            img_map = {rec["source_path"]: float(sim) for sim, rec in zip(s_img, img_recs)}
-            scores_img = np.zeros(N, dtype=np.float32)
-            for i, rec in enumerate(chunks):
-                sp = rec["source_path"]
-                base_dir = os.path.dirname(sp)
-                if sp in img_map:
-                    scores_img[i] = img_map[sp]
-                else:
-                    best = 0.0
-                    for k, v in img_map.items():
-                        if os.path.dirname(k) == base_dir:
-                            best = max(best, v*0.8)
-                    scores_img[i] = best
-            img_info = (s_img, img_ids, img_recs)
-
-    if getattr(args, "images_only", False):
-        s_img, img_ids, img_recs = image_query_to_scores(cfg, q_eff, data_dir, images, args.wimg)
-        if s_img is None:
-            print("未找到图像索引（先运行 imgindex）。")
-            return
-        order = np.argsort(-s_img)[:args.top]
-        print("图片检索 Top:")
-        for i in order:
-            rec = img_recs[i]
-            abs_path = norm_win_abs(os.path.join(cfg["input_dir"], rec["source_path"]))
-            print(f"{abs_path}  (score={s_img[i]:.4f})")
-        return
-
-    # Boolean channel
-    base_tokens = normalize_tokens(q_eff)
-    if llm_info:
-        base_tokens += [t for t in (llm_info.get("keywords", []) + llm_info.get("synonyms", [])) if t not in CN_INSTR_STOP]
-    expanded = expand_terms(base_tokens)
-    combos = make_combos(expanded, max_combo=2)
-
-    prelim = set()
-    if scores_word is not None: prelim.update(np.argsort(-scores_word)[:200])
-    if scores_char is not None: prelim.update(np.argsort(-scores_char)[:200])
-    if scores_dense is not None: prelim.update(np.argsort(-scores_dense)[:200])
-    if not prelim:
-        prelim = set(range(N))
-    prelim = list(prelim)
-
-    scores_bool = np.zeros(N, dtype=np.float32)
-    for i in prelim:
-        rec = chunks[i]
-        scores_bool[i] = bool_channel_score(rec.get("text",""), expanded, combos)
-
-    # Fuzzy channel on prelim
-    scores_fuzzy = fuzzy_scores(prelim, chunks, q)
-
-    scores = fuse_scores(
-        {"word":scores_word, "char":scores_char, "dense":scores_dense, "img":scores_img, "bool":scores_bool, "fuzzy":scores_fuzzy},
-        {"word":args.alpha, "char":args.beta, "dense":args.gamma, "img":args.wimg, "bool":args.wbool, "fuzzy":args.wfuzzy}
-    )
-    if scores is None:
-        print("没有可融合的分数，请确认已构建对应索引。")
-        return
-
-    order = np.argsort(-scores)
-
-    # PRF：基于初选做二次词扩展并重算 lexical
-    if args.prf and args.mode in ["tfidf","hybrid"]:
-        idx_seed = order[: min(100, len(order))]
-        extra_terms = prf_terms(vec_word, X_word, idx_seed, k=10)
-        if extra_terms:
-            q_eff2 = q_eff + " " + " ".join(extra_terms)
-            vq2 = vec_word.transform([q_eff2])
-            scores_word2 = (X_word @ vq2.T).toarray().ravel()
-            vqc2 = vec_char.transform([q_eff2])
-            scores_char2 = (X_char @ vqc2.T).toarray().ravel()
-            scores = fuse_scores(
-                {"word":scores_word2, "char":scores_char2, "dense":scores_dense, "img":scores_img, "bool":scores_bool, "fuzzy":scores_fuzzy},
-                {"word":args.alpha, "char":args.beta, "dense":args.gamma, "img":args.wimg, "bool":args.wbool, "fuzzy":args.wfuzzy}
-            )
-            order = np.argsort(-scores)
-
-    # strict filters
-    if False:  # keep code path for completeness; currently we rely on expansions
-        pass
-
-    # choose top
-    idx_top = order[:min(max(args.top*6, 60), len(order))]
-    if args.cross_rerank:
-        pairs = []
-        for i in idx_top[:args.rerank_k]:
-            txt = chunks[i]["text"][:args.ctx_chars]
-            pairs.append((q, txt))
-        rr = cross_rerank(pairs, model_name=args.reranker)
-        if rr is not None:
-            # rerank only a subset; pick final top by reranker
-            order_local = np.argsort(-rr)[:args.top]
-            chosen_idx = [idx_top[:args.rerank_k][j] for j in order_local]
-        else:
-            chosen_idx = list(idx_top[:args.top])
-    else:
-        chosen_idx = list(idx_top[:args.top])
-
-    chosen_chunks = [chunks[i] for i in chosen_idx]
-
-    images_used = []
-    if img_info is not None:
-        s_img, img_ids, img_recs = img_info
-        img_order = np.argsort(-s_img)[:args.top]
-        images_used = [img_recs[i] for i in img_order if s_img[i] > 0]
-
-    ctx = build_context(chosen_chunks, images_used, cfg, args.num_ctx, args.ctx_chars)
-
-    answer = ""
-    if args.model:
-        sys_prompt = "你是可靠的企业内检索与问答助手。回答要基于提供的上下文，若没有证据，请直说不知道。"
-        client = OllamaClient(cfg["ollama_base_url"], timeout=int(cfg.get("embed_timeout",120)), keep_alive=cfg.get("embed_keep_alive","10m"))
-        prompt = f"问题：{q}\n\n参考上下文：\n{ctx}\n\n请用中文直接回答。"
+    q_vecs = []
+    for q in queries:
         try:
-            answer = client.generate(args.model, prompt, temperature=0.2, system=sys_prompt)
-        except Exception as e:
-            answer = f"(生成失败，返回检索片段)\n\n" + ctx
-    else:
-        answer = ctx
+            v = client.embeddings(args.embed_model, [q])[0]
+            q_vecs.append(np.asarray(v, dtype=np.float32))
+        except Exception:
+            continue
+    if not q_vecs:
+        print("（提示）生成模型调用失败，以下为检索到的上下文片段（供自查）：\n")
+        return
+    q_vec = np.mean(np.stack(q_vecs, axis=0), axis=0)
+    q_vec = q_vec / (np.linalg.norm(q_vec) + 1e-6)
 
-    if debug_dir:
-        os.makedirs(debug_dir, exist_ok=True)
-        with open(os.path.join(debug_dir, "query.txt"), "w", encoding="utf-8") as f:
-            f.write(f"question: {q}\n")
-            if args.smart_query:
-                f.write(f"smart_keywords: {' '.join(smart_keywords(q))}\n")
-            if llm_info:
-                f.write(f"llm_keywords: {', '.join(llm_info.get('keywords', []))}\n")
-                f.write(f"llm_synonyms: {', '.join(llm_info.get('synonyms', []))}\n")
-                f.write(f"llm_time: {llm_info.get('time','')}\n")
-            if hyde_txt:
-                f.write(f"hyde: {hyde_txt}\n")
-            f.write(f"q_eff: {q_eff}\n")
-            f.write(f"expanded_terms: {', '.join(expand_terms(normalize_tokens(q_eff)))}\n")
-        cands_json = []
-        for i in chosen_idx:
-            cands_json.append({
-                "id": chunks[i]["id"],
-                "source_path": chunks[i]["source_path"]
-            })
-        with open(os.path.join(debug_dir, "candidates.json"), "w", encoding="utf-8") as f:
-            json.dump(cands_json, f, ensure_ascii=False, indent=2)
-        pipe = {
-            "mode": args.mode,
-            "weights": {"alpha":args.alpha, "beta":args.beta, "gamma":args.gamma, "wimg":args.wimg, "wbool":args.wbool, "wfuzzy":args.wfuzzy},
-            "mmr": args.mmr, "neighbors": args.neighbors,
-            "strict_mode": args.strict_mode,
-            "top": args.top, "num_ctx": args.num_ctx, "ctx_chars": args.ctx_chars,
-            "llm_expand": args.llm_expand, "hyde": args.hyde, "prf": args.prf,
-            "cross_rerank": args.cross_rerank, "reranker": args.reranker, "rerank_k": args.rerank_k
-        }
-        with open(os.path.join(debug_dir, "pipeline.json"), "w", encoding="utf-8") as f:
-            json.dump(pipe, f, ensure_ascii=False, indent=2)
-        with open(os.path.join(debug_dir, "contexts.txt"), "w", encoding="utf-8") as f:
-            f.write(ctx)
-        if images_used:
-            with open(os.path.join(debug_dir, "images.json"), "w", encoding="utf-8") as f:
-                json.dump(images_used, f, ensure_ascii=False, indent=2)
+    text_hits = []
+    if X is not None:
+        text_hits = topk_dot(X, q_vec, k=max(args.top*5, 50))
 
-    print(answer.strip())
+    img_hits = []
+    if Xi is not None:
+        img_hits = topk_dot(Xi, q_vec, k=max(args.top*3, 24))
 
-    used_paths = set()
-    for rec in chosen_chunks:
-        used_paths.add(norm_win_abs(os.path.join(input_dir, rec["source_path"])))
-    for im in images_used:
-        used_paths.add(norm_win_abs(os.path.join(input_dir, im["source_path"])))
-    if used_paths:
-        print("\n参考：")
-        for p in used_paths:
-            print(p)
+    cands = []
+    T = args.text_first
+    # --- neighbor & link expansions ---
+    rel_to_idxs = build_rel_index(chunks) if chunks else {}
+    link_rows = read_jsonl(links_path(data_dir))
+    expanded = set(i for i,_ in text_hits[:max(T, args.top)])
+    base_idxs = list(expanded)
+    for idx in base_idxs:
+        for j in pick_neighbors(idx, chunks, rel_to_idxs, args.neighbors):
+            expanded.add(j)
+        rel = chunks[idx].get("rel","") if chunks else ""
+        for j in folder_siblings(rel, chunks, rel_to_idxs, args.folder_neighbors):
+            expanded.add(j)
+        for j in link_expansion(rel, link_rows, rel_to_idxs, chunks, k=3):
+            expanded.add(j)
+    # rebuild text hits restricted to expanded (keep original scores when available, else approximate with dot)
+    forced = []
+    if X is not None:
+        # compute scores for any new idx not in original top
+        orig_scores = {i:s for i,s in text_hits}
+        for i in expanded:
+            s = orig_scores.get(i, float(np.dot(np.asarray(X[i]), q_vec)))
+            forced.append((i, s))
+        forced.sort(key=lambda x: -x[1])
+        text_hits = forced
+
+    for (i, score) in text_hits[:max(T, args.top)]:
+        meta = chunks[i]
+        cands.append({
+            "kind": "text",
+            "score": float(score)*args.wtext,
+            "path": meta.get("rel", ""),
+            "text": meta.get("text", ""),
+        })
+    for (i, score) in img_hits[:args.top]:
+        meta = images[i]
+        cands.append({
+            "kind": "image",
+            "score": float(score)*args.wimg,
+            "path": meta.get("rel", ""),
+            "abs": meta.get("path",""),
+            "ocr": meta.get("ocr",""),
+        })
+
+    if args.post_filter and cands:
+        kept = post_filter(args.question, cands, args.pf_model, args.pf_workers, args.pf_timeout, base_url)
+        if len(kept) < max(1, args.pf_min_keep):
+            kept = sorted(cands, key=lambda x: -x["score"])[:args.pf_min_keep]
+        cands = kept
+
+    cands = sorted(cands, key=lambda x: -x["score"])[:args.top]
+
+    ctx_lines = []
+    refs = []
+    imgs_b64 = []
+    uniq_paths = []
+    for c in cands:
+        disp = c.get("path","").replace("\\\\?\\","")
+        if disp not in uniq_paths:
+            uniq_paths.append(disp)
+            refs.append(disp)
+        if c["kind"] == "text":
+            txt = c.get("text","")[:args.ctx_chars]
+            ctx_lines.append(f"[{len(refs)}] {disp}\n{txt}\n")
+        else:
+            ocr = c.get("ocr","")[:args.ctx_chars]
+            ctx_lines.append(f"[{len(refs)}] {disp}\n(图片OCR)\n{ocr}\n")
+            if args.vl_answer and len(imgs_b64) < args.max_images:
+                abs_p = c.get("abs", disp)
+                try:
+                    imgs_b64.append(b64image(abs_p))
+                except Exception:
+                    pass
+
+    with open(os.path.join(args.debug_dir, "candidates.json"), "w", encoding="utf-8") as f:
+        json.dump(cands, f, ensure_ascii=False, indent=2)
+    with open(os.path.join(args.debug_dir, "contexts.txt"), "w", encoding="utf-8") as f:
+        f.write("\n".join(ctx_lines))
+    with open(os.path.join(args.debug_dir, "refs.json"), "w", encoding="utf-8") as f:
+        json.dump(refs, f, ensure_ascii=False, indent=2)
+
+    if not cands:
+        print("没有检索到与问题相关的材料，无法作答。")
+        return
+
+    sys_prompt = (
+        "你是检索增强生成（RAG）的助手。根据“参考材料”回答用户问题。"
+        "只回答你能从材料里找到的内容，必要时可以做简短推断。"
+        "请在结尾列出编号化参考来源（例如：[1][3][5]）。"
+    )
+    context_block = "参考材料：\n" + "\n".join(ctx_lines) + "\n"
+    full_prompt = f"{sys_prompt}\n问题：{args.question}\n{context_block}\n请给出结构化回答，最后附参考编号。"
+
+    try:
+        if args.vl_answer and imgs_b64:
+            resp = OllamaClient(base_url).generate(model="qwen2.5vl:latest", prompt=full_prompt, images_b64=imgs_b64, timeout=args.gen_timeout)
+        else:
+            resp = OllamaClient(base_url).generate(model=args.model, prompt=full_prompt, images_b64=None, timeout=args.gen_timeout)
+    except Exception:
+        print("（提示）生成模型不可用，本次仅返回命中的参考材料。\n")
+        print("参考：")
+        for i, r in enumerate(refs, 1):
+            print(f"[{i}] {r}")
+        return
+
+    print(resp.strip())
+    print("\n参考：")
+    for i, r in enumerate(refs, 1):
+        print(f"[{i}] {r}")
 
 if __name__ == "__main__":
     main()

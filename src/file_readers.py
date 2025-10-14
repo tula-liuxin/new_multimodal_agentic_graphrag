@@ -1,105 +1,47 @@
-import os, io, re, json
-from typing import Tuple, Optional
-from bs4 import BeautifulSoup
-from pdfminer.high_level import extract_text as pdf_extract
-from pypdf import PdfReader
-from PIL import Image
-import pytesseract
-from .utils import win_long
 
-PREFERRED_ENCODINGS = ["utf-8", "gb18030", "gbk", "big5", "cp936", "latin-1"]
+import os, re
+from typing import Optional, Tuple
+from .utils import get_logger
+
+log = get_logger("file_readers")
 
 def read_text_auto(path: str) -> str:
     ext = os.path.splitext(path)[1].lower()
-    if ext in [".md", ".markdown", ".txt", ".rst", ".tex", ".csv", ".tsv", ".json", ".yaml", ".yml", ".ini", ".log", ".xml"]:
-        return read_text_fallback(path)
-    elif ext in [".html", ".htm"]:
-        return read_html(path)
-    elif ext in [".pdf"]:
-        return read_pdf(path)
-    elif ext in [".docx"]:
-        return read_docx(path)
-    elif ext in [".xlsx", ".xls"]:
-        return read_xlsx(path)
-    elif ext in [".pptx"]:
-        return read_pptx(path)
-    else:
-        return ""
-
-def read_text_fallback(path: str) -> str:
-    for enc in PREFERRED_ENCODINGS:
-        try:
-            with open(win_long(path), "r", encoding=enc, errors="strict") as f:
+    try:
+        if ext in [".txt", ".md", ".markdown", ".html", ".htm"]:
+            with open(path, "r", encoding="utf-8", errors="ignore") as f:
                 return f.read()
-        except Exception:
-            continue
-    with open(win_long(path), "r", encoding="utf-8", errors="ignore") as f:
-        return f.read()
-
-def read_html(path: str) -> str:
-    raw = read_text_fallback(path)
-    soup = BeautifulSoup(raw, "lxml")
-    for s in soup(["script","style","noscript"]):
-        s.extract()
-    text = []
-    for h in soup.find_all(re.compile("^h[1-6]$")):
-        text.append("#" * int(h.name[1]) + " " + h.get_text(" ", strip=True))
-    text.append(soup.get_text(" ", strip=True))
-    return "\n".join(text)
-
-def read_pdf(path: str) -> str:
-    try:
-        return pdf_extract(win_long(path)) or ""
-    except Exception:
-        try:
-            reader = PdfReader(win_long(path))
-            out = []
-            for page in reader.pages:
-                out.append(page.extract_text() or "")
-            return "\n".join(out)
-        except Exception:
-            return ""
-
-def read_docx(path: str) -> str:
-    try:
-        from docx import Document
-        doc = Document(win_long(path))
-        return "\n".join(p.text for p in doc.paragraphs)
-    except Exception:
+        with open(path, "r", encoding="utf-8", errors="ignore") as f:
+            return f.read()
+    except Exception as e:
+        log.warning(f"[warn] 无法读取文本文件: {path} ({e})")
         return ""
 
-def read_xlsx(path: str) -> str:
+def ocr_image(path: str, backend: str = "rapidocr") -> str:
+    text = ""
     try:
-        import openpyxl
-        wb = openpyxl.load_workbook(win_long(path), read_only=True, data_only=True)
-        texts = []
-        for ws in wb.worksheets:
-            texts.append(f"# {ws.title}")
-            for row in ws.iter_rows(values_only=True):
-                row_txt = "\t".join("" if v is None else str(v) for v in row)
-                texts.append(row_txt)
-        return "\n".join(texts)
-    except Exception:
+        if backend == "rapidocr":
+            from rapidocr_onnxruntime import RapidOCR
+            engine = RapidOCR()
+            res, _ = engine(path)
+            if res:
+                text = "\n".join([x[1] for x in res if len(x) >= 2])
+                return text
+    except Exception as e:
+        log.warning(f"[warn] RapidOCR 失败({e})，尝试 tesseract...")
+    try:
+        import pytesseract
+        from PIL import Image
+        img = Image.open(path).convert("RGB")
+        text = pytesseract.image_to_string(img, lang="chi_sim+eng")
+        return text
+    except Exception as e:
+        log.warning(f"[warn] tesseract OCR 失败: {e}")
         return ""
 
-def read_pptx(path: str) -> str:
-    try:
-        from pptx import Presentation
-        prs = Presentation(win_long(path))
-        texts = []
-        for i, slide in enumerate(prs.slides):
-            texts.append(f"# Slide {i+1}")
-            for shape in slide.shapes:
-                if hasattr(shape, "text"):
-                    texts.append(shape.text)
-        return "\n".join(texts)
-    except Exception:
-        return ""
+def is_image(path: str) -> bool:
+    return os.path.splitext(path)[1].lower() in [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp"]
 
-def ocr_image(path: str, lang: str="chi_sim+eng", psm: int=6) -> str:
-    try:
-        img = Image.open(win_long(path))
-        cfg = f"--psm {psm}"
-        return pytesseract.image_to_string(img, lang=lang, config=cfg) or ""
-    except Exception:
-        return ""
+def clean_display_path(p: str) -> str:
+    p = p.replace("\\\\?\\", "")
+    return p

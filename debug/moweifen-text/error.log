@@ -1,0 +1,6 @@
+文本生成失败: Traceback (most recent call last):
+  File "C:\MyNotion\new_multimodal_agentic_graphrag\src\query_cli.py", line 331, in main
+    answer = ollama_generate(os.getenv("OLLAMA_HTTP", args.ollama_base_url), args.model, prompt, images=None, timeout=args.gen-timeout)
+                                                                                                                      ^^^^^^^^
+AttributeError: 'Namespace' object has no attribute 'gen'
+

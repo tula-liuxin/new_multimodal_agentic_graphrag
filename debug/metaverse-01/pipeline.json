@@ -1,0 +1,11 @@
+{
+  "question": "元宇宙Metaverse架构师 说了什么",
+  "clean_query": "元宇宙Metaverse架构师",
+  "input_dir": "C:\\MyNotion\\MyNotion20251007",
+  "data_dir": "C:\\MyNotion\\new_multimodal_agentic_graphrag\\data",
+  "time_sec": 13.493304014205933,
+  "counts": {
+    "texts": 24444,
+    "images": 1871
+  }
+}

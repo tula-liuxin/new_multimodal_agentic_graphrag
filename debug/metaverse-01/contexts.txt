@@ -1,0 +1,23 @@
+[1] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\question&topics fcbde4a85f4b4301a4be794e38177570.md
+metaverse
+
+[2] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\question&topics fcbde4a85f4b4301a4be794e38177570.md
+What do you know about metaverse?
+
+[3] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\关注圈、影响圈系统、信息系统 d93c89e9dec54564a7e398bac7aa5591.md
+一般只呆在我的方向内：RL、robotics、LLM、LMM、simulator、metaverse、AI research&application。
+
+[4] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ALL IN ASI（AGI，general as possible is the key, lik 73147f1a9fe14b8ea0fe3fec8b1e0b30.md
+To establish such AI prototype: It can interact with human in very efficient and informative way, for instance in metaverse with 3D space.
+
+[5] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ALL IN ASI（AGI，general as possible is the key, lik 73147f1a9fe14b8ea0fe3fec8b1e0b30\My road to build an AGI 83c95ad76a06412c8b307fb6bd432ddb.md
+To build an expandable metaverse being capable of cope all kinds of modalities, and allow everything into it, just like the Internet.
+
+[6] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\9 8 presentation 8caa87042eb14acdb1d1e8b98acb4c6e.md
+Why do I better follow meta? A: Thier goal is to build a metaverse which is spatial computing with RL. They would continue to contribute a lot of open sources in these fields.
+
+[7] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ALL IN ASI（AGI，general as possible is the key, lik 73147f1a9fe14b8ea0fe3fec8b1e0b30.md
+# ALL IN ASI（AGI，general as possible is the key, like LLM is general） (←AGI←robotics&LMM&embodied AI（verfiable task）←sim\metaverse & LLM\LMM)（一定不要路径依赖。如果以后发现强化学习就和专家系统一样，那一定要果断放弃而去跟热点。我呢，也需要一直follow热点和经检验过后的技术，例如最近的transformer、diffusion是基础功，不能不学会其原理以好去应用。以后也一样。要依据局势来灵活变换。）
+
+[8] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Workstation (ie Current Projects) (看一眼就知道找事情做的事项)  ba9557536a814e84babcce393e0695c1\My specific path to AGI 083ea302c686448c9893de2ce3ade245.md
+Before research phisical robots in the real world, I should first work more on simulator world, game, metaverse, computer world (internet, interpreter, software, etc).

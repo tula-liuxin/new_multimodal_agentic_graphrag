@@ -1,72 +1,105 @@
-import os, re, json, hashlib, logging, pathlib, sys, socket
-from typing import Dict, Any
-import yaml
 
-ENV_PREFIX = "NMAGR_"
+import os, sys, json, hashlib, logging, time
+from typing import Iterable, Dict, Any, List, Optional
 
-def norm_win_abs(p: str) -> str:
-    if not p:
-        return p
-    p = os.path.abspath(p)
-    p = p.replace('/', '\\')
-    return p
-
-def win_long(path: str) -> str:
-    # Windows 长路径支持
-    if os.name != "nt":
-        return path
-    if not path:
-        return path
-    p = os.path.abspath(path)
-    if p.startswith("\\\\?\\"):
-        return p
-    if p.startswith("\\\\"):  # UNC
-        return "\\\\?\\UNC\\" + p[2:]
-    return "\\\\?\\" + p
-
-def load_cfg(config_path: str) -> Dict[str, Any]:
-    with open(config_path, 'r', encoding='utf-8') as f:
-        cfg = yaml.safe_load(f) or {}
-    for k in list(cfg.keys()):
-        env_key = ENV_PREFIX + k
-        if env_key in os.environ:
-            val = os.environ[env_key]
-            if isinstance(cfg[k], bool):
-                cfg[k] = str(val).lower() in ["1","true","yes","y","on"]
-            elif isinstance(cfg[k], int):
-                try: cfg[k] = int(val)
-                except: pass
-            elif isinstance(cfg[k], float):
-                try: cfg[k] = float(val)
-                except: pass
-            else:
-                cfg[k] = val
-    for key in ["project_root", "input_dir", "data_dir", "debug_dir"]:
-        if key in cfg:
-            cfg[key] = norm_win_abs(cfg[key])
-    return cfg
-
-def ensure_dir(p: str):
-    os.makedirs(p, exist_ok=True)
-
-def get_logger(name: str = "nmagr", level=logging.INFO):
-    logger = logging.getLogger(name)
-    if logger.handlers:
-        return logger
-    logger.setLevel(level)
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setLevel(level)
-    fmt = logging.Formatter("[%(asctime)s %(levelname)s] %(message)s")
-    ch.setFormatter(fmt)
-    logger.addHandler(ch)
-    return logger
+try:
+    import yaml
+except Exception:
+    yaml = None
 
 def sha1(s: str) -> str:
-    return hashlib.sha1(s.encode('utf-8', errors='ignore')).hexdigest()
+    return hashlib.sha1(s.encode("utf-8", errors="ignore")).hexdigest()
 
-def is_port_open(host="127.0.0.1", port=11434) -> bool:
+def norm_win_abs(p: str) -> str:
+    p = os.path.abspath(p)
+    if p.startswith("\\\\?\\"):
+        p = p[4:]
+    return p
+
+def ensure_dir(d: str) -> str:
+    """mkdir -p，返回绝对 Windows 路径（去掉 \\?\ 前缀）。"""
+    os.makedirs(d, exist_ok=True)
+    return norm_win_abs(d)
+
+def get_logger(name: str = "") -> logging.Logger:
+    log = logging.getLogger(name or __name__)
+    if not log.handlers:
+        log.setLevel(logging.INFO)
+        h = logging.StreamHandler(sys.stdout)
+        fmt = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
+        h.setFormatter(fmt)
+        log.addHandler(h)
+    return log
+
+def load_cfg(path: str = "config.yaml") -> Dict[str, Any]:
+    cfg = {
+        "root_dir": ".",
+        "data_dir": "data",
+        "enable_ocr": False,
+        "ocr_backend": "rapidocr",
+        "ollama_base_url": "http://127.0.0.1:11434",
+        "embed_model": "bge-m3:latest",
+        "clip_local": "",
+        "image_batch": 32,
+        "text_max_chars": 1200,
+        "text_overlap": 100,
+    }
+    if os.path.exists(path) and yaml:
+        with open(path, "r", encoding="utf-8") as f:
+            u = yaml.safe_load(f) or {}
+        if isinstance(u, dict):
+            cfg.update(u)
+    cfg["root_dir"] = norm_win_abs(cfg["root_dir"])
+    cfg["data_dir"] = norm_win_abs(cfg["data_dir"])
+    ensure_dir(cfg["data_dir"])
+    return cfg
+
+def read_jsonl(path: str) -> List[Dict[str, Any]]:
+    out = []
+    if not os.path.exists(path): return out
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line: continue
+            try:
+                out.append(json.loads(line))
+            except Exception:
+                continue
+    return out
+
+def write_jsonl(path: str, rows: Iterable[Dict[str, Any]]):
+    with open(path, "w", encoding="utf-8") as f:
+        for r in rows:
+            f.write(json.dumps(r, ensure_ascii=False) + "\n")
+
+def safe_rel(path: str, root: str) -> str:
     try:
-        with socket.create_connection((host, port), timeout=1.0):
-            return True
+        return os.path.relpath(path, root)
     except Exception:
-        return False
+        return path
+
+def chunk_path(index_dir: str) -> str:
+    return os.path.join(index_dir, "chunks.jsonl")
+
+def chunk_emb_path(index_dir: str) -> str:
+    return os.path.join(index_dir, "chunk_embeddings.f32")
+
+def chunk_ids_path(index_dir: str) -> str:
+    return os.path.join(index_dir, "chunk_ids.jsonl")
+
+def image_list_path(index_dir: str) -> str:
+    return os.path.join(index_dir, "images.jsonl")
+
+def image_emb_path(index_dir: str) -> str:
+    return os.path.join(index_dir, "image_embeddings.f32")
+
+def links_path(index_dir: str) -> str:
+    return os.path.join(index_dir, "links.jsonl")
+
+def timeit(fn):
+    def w(*a, **k):
+        t0 = time.time()
+        r = fn(*a, **k)
+        dt = time.time() - t0
+        return r, dt
+    return w

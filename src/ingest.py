@@ -1,119 +1,46 @@
-import os, json, re
-from typing import List, Dict
-from tqdm import tqdm
-from .utils import ensure_dir, sha1, norm_win_abs
-from .file_readers import read_text_auto, ocr_image
-from PIL import Image
 
-TEXT_EXT = {".md",".markdown",".txt",".html",".htm",".rst",".tex",".csv",".tsv",".json",".yaml",".yml",".ini",".log",".xml",".xlsx",".xls",".docx",".pptx",".pdf"}
-IMG_EXT = {".png",".jpg",".jpeg",".bmp",".webp",".tif",".tiff",".gif"}
+import os, glob
+from typing import Dict, Any, List
+from .utils import get_logger, load_cfg, ensure_dir, sha1, safe_rel, chunk_path, image_list_path
+from .file_readers import read_text_auto, ocr_image, is_image
+from .text_splitter import split_text
 
-def iter_chunks(text: str, max_chars=1200, overlap=200):
-    if not text:
-        return
-    overlap = max(0, min(overlap, max_chars // 2))
-    # 按段落切，再对超长段落滑窗；逐条 yield，避免一次性占用内存
-    paras = (p.strip() for p in re.split(r"\n\s*\n", text))
-    for p in paras:
-        if not p:
-            continue
-        if len(p) <= max_chars:
-            yield p
-        else:
-            s = 0
-            step = max_chars - overlap
-            if step <= 0:
-                step = max_chars
-            L = len(p)
-            while s < L:
-                e = min(L, s + max_chars)
-                yield p[s:e]
-                if e >= L:
-                    break
-                s += step
-
-def walk_files(root: str):
-    for dirpath, _, filenames in os.walk(root):
-        for fn in filenames:
-            yield os.path.join(dirpath, fn)
-
-def run_ingest(cfg, logger):
-    input_dir = cfg["input_dir"]
+def run_ingest(cfg=None, logger=None):
+    log = logger or get_logger("ingest")
+    cfg = cfg or load_cfg()
+    root = cfg["root_dir"]
     data_dir = cfg["data_dir"]
-    ensure_dir(data_dir)
-
-    chunks_path = os.path.join(data_dir, "chunks.jsonl")
-    images_path = os.path.join(data_dir, "images.jsonl")
-
-    max_chars = int(cfg.get("max_chars", 1200))
-    overlap = int(cfg.get("overlap_chars", 200))
-
     enable_ocr = bool(cfg.get("enable_ocr", False))
-    ocr_lang = cfg.get("ocr_lang", "chi_sim+eng")
-    ocr_psm = int(cfg.get("ocr_psm", 6))
+    ocr_backend = cfg.get("ocr_backend", "rapidocr")
 
-    cnt_txt = 0
-    cnt_img = 0
+    all_files = []
+    for ext in ["**/*.md", "**/*.txt", "**/*.html", "**/*.htm", "**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.gif", "**/*.webp", "**/*.bmp"]:
+        all_files.extend(glob.glob(os.path.join(root, ext), recursive=True))
 
-    # 预扫描文件以显示进度
-    all_files = list(walk_files(input_dir))
-    with open(chunks_path, "w", encoding="utf-8") as f_txt, open(images_path, "w", encoding="utf-8") as f_img:
-        for p in tqdm(all_files, desc="ingest 扫描", unit="file"):
-            ext = os.path.splitext(p)[1].lower()
-            rel = os.path.relpath(p, input_dir).replace("/", "\\")
-            if ext in TEXT_EXT:
-                try:
-                    text = read_text_auto(p)
-                except Exception as e:
-                    print(f"[warn] 无法读取文本文件: {p} ({e})")
-                    continue
-                i = 0
-                for ch in iter_chunks(text, max_chars, overlap):
-                    rid = sha1(f"{rel}:{i}")
-                    rec = {
-                        "id": rid,
-                        "source_path": rel,
-                        "chunk_index": i,
-                        "text": ch if ch.strip() else " ",
-                        "modality": ext.lstrip('.')
-                    }
-                    f_txt.write(json.dumps(rec, ensure_ascii=False) + "\n")
-                    i += 1
-                cnt_txt += 1
-            elif ext in IMG_EXT:
-                try:
-                    with Image.open(p) as im:
-                        w, h = im.size
-                except Exception:
-                    w, h = 0, 0
-                ocr_text = ""
-                if enable_ocr:
-                    ocr_text = ocr_image(p, lang=ocr_lang, psm=ocr_psm)
-                rid = sha1(f"{rel}:image")
-                rec = {
-                    "id": rid,
-                    "source_path": rel,
-                    "width": w,
-                    "height": h,
-                    "modality": "image",
-                    "ocr_text": ocr_text,
-                    "caption": ""
-                }
-                f_img.write(json.dumps(rec, ensure_ascii=False) + "\n")
-                cnt_img += 1
+    text_rows: List[Dict[str, Any]] = []
+    img_rows: List[Dict[str, Any]] = []
 
-                # 若有 OCR 文本，将其作为额外文本 chunk 写入（提升图片相关检索的可见度）
-                if enable_ocr and ocr_text and ocr_text.strip():
-                    rid_txt = sha1(f"{rel}:image:ocr")
-                    rec_txt = {
-                        "id": rid_txt,
-                        "source_path": rel,
-                        "chunk_index": 0,
-                        "text": ocr_text,
-                        "modality": "image_ocr"
-                    }
-                    f_txt.write(json.dumps(rec_txt, ensure_ascii=False) + "\n")
-            else:
-                continue
+    for i, p in enumerate(all_files):
+        rp = safe_rel(p, root)
+        rid = sha1(rp)
+        if is_image(p):
+            text = ""
+            if enable_ocr:
+                text = ocr_image(p, backend=ocr_backend) or ""
+            img_rows.append({"id": rid, "path": p, "rel": rp, "ocr": text})
+        else:
+            text = read_text_auto(p)
+            chunks = split_text(text, cfg.get("text_max_chars", 1200), cfg.get("text_overlap", 100))
+            for j, c in enumerate(chunks):
+                cid = sha1(f"{rp}:{j}")
+                text_rows.append({"id": cid, "doc": rid, "rel": rp, "chunk": j, "text": c})
 
-    logger.info(f"ingest 完成：文本文件 {cnt_txt}，图片文件 {cnt_img}")
+        if (i+1) % 500 == 0:
+            log.info(f"ingest 进度: {i+1}/{len(all_files)}")
+
+    ensure_dir(data_dir)
+    from .utils import write_jsonl
+    write_jsonl(chunk_path(data_dir), text_rows)
+    write_jsonl(image_list_path(data_dir), img_rows)
+
+    log.info(f"ingest 完成：文本块 {len(text_rows)}，图片文件 {len(img_rows)}")
