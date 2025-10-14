@@ -1,0 +1,25 @@
+[2025-10-14 15:25:49,363] [INFO] 扫描到 3380 个文件
+[2025-10-14 15:25:58,244] [INFO] 写出 chunks=2675, images=1885, links=11821, nodes=3380
+[2025-10-14 15:30:17,129] [INFO] 扫描到 3380 个文件
+[2025-10-14 15:32:50,605] [INFO] 写出 chunks=4490, images=1885, links=11821, nodes=3380
+[2025-10-14 15:38:01,765] [INFO] 扫描到 3380 个文件
+[2025-10-14 15:40:37,277] [INFO] 写出 chunks=4490, images=1885, links=11821, nodes=3380
+[2025-10-14 15:41:43,478] [INFO] 图像向量：共 1885 张，device=cuda, batch=32
+[2025-10-14 15:41:46,903] [WARNING] 图像读取失败（跳过）: C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Data ca825b1da3a94929b40d84466a7b9511\QQ memo 645787ae82bc43a4a829fd70be494ee1\picture 2e77efb1ff1d47baad90aef06d260068\1000015530.jpg | image file is truncated (5 bytes not processed)
+[2025-10-14 15:43:09,296] [INFO] 图像索引完成：vecs=(1884, 768), ids=1884 → index\image_vecs.npy
+[2025-10-14 15:44:39,958] [INFO] 扫描到 3380 个文件
+[2025-10-14 15:47:03,747] [INFO] 写出 chunks=4490, images=1885, links=11821, nodes=3380
+[2025-10-14 15:48:08,534] [INFO] 图像向量：共 1885 张，device=cuda, batch=32
+[2025-10-14 15:48:12,069] [WARNING] 图像读取失败（跳过）: C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Data ca825b1da3a94929b40d84466a7b9511\QQ memo 645787ae82bc43a4a829fd70be494ee1\picture 2e77efb1ff1d47baad90aef06d260068\1000015530.jpg | image file is truncated (5 bytes not processed)
+[2025-10-14 15:49:32,352] [INFO] 图像索引完成：vecs=(1884, 768), ids=1884 → index\image_vecs.npy
+[2025-10-14 15:54:18,600] [INFO] 扫描到 3380 个文件
+[2025-10-14 15:54:18,703] [INFO] 增量统计：新增/变更 3380 个；删除 0 个
+[2025-10-14 15:54:24,140] [INFO] 写出 chunks=2778, images=1885, links=11821, nodes=3380
+[2025-10-14 15:56:15,955] [INFO] 扫描到 3380 个文件
+[2025-10-14 15:56:16,102] [INFO] 增量统计：新增/变更 0 个；删除 0 个
+[2025-10-14 15:56:16,276] [INFO] 写出 chunks=2778, images=1885, links=11821, nodes=3380
+[2025-10-14 16:00:10,147] [INFO] 文本索引完成：vecs=(2778, 1024), ids=2778 → index\text_vecs.npy
+[2025-10-14 16:00:10,174] [INFO] 图像向量：共 1885 张，device=cuda, batch=32
+[2025-10-14 16:00:14,667] [WARNING] 图像读取失败（跳过）: C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Data ca825b1da3a94929b40d84466a7b9511\QQ memo 645787ae82bc43a4a829fd70be494ee1\picture 2e77efb1ff1d47baad90aef06d260068\1000015530.jpg | image file is truncated (5 bytes not processed)
+[2025-10-14 16:00:14,672] [INFO] 图像索引完成：vecs=(1884, 768), ids=1884 → index\image_vecs.npy
+[2025-10-14 16:36:36,450] [INFO] 召回候选数=52，耗时18.33s

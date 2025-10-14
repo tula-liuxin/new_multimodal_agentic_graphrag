@@ -1,108 +1,184 @@
-# new_multimodal_agentic_graphrag (Quality+OCR Upgrade)
+# new_multimodal_agentic_graphrag
 
-本版在你现有项目基础上做了**检索/回答质量增强**与**OCR 打开**：
-- 默认开启 **OCR**，并把 **图片的 OCR 文本作为文本 chunk** 一并入库（真正实现“文本+图片（非仅 OCR）”融合召回）。
-- 新增 **关键词与同义词扩展**（含 AGI/ASI/LLM 的中英别名），支持**关键词组合（pair）布尔通道**参与融合打分，显著提升“概念词/缩写”的召回率与精度。
-- `strict-mode smart` 更聪明：基于扩展后的关键词集合做 AND 过滤。
-- 进度条、长路径、坏图回退、并发与 memmap 等之前优化全部保留。
+一个可在 **Windows (PowerShell) + Python 3.12** 直接跑通的 **多模态 Agentic GraphRAG** 最小可用项目（文本 + 图片（OCR/VLM）），
+对 **Notion HTML 导出** 做了专门适配。默认 **离线优先**，本地模型使用 **Ollama (127.0.0.1:11434)** 与 **OpenCLIP**。
 
----
-
-## 0) 安装与运行环境
-与之前一致（Windows 11 + PowerShell + Python 3.12）。依赖见 `requirements.txt`。
-
-Ollama 建议模型：
-- 嵌入：`nomic-embed-text:latest`
-- 生成（可选）：`qwen3:4b-instruct-2507-fp16`
-- 多模态字幕（可选）：`qwen2.5vl:latest`
+> 目标：三段式流水线 —— **召回 → 并行过滤 → 最终回答（带编号引用）**。  
+> 重要：所有可调项都在 `config.yaml` 或 CLI 参数中。**不要修改源码就能跑通**。
 
 ---
 
-## 1) 配置（已默认开启 OCR）
-`config.yaml` 关键项：
-```yaml
-enable_ocr: true
-ocr_lang: "chi_sim+eng"
-ocr_psm: 6
+## 0. 运行环境与预置
 
-# 中文更强：
-tfidf_max_features: 200000
-char_ngram_range: [2, 6]
-```
+- OS: Windows 10/11 (PowerShell)
+- Python: 3.12.x 64-bit（建议在 `C:\MyNotion\.venv`）
+- GPU: NVIDIA（可用 CUDA；自动 CPU fallback）
+- 本地模型服务：**Ollama**（已安装并存在如下模型）
+  - `qwen2.5:3b-instruct`（轻量并行过滤器）
+  - `qwen3:4b-instruct-2507-fp16`（默认最终文本 LLM）
+  - `qwen2.5vl:latest`（最终多模态 LLM，可选）
+  - `bge-m3:latest`（文本向量）
+  - `nomic-embed-text:latest`（备选文本向量）
+- OpenCLIP：`CLIP-ViT-L-14-laion2B-s32B-b82K`（可通过 `--clip-local` 指定本地离线目录）
+- OCR：默认 **关闭**；开启后使用 **Tesseract**（需本地安装并在 `config.yaml.ocr_tesseract_cmd` 指定路径）。
 
-> 本版在 ingest 时会将 `images.jsonl` 的 OCR 文本**同步写入** `chunks.jsonl`（modality:`image_ocr`），因此后续 `embed/tfidf/charindex` 都会覆盖这些 OCR 文本。
+> 参考：Ollama 官方 API 对 **/api/generate**（支持 `images` base64）与 **/api/embed**（嵌入）详解。citeturn4view0
 
 ---
 
-## 2) 从 0 到检索（建议全量重建）
+## 1. 一键安装与环境检测
+
+**（推荐）**在 `PowerShell` 执行：
+
 ```powershell
-# 0) 启动 Ollama（另一个窗口常驻）
-$env:OLLAMA_HOST="127.0.0.1:11434"
-$env:OLLAMA_NUM_PARALLEL="2"
-$env:OLLAMA_KEEP_ALIVE="10m"
-ollama serve
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+cd <你要放项目的目录>
+# 解压后进入目录
+.\scripts\quickstart.ps1
+```
 
-# 1) ingest（默认开启 OCR）
-python -m src.cli ingest
+脚本会：
+- 创建并激活 venv、安装 `requirements.txt`；
+- 进行 **环境检测**（Ollama 端口、CUDA、Tesseract、长路径策略等）；
+- 演示 **ingest → embed/imgindex/charindex → graph → query** 的全流程。
 
-# 2) 文本嵌入（带进度）
-python -m src.cli embed
+> 如果网络不稳，`pip` 安装失败，请多次重试或使用你本地的 wheel 缓存。模型文件本项目 **不从网络下载**。
 
-# 3) 图像向量（OpenCLIP；带进度；已修复 Windows DataLoader 闭包问题）
-python -m src.cli imgindex
+---
 
-# 4) 字 n-gram（带进度）
-python -m src.cli charindex
+## 2. 目录结构
 
-# 5) 链接图
-python -m src.cli links
-
-# 6) （可选）图谱
-python -m src.cli graph
+```
+new_multimodal_agentic_graphrag/
+├─ README.md
+├─ requirements.txt
+├─ config.yaml
+├─ .env.example
+├─ scripts/
+│  ├─ quickstart.ps1
+│  └─ sanity_checks.ps1
+└─ src/
+   ├─ cli.py
+   ├─ utils.py
+   ├─ ingest.py
+   ├─ html_cleaner.py
+   ├─ embed_index.py
+   ├─ image_index.py
+   ├─ char_index.py
+   ├─ link_graph.py
+   ├─ rerank.py
+   ├─ ollama_client.py
+   ├─ post_filter.py
+   ├─ query_cli.py
+   └─ tests/
+      ├─ test_paths.py
+      ├─ test_html_links.py
+      ├─ test_ingest_outputs.py
+      ├─ test_post_filter.py
+      └─ test_citations.py
 ```
 
 ---
 
-## 3) 新查询建议（AGI/ASI 类问题更准）
-新增 `--wbool`（关键词/组合布尔通道权重，默认 0.6），并内置 AGI/ASI 中文同义词扩展：
+## 3. `config.yaml` 关键项
+
+- `roots`: 数据根目录列表（支持多个 Notion 导出目录）。
+- `enable_ocr`: 是否对图片/PDF 做 OCR（默认 false）。
+- `ocr_tesseract_cmd`: Windows 下 `tesseract.exe` 绝对路径（启用 OCR 时必填）。
+- `ollama.host`: 默认 `http://127.0.0.1:11434`。
+- `models`: 嵌入、过滤、多模态等模型名。
+- `openclip.local_path`: OpenCLIP 本地目录。
+- `concurrency`: 并行度配置。
+
+---
+
+## 4. 一步跑通（示例命令）
+
+> 你可以直接复制以下块到 PowerShell（修改路径）。
+
+### 4.1 一把梭构建
+
+```powershell
+python -m src.cli all --clip-local "C:\MyNotion\new_multimodal_agentic_graphrag\models\openclip\CLIP-ViT-L-14-laion2B-s32B-b82K"
+```
+
+### 4.2 文本查询
 
 ```powershell
 python -m src.query_cli `
-  --mode hybrid --alpha 0.4 --beta 0.6 --gamma 1.0 `
-  --wimg 0.10 --wbool 0.8 `
-  --top 10 --mmr 0.35 --neighbors 2 `
-  --smart-query --sqw 1.3 `
-  --strict-mode off `
-  --ctx-chars 800 --num-ctx 22000 `
-  --debug-dir "C:\MyNotion\new_multimodal_agentic_graphrag\debug\agi-tune-01" `
-  "asi\\agi 的路径、方法、思路、路线、理论、技术，以及对他们的控制？"
+  --mode hybrid --smart-query --sqw 1.2 `
+  --text-first 6 --wtext 1.0 --wimg 0.25 `
+  --neighbors 2 --folder-neighbors 2 --link-hop --link-depth 2 `
+  --post-filter --pf-model "qwen2.5:3b-instruct" --pf-workers 6 --pf-timeout 15 --pf-min-keep 6 `
+  --top 20 --num-ctx 20000 --ctx-chars 1200 `
+  --embed-model "bge-m3:latest" `
+  --debug-dir "C:\MyNotion\new_multimodal_agentic_graphrag\debug\moweifen-01" `
+  --model "qwen3:4b-instruct-2507-fp16" `
+  "刘晓玲的所有记录"
 ```
 
-> 说明：查询会自动扩展为：`AGI/ASI/通用人工智能/强人工智能/超人工智能/超级智能/…`，并把**成对组合**（pair）用于布尔通道打分，融合到最终排序。`debug\query.txt` 会记录 `expanded_terms` 与 `combos`，可审计。
+### 4.3 多模态问答（启用 VLM）
+
+```powershell
+python -m src.query_cli `
+  --mode hybrid --smart-query --sqw 1.2 `
+  --vl-answer --max-images 3 --gen-timeout 60 `
+  --post-filter --pf-model "qwen2.5:3b-instruct" --pf-workers 6 `
+  --top 12 --num-ctx 16000 --ctx-chars 900 `
+  --debug-dir "C:\MyNotion\new_multimodal_agentic_graphrag\debug\metaverse-vl" `
+  --model "qwen2.5vl:latest" `
+  "元宇宙Metaverse架构师 说了什么"
+```
 
 ---
 
-## 4) 质量提升思路（已经内置）
-- **多通道融合**：词面 TF-IDF、字 n-gram、语义向量、图像向量、关键词组合布尔（新）。
-- **中文增强**：字符 n-gram 扩到 `[2,6]`；空白/编码容错；HTML 标题/目录抽取。
-- **图片可见性**：OCR 文本进入文本通道（不依赖字幕也能命中）；CLIP 跨模态检索保留。
-- **可观测性**：`debug/` 落盘记录关键参数与候选；可快速调权重。
+## 5. 三段式流水线说明
+
+1) **RAG 召回**：文本语义（Ollama `/api/embed`）+ 文件名/路径布尔 + 中文 char/n-gram 模糊 +（可选）OpenCLIP 图像向量；
+   对命中节点进行 **link hop** 与 **同文件夹邻居** 扩展，输出 `debug\candidates.json`。  
+   > `/api/generate` 的 `images` 字段用于多模态；`/api/embed` 支持单条或批量输入。citeturn4view0
+
+2) **并行过滤 & 预处理**：以 `qwen2.5:3b-instruct` 做 **“任意相关即保留”** 判别（并发可配），清洗噪声/重复，输出 `debug\filtered.json`。
+
+3) **最终回答**：文本或多模态（`--vl-answer`）生成答案，**严格只在末尾输出一个“参考”段**，编号从 `[1]` 开始，
+   路径为 **Windows 绝对路径**，去除 `\\?\` / `\?` 等前缀；如 LLM 不可用则优雅降级并输出参考编号。
 
 ---
 
-## 5) 常见问答
-- **为什么之前没命中 AGI/ASI？**  
-  原因通常是：你的库里中文文档更常写“通用人工智能/强人工智能”等，而纯 `AGI/ASI` 英文缩写较少；现已自动**同义词扩展**与**组合布尔**打分，大幅提升召回。
-- **OCR 很多图片文本也参与检索了吗？**  
-  是的。打开 `enable_ocr: true` 后，图片的 OCR 文本会在 `chunks.jsonl` 生成对应记录（`modality: image_ocr`），与普通文本一样被嵌入与 TF-IDF 化。
+## 6. 常见报错与修复
+
+- **Ollama 500 或超时**：自动重试与降级；请先执行 `.\scripts\sanity_checks.ps1` 查看端口/模型。
+- **TesseractNotFoundError**：请安装 Windows 版 Tesseract，并将 `config.yaml.ocr_tesseract_cmd` 指向 `tesseract.exe`。详见修复思路。citeturn0search14turn0search9
+- **OpenCLIP 离线加载**：通过 `--clip-local` 传入 checkpoint 路径（`open_clip.create_model_and_transforms(..., pretrained=<ckpt_path>)` 支持本地权重）。citeturn0search2turn5search10
+- **FAISS 不可用**：自动回退到 **纯 NumPy TopK** 检索，功能不受影响（仅速度略慢）。
 
 ---
 
-## 6) 速度与稳定性
-- ingest/嵌入/图像索引均带进度条；并发+memmap；OpenCLIP AMP 混精度。  
-- Windows 长路径 `\\?\` 兼容；坏图回退白图不阻塞。
+## 7. 内置 Prompt 模板
+
+**Smart-Query（检索预处理）**  
+见 `src/utils.py: SMART_QUERY_PROMPT`。 
+
+**Post-Filter（并行判别，宁可多留）**  
+见 `src/post_filter.py: FILTER_PROMPT`。
+
+**Final-Answer（严格单一“参考”段）**  
+见 `src/query_cli.py: FINAL_ANSWER_PROMPT`。
 
 ---
 
-## 7) 许可证
-MIT
+## 8. 自测与单元测试
+
+运行：
+
+```powershell
+python -m pytest -q
+```
+
+覆盖：路径归一化、HTML/MD 链接解析、ingest 产物格式、并行过滤保留策略、引用编号去重等。
+
+---
+
+## 9. 许可
+
+MIT。仅示范工程结构与实现模式，请按需二次开发。

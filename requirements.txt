@@ -1,18 +1,22 @@
-tqdm
-requests
-numpy
-joblib
-scikit-learn
-pyyaml
-beautifulsoup4
-lxml
-pdfminer.six
-pypdf
-pillow
-pytesseract
-open-clip-torch
-torch
-torchvision
-python-docx
-openpyxl
-python-pptx
+# 轻量优先；如你已安装 torch/cuda，可跳过或保留本项
+requests>=2.31.0
+tqdm>=4.66.4
+numpy>=1.26.4
+regex>=2023.12.25
+beautifulsoup4>=4.12.3
+lxml>=5.2.1
+Pillow>=10.3.0
+PyYAML>=6.0.1
+rich>=13.7.1
+# OCR（可选，默认关闭，需本地 tesseract 安装）
+pytesseract>=0.3.10
+# PDF 文本提取/渲染（可离线）
+pymupdf>=1.24.9
+# OpenCLIP（图像向量）+ PyTorch（如已安装可忽略）
+open_clip_torch>=3.2.0
+# faiss-cpu（如果安装失败会自动降级为 numpy TopK）
+faiss-cpu>=1.8.0.post1; platform_system == "Windows"
+# 交叉重排（可选）
+sentence-transformers>=3.0.1
+rapidfuzz>=3.9.6
+pytest>=8.2.0

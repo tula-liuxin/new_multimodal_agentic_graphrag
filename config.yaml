@@ -1,0 +1,53 @@
+# 全局配置（可被 CLI 参数覆盖）
+roots:
+  - "C:\\MyNotion\\MyNotion20251007"
+
+data_dir: "data"          # 结构化产物输出目录（相对工程根）
+debug_dir: "debug"        # 调试与会话产物
+
+enable_ocr: false         # OCR 默认关闭（需要本地安装 tesseract）
+ocr_tesseract_cmd: "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+ocr_merge_into_text: true # OCR 文本合并到文本块；false 则生成独立 OCR 块
+
+ollama:
+  host: "http://127.0.0.1:11434"
+  timeout: 30
+  retries: 2
+
+models:
+  embed_model: "bge-m3:latest"
+  embed_model_fallback: "nomic-embed-text:latest"
+  filter_model: "qwen2.5:3b-instruct"
+  text_llm: "qwen3:4b-instruct-2507-fp16"
+  vl_llm: "qwen2.5vl:latest"
+
+openclip:
+  local_path: "C:\\MyNotion\\new_multimodal_agentic_graphrag\\models\\openclip\\CLIP-ViT-L-14-laion2B-s32B-b82K"
+  device: "auto" # auto/cuda/cpu
+
+concurrency:
+  io_workers: 8
+  embed_batch: 32
+  filter_workers: 6
+  image_batch: 16
+
+index:
+  use_faiss: true
+  dim_hint: 1024
+  save_dir: "index"   # 相对工程根保存向量/索引
+
+query_defaults:
+  mode: "hybrid"
+  neighbors: 2
+  folder_neighbors: 2
+  link_hop: true
+  link_depth: 2
+  top_k: 20
+  num_ctx_tokens: 20000
+  ctx_chars_per_chunk: 1200
+  wtext: 1.0
+  wimg: 0.25
+  wbool: 0.8
+  wfuzzy: 0.8
+  smart_query: true
+  smart_query_weight: 1.2
