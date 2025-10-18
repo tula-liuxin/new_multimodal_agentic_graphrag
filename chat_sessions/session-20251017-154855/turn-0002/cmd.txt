@@ -1,9 +1,0 @@
-C:\MyNotion\.venv\Scripts\python.exe -m src.query_cli --mode hybrid --smart-query --sqw 1.2 --text-first 6 --wtext 1.0 --wimg 0.25 --wbool 0.7 --wfuzzy 0.6 --neighbors 2 --folder-neighbors 2 --link-hop --link-depth 2 --expand-parent --sibling-span 1 --post-filter --pf-model qwen2.5:3b-instruct --pf-workers 6 --pf-timeout 15 --pf-min-keep 6 --top 8 --num-ctx 18000 --ctx-chars 1000 --embed-model bge-m3:latest --gen-timeout 180 --temperature 0.2 --llm-num-ctx 8192 --model qwen3:4b-instruct-2507-fp16 --ollama-host http://127.0.0.1:11434 --debug-dir chat_sessions\session-20251017-154855\turn-0002 [对话摘要]
-主题：AI Agent的路径、技术与护城河  
-关键实体：AI Agent、RAG（检索增强生成）、多模态、图数据库、技术路径  
-用户偏好/约束：聚焦技术实现路径与竞争壁垒，需明确可落地的技术方案与差异化优势  
-未解决目标：未能生成有效内容，系统因Unicode编码错误（cp1252）中断，需修复环境以支持中文字符输出  
-状态：生成失败，依赖环境修复（编码兼容性问题）
-
-[当前问题]
-python -m src.chat_cli --config chat_config.yaml
