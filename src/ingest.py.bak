@@ -1,0 +1,159 @@
+from __future__ import annotations
+# -*- coding: utf-8 -*-
+"""
+Ingest ä¿®å¤ï¼š
+- ä»»ä½•æ–‡ä»¶ I/O ç”¨ safe_io_path
+- os.stat å¤±è´¥æ—¶å¯å‘å¼é‡å®šä½ï¼ˆutils.try_statï¼‰
+- å¯å…³é—­ thin-page è¿‡æ»¤ï¼›è¾“å‡ºä¸¢å¼ƒåŽŸå› æŠ¥å‘Š
+- ç”Ÿæˆ chunks.jsonl / images.jsonl / links.jsonl
+"""
+import os, re, json, time, traceback
+from typing import List, Dict, Any, Tuple
+from bs4 import BeautifulSoup
+from tqdm import tqdm
+
+from .utils import path_normalize, safe_io_path, try_stat, write_jsonl, load_file_text, sha1_of_path
+from .html_cleaner import html_to_text
+
+ALLOW_TEXT = {'.html','.htm','.md','.txt'}
+ALLOW_IMG  = {'.png','.jpg','.jpeg','.gif','.webp','.bmp'}
+ALLOW_PDF  = {'.pdf'}
+
+def _scan_files(roots: List[str]) -> List[str]:
+    paths = []
+    for r in roots:
+        r = path_normalize(r)
+        for dirpath, _, files in os.walk(safe_io_path(r)):
+            for fn in files:
+                ext = os.path.splitext(fn)[1].lower()
+                if ext in ALLOW_TEXT.union(ALLOW_IMG).union(ALLOW_PDF):
+                    paths.append(path_normalize(os.path.join(dirpath, fn)))
+    return paths
+
+def _extract_links_from_html(path_or_html: str, base_dir: str) -> List[Tuple[str,str,str]]:
+    """è¿”å›ž [(src_abs, dst_abs, type)]"""
+    text = load_file_text(path_or_html) if os.path.exists(safe_io_path(path_or_html)) else path_or_html
+    if not text:
+        return []
+    soup = BeautifulSoup(text, "lxml")
+    out = []
+    # a href
+    for a in soup.find_all('a'):
+        href = a.get('href')
+        if not href: 
+            continue
+        out.append((path_or_html, os.path.normpath(os.path.join(base_dir, href)), 'link'))
+    # img src
+    for im in soup.find_all('img'):
+        src = im.get('src')
+        if not src:
+            continue
+        out.append((path_or_html, os.path.normpath(os.path.join(base_dir, src)), 'image'))
+    return out
+
+def ingest(
+    roots: List[str],
+    out_dir: str,
+    enable_ocr: bool = False,
+    min_chars: int = 0,
+    no_thin_filter: bool = False,
+    save_why_drop: bool = False,
+    debug_dir: str = None,
+) -> Dict[str, Any]:
+    roots = [path_normalize(r) for r in roots]
+    print(f"Ingest å¼€å§‹  roots={roots}")
+    files = _scan_files(roots)
+    chunks, images, links = [], [], []
+    dropped = []
+
+    for p in tqdm(files, desc="[Ingest] æ‰«æ/è§£æž"):
+        st, fixed = try_stat(p, roots=roots)
+        if not st or not fixed:
+            dropped.append({"path": p, "reason": "stat_fail"})
+            continue
+        p = fixed
+        ext = os.path.splitext(p)[1].lower()
+        rel = os.path.relpath(p, roots[0]) if len(roots)==1 else os.path.basename(p)
+
+        if ext in ALLOW_TEXT:
+            try:
+                if ext in ('.html','.htm'):
+                    text = html_to_text(p)
+                else:
+                    text = load_file_text(p) or ""
+                text = text.replace('\r\n','\n').strip()
+                if not text:
+                    dropped.append({"path": p, "reason": "empty_text"})
+                    continue
+                if not no_thin_filter and min_chars>0 and len(text) < min_chars:
+                    dropped.append({"path": p, "reason": f"thin_page(<{min_chars})"})
+                    # ä»ç„¶å¯ä»¥é‡‡é›†é“¾æŽ¥å›¾
+                # é“¾æŽ¥å›¾
+                try:
+                    base = os.path.dirname(p)
+                    for src, dst, tp in _extract_links_from_html(p, base):
+                        links.append({"src": path_normalize(src), "dst": path_normalize(dst), "type": tp})
+                except Exception:
+                    pass
+                # æ–‡æœ¬åˆ†å—ï¼ˆç®€å•æŒ‰ 800-1200 å­—è¿‘ä¼¼ï¼‰
+                CHUNK = 1000
+                s = 0; idx = 0
+                n = len(text)
+                while s < n:
+                    e = min(n, s + CHUNK)
+                    chunk = text[s:e].strip()
+                    if chunk:
+                        chunks.append({
+                            "id": f"{sha1_of_path(p)}|{idx}",
+                            "path": path_normalize(p),
+                            "rel": rel,
+                            "mtime": int(os.path.getmtime(safe_io_path(p))),
+                            "chunk_id": idx,
+                            "text": chunk,
+                            "title": os.path.splitext(os.path.basename(p))[0],
+                        })
+                        idx += 1
+                    s = e
+            except Exception as ex:
+                dropped.append({"path": p, "reason": f"html_error:{type(ex).__name__}"})
+                continue
+        elif ext in ALLOW_IMG:
+            try:
+                images.append({
+                    "path": path_normalize(p),
+                    "rel": rel,
+                    "sha1": sha1_of_path(p),
+                    "mime": f"image/{ext[1:]}"
+                })
+                # å¯é€‰ OCR åœ¨ä½ çŽ°æœ‰æµç¨‹å¤„ç†
+            except Exception as ex:
+                dropped.append({"path": p, "reason": f"img_error:{type(ex).__name__}"})
+        elif ext in ALLOW_PDF:
+            # ä»…ç™»è®°èŠ‚ç‚¹ï¼›OCR ç”±ä½ çŽ°æœ‰æ¨¡å—å¤„ç†
+            images.append({
+                "path": path_normalize(p),
+                "rel": rel,
+                "sha1": sha1_of_path(p),
+                "mime": "application/pdf"
+            })
+
+    os.makedirs(out_dir, exist_ok=True)
+    c = write_jsonl(os.path.join(out_dir, "chunks.jsonl"), chunks)
+    i = write_jsonl(os.path.join(out_dir, "images.jsonl"), images)
+    l = write_jsonl(os.path.join(out_dir, "links.jsonl"), links)
+
+    report = {
+        "chunks": c,
+        "images": i,
+        "links": l,
+        "dropped": len(dropped),
+    }
+    if save_why_drop and debug_dir:
+        os.makedirs(debug_dir, exist_ok=True)
+        from .utils import write_jsonl as _wj
+        _wj(os.path.join(debug_dir, "dropped.jsonl"), dropped)
+        with open(safe_io_path(os.path.join(debug_dir, "ingest_report.json")), 'w', encoding='utf-8') as f:
+            json.dump(report, f, ensure_ascii=False, indent=2)
+
+    print(f"[Ingest] å†™å‡º chunks={c}, images={i}, links={l}, dropped={len(dropped)}")
+    return report

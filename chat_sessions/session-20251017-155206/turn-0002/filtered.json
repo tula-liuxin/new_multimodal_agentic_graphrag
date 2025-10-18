@@ -1,0 +1,250 @@
+[
+  {
+    "id": "8e5aafcb56e83ae7fd9e71638381f0d8cee02d63|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87.html|3",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87.html",
+    "title": "",
+    "chunk_id": 3,
+    "text": "牛客机试\nML & AI Agent & LLM & LMM & RL 知识点\\基础复习和面经\\八股\n优化工作流&信息流优化\\日程，去芜存菁\n12月 经营自己的社交软件  |\n11月 找工作（现在最适合做ai研究的地方不是学校，而是工业界！虽然没有论文很难，但是必须要迈出这一步，如果不行就得赶紧考博了，考一线城市的大学，不在乎学校，考博后随时准备跳槽到大公司：积极积累和准备面试）\n每一天\n2025年\n10月\n10.14\nRAG系统：多模态检索要成功（至少ocr要成功）\n工作流优化\neureka发现\n怎么使用好gpt5（而不是做gpt5的测试员）\n9-10月\n答辩\n推进3~6家的求职流程：\n准备华为的od机试，积极推进\n每天至少5题\n| 找工作 | ai agent彻底入门，并做一个demo（配合gpt快速学习和做demo）：MCP、RAG、强化学习的执行组件&路由组件的探索、ai其它组件探索（自己设计并训练的组件）\nlanggraph架构V1（MVP） 完成\n~10.15 三天做出V1\n文本RAG\nprerequisite建立 （以后拆解）\n并行 multi-agent 模块\n协调agent\nnotion agent\n前置知识 agent\n计划 agent\n最终回答 agent\n实现增量处理数据、文件，并避免出错\nAgentic search\nsource\n构建长期记忆功能\nsource\nsearch功能\n强化学习模块：agent调度（路由、invoke、关闭）、数据&文件维护\n学习模块（PC\\energy-based model+RL方法）\n资讯模块\n效果示例\n找ML\\DL\\RL\\AI八股资料（小红书、github、知乎、问gpt5）\n调研coze\\dify\\n8n\\fastGPT\\RAGflow\n不要成为“调包侠”，去做一个大项目\n优化沟通技巧，至少做到有来有回，例如：也去提建议、提方法，去提问题，去主动开拓话题、深入沟通\nSlides 介绍自己的工作、技能\nbefore\n8月（成功找到工作，找工作为主、自由职业为辅） 改简历（1. LLM相关；2. 强化学习相关；3. ai agent相关）、找工作、先找工作再顾论文。简历准备2~5个版本，其中必须含两份关于强化学习+RL：1. 实事求是，不乱写简历；2. 尽可能多写实习，工作是不能写的、论文是不能写的；\n8.9~8.11 简历框架完善，并投30份以上\n7月\n研究方向确定：LLM，方向越小越好、模型越小越好（只关注于小模型，<1B），目标是毕业而不是做出成果！\n|\n复刻考研高考状态！很紧急，必须要毕业！顶住所有压力，全力取得双证！\n第一时间\n不开始，则永远不能开始\n| 实验+论文初稿（至少是框架）完成 ｜ 赶紧检查自己的毕业要求有没有遗漏，避免意外  |\n结业流程搞清楚！",
+    "score": 0.21
+  },
+  {
+    "id": "cb5bd575cf956733639c49f8c61a0021dba87ada|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\\Git 28bc6684d364807ea6f7c9e32d100022.html|2",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\\Git 28bc6684d364807ea6f7c9e32d100022.html",
+    "title": "",
+    "chunk_id": 2,
+    "text": "# 覆盖 main\ngit reset --hard v0.1.0\ngit push origin main --force-with-lease\n想回到覆盖前：用上面的备份分支/标签再 reset --hard + --force-with-lease 即可。\n五、把“当前分支的状态”变成远端 main\n在 main 上改的\n：直接\ngsave\n。\n在其它分支上改的\n：\n合并（推荐协作）\ngsave \"ready to merge\"\ngit switch main\ngit pull\ngit merge --ff-only <你的分支>    # 无法快进就先在你的分支：git rebase main\ngit push\n覆盖式（以现状为准）\ngsave \"promote current head to main\"\ngit push origin HEAD:main --force-with-lease\n六、Git LFS（你已经启用过，用于 >50MB/100MB 文件）\n一次性配置\ngit lfs install\ngit lfs track \"*.npy\"\ngit lfs track \"*.joblib\"\ngit add .gitattributes\ngit commit -m \"chore: enable Git LFS for npy/joblib\"\n把历史中的大文件也迁到 LFS（已做过）\ngit lfs migrate import --include=\"*.npy,*.joblib\"\ngit push -u origin main --force\n切版本后拉取大文件\ngit lfs pull\n七、常见提示/错误怎么处理（你遇到过的）\nCRLF/LF 提示\n：无碍。你已设\ngit config --global core.autocrlf true\nPush Protection：密钥被拦\n处理方式：从文件中删掉 → 新建提交；或按 GitHub 提供的链接临时放行（但建议删掉/更换密钥）。\n大文件被拒（>100MB）\n：用 LFS（见上）。\nTLS/SSL 报错\n（比如 unexpected EOF）：可尝试\ngit config --global http.sslBackend schannel\ngit config --global http.version HTTP/1.1\ngit push\nPython not found\n：安装 Python 后（或用\npy\n）并激活虚拟环境：",
+    "score": 0.21
+  },
+  {
+    "id": "cc35ba2c9632e358df56e1ff7a8a0db710c1d4f3|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\\RL bfcc364b119145be9df6b1249dc682c9\\张伟楠动手学RL（视频+书） 94a4ca6ace7441acb47559ed62a773c5\\推荐算法之Thompson(汤普森)采样 4d2c7b92b96c4238bd5550f4e056479e.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\\RL bfcc364b119145be9df6b1249dc682c9\\张伟楠动手学RL（视频+书） 94a4ca6ace7441acb47559ed62a773c5\\推荐算法之Thompson(汤普森)采样 4d2c7b92b96c4238bd5550f4e056479e.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "推荐算法之Thompson(汤普森)采样\n推荐算法之Thompson(汤普森)采样\n如果想理解汤普森采样算法，就必须先熟悉了解贝塔分布。\n一、Beta(贝塔)分布\nBeta分布是一个定义在[0,1]区间上的连续概率分布族，它有两个正值参数，称为形状参数，一般用α和β表示，Beta分布的概率密度函数形式如下：\n这里的Γ表示gamma函数。\nBeta分布的均值是：\n方差：\nBeta分布的图形(概率密度函数)：\n从Beta分布的概率密度函数的图形我们可以看出，Beta分布有很多种形状，但都是在0-1区间内，因此Beta分布可以描述各种0-1区间内的形状（事件）。因此，它特别适合为某件事发生或者成功的概率建模。同时，当α=1，β=1的时候，它就是一个均匀分布。\n贝塔分布主要有 α和 β两个参数，这两个参数决定了分布的形状，从上图及其均值和方差的公式可以看出：\n1）α/(α+β)也就是均值，其越大，概率密度分布的中心位置越靠近1，依据此概率分布产生的随机数也多说都靠近1，反之则都靠近0。\n2）α+β越大，则分布越窄，也就是集中度越高，这样产生的随机数更接近中心位置，从方差公式上也能看出来。\n二、举例理解Beta分布\n贝塔分布可以看作是一个概率的分布，当我们不知道一个东西的具体概率是多少时，它给出了所有概率出现的可能性大小，可以理解为概率的概率分布。\n以棒球为例子：\n棒球运动的一个指标就是棒球击球率，就是用一个运动员击中的球数除以总的击球数，一般认为0.27是一个平均的击球水平，如果击球率达到0.3就会认为非常优秀了。如果我们要预测一个棒球运动员，他整个赛季的棒球击球率，怎么做呢？你可以直接计算他目前的棒球击球率，用击中数除以击球数。但是，这在赛季开始阶段时是很不合理的。假如这个运动员就打了一次，还中了，那么他的击球率就是100%；如果没中，那么就是0%，甚至打5、6次的时候，也可能运气爆棚全中击球率100%，或者运气很糟击球率0%，所以这样计算出来的击球率是不合理也是不准确的。\n为什么呢？\n当运动员首次击球没中时，没人认为他整个赛季都会一次不中，所以击球率不可能为0。因为我们有先验期望，根据历史信息，我们知道击球率一般会在0.215到0.36之间。如果一个运动员一开始打了几次没中，那么我们知道他可能最终成绩会比平均稍微差一点，但是一般不可能会偏离上述区间，更不可能为0。\n如何解决呢？\n一个最好的方法来表示这些先验期望（统计中称为先验（prior））就是贝塔分布，表示在运动员打球之前，我们就对他的击球率有了一个大概范围的预测。假设我们预计运动员整个赛季的击球率平均值大概是0.27左右，范围大概是在0.21到0.35之间。",
+    "score": 0.21
+  },
+  {
+    "id": "caa1168810f8cfb1ac1d29bae5b40b2f15919ba6|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\\Diary （准备ai agent的项目，很多公司都在招，还能拿去写论文。2025 8-2026 4 297f5afec8224f8f913a0d8b3d428d41.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\\Diary （准备ai agent的项目，很多公司都在招，还能拿去写论文。2025 8-2026 4 297f5afec8224f8f913a0d8b3d428d41.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "Diary （准备ai agent的项目，很多公司都在招，还能拿去写论文。2025.8-2026.4 all in ai agent，且越简单越好）（每天2h找工作，4h做个人项目&写论文）GET your HANDS DIRTY. EXPAND your teams and refine it either.\nDiary （准备ai agent的项目，很多公司都在招，还能拿去写论文。2025.8-2026.4 all in ai agent，且越简单越好）（每天2h找工作，4h做个人项目&写论文）GET your HANDS DIRTY. EXPAND your teams and refine it either.\nrecord\nmemo\n40-1m x3工作模式\n去芜存菁\n任何攻击、扶持都是我的能量来源 。逆商和合作能力\n===时间分配（最佳睡眠时间供参考；9am-9:30pm 学习工作；洗漱之后的颈椎维护；9:30pm-10:30am休息（不娱乐，只休息）；10:30pm-9am睡觉，0:30pm左右入睡）：学习&工作时长（稳定）>7.5h：3h机试（确保）+3h项目+1h简历（彻底搞透简历上的东西）+0.5复盘  | 世俗&婚姻&育孩&寿命&事业 | 生于忧患死于安乐（有条件） | 不工作还真是不务正业 |\n颈椎手册\n：10点+15点半  定时颈椎检查和护理；每40m走家里3圈 | 9am-10am投简历；12am-2pm机试(1)；2pm-4pm改简历&投简历；4pm-7pm机试（2）；7-8pm反思+计划&安排（随时检查招聘信息） ｜\n长期是积极预期，短期是真实预期，中期是二者结合\n|  纵然都是万分之一，但是其中一个是连续的一个是离散的 肯定选连续的啊！  ｜现在还有救，再继续堕落，我就真毁了！｜   先求生存，再求留在行业，而后求路线对口，最终求asi节点 |  一切事务，设置好红线、做好基础后，都以推进为要  | 要求不高：每周有五天番茄计时（学习&工作）7h+/day就够了，一周休息1~2天是可以理解的 | 少刷推荐系统的内容，多带着目的做事情，带着目的去学习、多投简历&面试。尽量高效学习、找工作，\n特别是高效休息\n|  晋升、跳槽晋升：关键在于乐意折腾  ｜\n2025.9.16\n决断彩票\n|  每40m的30s-1m短休息  | 实干-高瞻远瞩，两点一线  ｜无聊是因为闲的，得找让自己不无聊的实事做：找工作、学习、JD learning、机试、etc  | (ai agent→ 具身智能→asi)→大道  ｜\n竹竿效应\n| 统一向量到对的地方  | 一次熬夜可能需要好几天来调  ｜我需要钱、人才、设备、资源、数据，不需要娱乐（只需要休息） |  我的注意力：",
+    "score": 0.21
+  },
+  {
+    "id": "975cd61fdff6e16c6b9dbccffcbb5ff970f7eb2e|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\\应世事：一定要注意到版本更新和自己的微调（我还要追asi梦呢）。世俗、超脱、去私心、积极主动正向、伪 c993da432a974f1f924da3155dd2f451.html|5",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\\应世事：一定要注意到版本更新和自己的微调（我还要追asi梦呢）。世俗、超脱、去私心、积极主动正向、伪 c993da432a974f1f924da3155dd2f451.html",
+    "title": "",
+    "chunk_id": 5,
+    "text": "不对任何人负责（包括我父母和子女）和履行义务（除非躲不开，例如法律的束缚），而只去索取和体验。\n说话、办事要看场合和对象。\n社会乱象。共产党的：捂嘴、捂耳、捂眼、束手束脚。（姜萍事件可见）\n要与时俱进。该淘汰的中国文化就和传统医学、传统武术一样被淘汰，而不是守旧\n女人讨厌好色的吗？\n一个强大的、隔绝内外的内核（include 虚伪、坚定果断、锐利圆滑）\n情绪脱离地处于世事。泰山崩于前而不变色。\n生活中不要自证。永远不陷入自证陷阱（自证的成本过高，则没有自证的必要，自信就行了）\n世事之学的定性\n宁愿选择一个可敬强大的对手，也不要与恶犬缠斗。得自姜萍事件\n辩论和争论没有意义。调查、举证、实验才有的可信。逻辑除非严密如数学物理，不然逻辑推导强如化学和生物都值得怀疑，更不用说那群无知网友的争论了。（姜萍事件）\nUntitled\n我现在（2024/6/20）是反华/反共先锋：追求自由、积极主动向上、自然、大道、低熵体\n中文互联网：娱乐化/轻屑化（互联网已经筛选过滤了一次：倾向于闲人、找乐子的人、语出惊人的人、没重大影响力的人说话几乎不负责）\n说白了还是没有通行的方法、答案，所以众人才会纷纷扰扰的\n我遵纪守法，但是不讲道德，不受主流三观裹挟。且也过分不讨论三观、道德，不然在大众面前一开口就会被批，我何必？我的道德、三观是肯定和主流大有不同的。\n官方问题很大。大众也如此。不可受它们裹挟和控制\n世界就是弱肉强食、欺软怕硬。我一定要学会服软和妥协，不可受主流价值观裹挟。\n判断：逻辑、证据、前提、前置定理/公理/结论、错误归纳\n短期接触甚至瞬时接触（<一个星期）的人\n所谓的爱，就是不公平。他们是等价的\n什么是成熟？接受所有的脏、乱、差。\n变得圆滑：我的每次让步和妥协我都暗自从别处重新获取了。我相信所有的付出和退让都会有所应对。\n这群女人，打什么算盘，我一眼就看出来来了，只是在捧杀或者推尊她们罢了\n肥头大耳、包稳定姐的老女人破防。都是了解女人的绝佳案例\n建立好分别心、情绪＆精神＆心理等等的分割\n文人、政治\n法律是上层人的工具，下层人的枷锁。中国是极权、威权社会，我现在站自己，既不站台美，也不站中国\n早点看清社会真相很重要。但是也要知道小孩子需要快乐地成长。这个转折点对父母来说就是挑战啊！\n交朋友、找合作者一定要看整体利益。不要讲究私德。整体利益值得交，再培养感情、讲感情\n怎么让一个人有责任心？答：赋予决定和操作权和让他们对决定和操作的后果负责\n不要盲目把自己带入那些恶人。例如最近读金瓶梅\n世俗观、国家观\n外圆内方：对外圆滑，对内坚守自己的原则\n一定要自私，但是可以与做世俗之善不矛盾。\n不要受集体、国家、民族、人类、地球文明的集体价值观、道德观裹挟。要自私自利，关注自己、家人、徒弟、家族朋友、etc\n感情上，我真的希望有审判日且早点到来\n什么样的人会变成坏人：",
+    "score": 0.21
+  },
+  {
+    "id": "c7c4181b2e830d84f809eaf07983022de805a699|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\\自我定位&我的天赋；人生、榜样&励志激励系统 0cc083ee96c74841a08ce47cde62d4e6.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\\自我定位&我的天赋；人生、榜样&励志激励系统 0cc083ee96c74841a08ce47cde62d4e6.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "自我定位&我的天赋；人生、榜样&励志激励系统\n自我定位&我的天赋；人生、榜样&励志激励系统\n人生专业专注于：\n探索人类的智能、生物智能、人工智能、心理学&人文&社科（渔民之术：养之、御之）、宇宙关键的终极问题。最低要求：熟悉各种算法，能读懂最新论文并复现（如果有硬件条件），也就是要尽可能在已有资源下（包括已经保证了最起码得温饱、家庭幸福），做到最接近AGI，这是能做到的。\n一个探索于此道的现实主义者。也谈油盐酱醋、也谈孩子。总之，世俗的一切我都不畏惧。垃圾语文、政治，这些蹩脚的谎话！\n遇到进展不下去时：\n好好分析一下问题，至少搞清状况，不可以逃避。你可以慢慢做事，但是绝不可逃避去逛B站、知乎。这些都是害人的东西。\n找同样困苦的，或者更困苦的来学习，不过最好是找和我一样情况的人，而最好的则为同学。而不可学习纨绔子弟，原因也简单：我们家没那个条件。\n不过要学到核心和本质，不要学坏的部分。例如庞众望，为自然不可以学其捡垃圾、花太多时间陪父母之类的。不过也至少从其可知，捡垃圾、陪身体残疾的母亲不会真正决定性影响成绩。\n要会手段尽出，搏生机，死而后已。\n学习：朱元璋、王猛、庞众望、孙策（孙坚败亡后）、幼时我、年少我之部分等等。特点\n还学：桂敏、严广源、曹操。\n还更学：罗建祥、幼时刘沙、卢占林、世俗之人（势利之人）。\n反面教材：我叔（多疑无谋、嘴硬、世界观崩坏、善辨故无智、脆弱玻璃心、自视甚高却无才能、纨绔子弟之心而无其命、灭人我威风以期控制我却不得、嫉妒心强不能容他人成长、躲于人后不接受任何检验和评价、浑水摸鱼搅浑时局以滥竽充数、娇气矫情、懒惰、，其之弱点过多，不能数尽。和他为伍，简直是我之大不幸！）、卢凤勇（偏执、胸无点志、嫉妒他人、）；\n关键点：身经百战、勇猛、果断坚毅、多谋善断、坚强、open、幽默轻松、\n改变：我当自卑、自谦，也要绝不放过任何结交他人的机会，且要大胆表达和学习，自卑、自谦和自闭不是一个东西，也和多交流、多结交不矛盾。幽默，但当人能给出冷静意见时，要稍加赞许，不可阻塞忠言，但也不可过于嘉赏而使众人争相攻我。\n榜样是可以有的，而且是可以时刻更换的，也只需要有某个特质就足够了的。\n但是一定要透过表象去看内里、本质、根本。\n自我定位：一个agi研究者，实目前是际的robotics＆simulation＆llm＆lmm＆DRL＆coder学习和实践者，一个历史爱好者，一个博览群书，知晓有关智能、agi通识的人，一个毫无底线、外向open的人，一个促进团队凝聚，懂得止损的人，一个历史爱好者、心理学爱好者，一个控制引导他人的操纵者，一个极度耐心的人，一个既要也要能调和万物（哪怕是看似矛盾的诸物诸法）使各自发挥80%以上各种优势的人（例如锐意进取的极端和稳扎稳打的平衡，或是分时、分时机；或是分情况；或者分对象；）。一个关键枢纽级的人，自带魅力吸引人才的人。",
+    "score": 0.21
+  },
+  {
+    "id": "085198db50c7ee7631494446b1ccdedccacc3911|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87\\Projects（熟悉项目架构和功能、改进项目。同步包装这些内容） 1bec6684d3648060bf30e1586cde04c4\\基于llm实现一个流量（pcaps）的分析智能体，能够实现多种流量 异常识别。 263c6684d3648064a5dfe44577570cc2.html|2",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87\\Projects（熟悉项目架构和功能、改进项目。同步包装这些内容） 1bec6684d3648060bf30e1586cde04c4\\基于llm实现一个流量（pcaps）的分析智能体，能够实现多种流量 异常识别。 263c6684d3648064a5dfe44577570cc2.html",
+    "title": "",
+    "chunk_id": 2,
+    "text": "# 3) 跑\npython agent.py examples/sample_fixed.pcap\n打开.pcap文件\nsudo apt update\nsudo apt install -y wireshark tshark\n# 如果需要抓包（不是必须看文件），把自己加到 wireshark 组后重登：\n# sudo usermod -aG wireshark $USER",
+    "score": 0.21
+  },
+  {
+    "id": "f276eca6a48a25c7db34a7fe7b6a8e9b64e7b7aa|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Data ca825b1da3a94929b40d84466a7b9511\\QQ memo 645787ae82bc43a4a829fd70be494ee1\\clip 91ac37d171c1456f8923f1b955f2da18.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Data ca825b1da3a94929b40d84466a7b9511\\QQ memo 645787ae82bc43a4a829fd70be494ee1\\clip 91ac37d171c1456f8923f1b955f2da18.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "clip\nclip",
+    "score": 0.175
+  },
+  {
+    "id": "e7105ab8324291df7e1f0945fbaf6c3b53270988|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\\English study 426883119e3846c2a2b863dfc85edcbd\\correction 47c3607db6c44bc9ba35dcf1184b0add.html|2",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\\English study 426883119e3846c2a2b863dfc85edcbd\\correction 47c3607db6c44bc9ba35dcf1184b0add.html",
+    "title": "",
+    "chunk_id": 2,
+    "text": "。",
+    "score": 0.175
+  },
+  {
+    "id": "b422b37ccb69cda417d02b614caaec303d267af5|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87\\日记：计划、反思、嘱咐、提醒、记录(不追求完备，可以概括，但是尽量覆盖所有时间）Try your b 00ee6c7e7b5a4ad39ecae0a12376ff4b\\我的拨乱反正（Start from 2023 12 17, 呼应于上次不破不立，探于阴的自我反省和观 20dd042b99ea49698f0fb4630845c7de.html|6",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87\\日记：计划、反思、嘱咐、提醒、记录(不追求完备，可以概括，但是尽量覆盖所有时间）Try your b 00ee6c7e7b5a4ad39ecae0a12376ff4b\\我的拨乱反正（Start from 2023 12 17, 呼应于上次不破不立，探于阴的自我反省和观 20dd042b99ea49698f0fb4630845c7de.html",
+    "title": "",
+    "chunk_id": 6,
+    "text": "itions:",
+    "score": 0.175
+  },
+  {
+    "id": "60a83c72831a2909569e1cf0e935b94304c74aad|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\\Daily notes’ record 05a3174fe60a4e299f6b88269e2b1984\\-3 31 58bafb39dd4e46f19a98369ff0cb9b68\\metronome 9c84126955204e6baa31176514673532.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\\Daily notes’ record 05a3174fe60a4e299f6b88269e2b1984\\-3 31 58bafb39dd4e46f19a98369ff0cb9b68\\metronome 9c84126955204e6baa31176514673532.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "metronome\nmetronome",
+    "score": 0.13999999999999999
+  },
+  {
+    "id": "3877e341be823ebf377dfa45604eddf926ad2268|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Thinking lab To be brave and straightforward here 00c6eef31ac644d2b1229eef6a630438\\point 821d664ccfee4e9b95ba2a9f02894793\\tool b8e776a180ac471488e858b981b7e6db.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Thinking lab To be brave and straightforward here 00c6eef31ac644d2b1229eef6a630438\\point 821d664ccfee4e9b95ba2a9f02894793\\tool b8e776a180ac471488e858b981b7e6db.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "tool\ntool",
+    "score": 0.13999999999999999
+  },
+  {
+    "id": "7ea33aba8fc90da2d8f960c443ad9e89896a1e48|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\\before 06db04584825494b8b7234347418d699\\Deep learning 64b83b0e18b94160bd517a102ca1af8a\\chapter 4 5c5a061be0bd4c2bb11da526018cf3c9.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\\before 06db04584825494b8b7234347418d699\\Deep learning 64b83b0e18b94160bd517a102ca1af8a\\chapter 4 5c5a061be0bd4c2bb11da526018cf3c9.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "chapter 4\nchapter 4",
+    "score": 0.13999999999999999
+  },
+  {
+    "id": "0acfa2b0a472f10ebfab96837176651f5d26d6dc|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\\Intj 8330d2d86fb640f39c861026c0d4bb80.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\\Intj 8330d2d86fb640f39c861026c0d4bb80.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "Intj\nIntj",
+    "score": 0.13999999999999999
+  },
+  {
+    "id": "3cb65ee51309c4ef5feb668890be61f5530f1ae3|C:\\MyNotion\\MyNotion20251007\\Private & Shared\\People d3dc6684d36482dfb0d8014512d331ec\\tula 8c3c6684d36482e887cd81d823f07655.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\Private & Shared\\People d3dc6684d36482dfb0d8014512d331ec\\tula 8c3c6684d36482e887cd81d823f07655.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "tula\ntula",
+    "score": 0.13999999999999999
+  },
+  {
+    "id": "b8b42bd289db52942f02409886aae1414c79624d|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\\before 06db04584825494b8b7234347418d699\\major notes f886bdda7897455a90eca7a7c4fbee56\\robotics 602b4a8f6a094e049676b124c415ad06.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\\before 06db04584825494b8b7234347418d699\\major notes f886bdda7897455a90eca7a7c4fbee56\\robotics 602b4a8f6a094e049676b124c415ad06.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "robotics\nrobotics",
+    "score": 0.13611111111111107
+  },
+  {
+    "id": "1bf027f5a4d1cbbc9ba4e1d06eb90382a6b98b0b|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\\Chatgpt 00d2fe65ab2248f6a419e71d90d71a3d.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\\Chatgpt 00d2fe65ab2248f6a419e71d90d71a3d.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "Chatgpt\nChatgpt\nChatgpt prompts\nusage\nvpn",
+    "score": 0.1333333333333333
+  },
+  {
+    "id": "3e726bd75700c819016691ffd7c2a1ce514e2039|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\\before 06db04584825494b8b7234347418d699\\ChatGLM 16175791765249128647a9ac8cea661e.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\\before 06db04584825494b8b7234347418d699\\ChatGLM 16175791765249128647a9ac8cea661e.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "ChatGLM\nChatGLM\n量化 Int8 & Int4",
+    "score": 0.1320754716981132
+  },
+  {
+    "id": "79961d16e6584c01c465d45ec1f9a8e53ea2af0d|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\\A2A 284c6684d36480f69c4fdddf79abef66.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\\A2A 284c6684d36480f69c4fdddf79abef66.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "A2A\nA2A",
+    "score": 0.13124999999999998
+  },
+  {
+    "id": "6b2c0ecf552f400e615a00d902c6133e1a759a0d|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87\\Week plan introspection 887f6874956743d5820553748a5ae3fc.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87\\Week plan introspection 887f6874956743d5820553748a5ae3fc.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "Week plan\\introspection\nWeek plan\\introspection",
+    "score": 0.13124999999999998
+  },
+  {
+    "id": "2c9aba518051e7767c9f35ff39f65f8b5722fb63|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\\before 06db04584825494b8b7234347418d699\\磨菇属EasyRL c7a5bd276f8c4af0bc9dd41595e2051b.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\\before 06db04584825494b8b7234347418d699\\磨菇属EasyRL c7a5bd276f8c4af0bc9dd41595e2051b.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "磨菇属EasyRL\n磨菇属EasyRL\nChapter 1",
+    "score": 0.12833333333333333
+  },
+  {
+    "id": "9a6d4e47c12dc3d47a0711d8a7dc142c96178f48|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Thinking lab To be brave and straightforward here 00c6eef31ac644d2b1229eef6a630438\\point 821d664ccfee4e9b95ba2a9f02894793.html|3",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Thinking lab To be brave and straightforward here 00c6eef31ac644d2b1229eef6a630438\\point 821d664ccfee4e9b95ba2a9f02894793.html",
+    "title": "",
+    "chunk_id": 3,
+    "text": "situation:",
+    "score": 0.12727272727272726
+  },
+  {
+    "id": "5f75803411f6ec59297f11e26730dc64865588b8|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\\researches 1b2f0f9228244487a631d656ec14f9c2.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\\researches 1b2f0f9228244487a631d656ec14f9c2.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "researches\nresearches",
+    "score": 0.12727272727272726
+  },
+  {
+    "id": "41e847b99e04a9175a7ba1d415db4e64d1252f82|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\\before 06db04584825494b8b7234347418d699\\major notes f886bdda7897455a90eca7a7c4fbee56\\spatial computing f4e81e6334e2457c974478ffb7943595.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\\before 06db04584825494b8b7234347418d699\\major notes f886bdda7897455a90eca7a7c4fbee56\\spatial computing f4e81e6334e2457c974478ffb7943595.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "spatial computing\nspatial computing",
+    "score": 0.1263888888888889
+  },
+  {
+    "id": "88911fe8fa38947c70d2d9a553bf8dda2d8be2ac|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87\\Month plan introspection e2c92daadc6446189808bd19a2145bcf.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87\\Month plan introspection e2c92daadc6446189808bd19a2145bcf.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "Month plan\\introspection\nMonth plan\\introspection",
+    "score": 0.126
+  },
+  {
+    "id": "2d13f2ab95660185250bc9c61a272b3c392566cf|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\The before a2b44ccea0a341ee88e194a528467687\\first routine (old) 4b9055cbabbb46cca47e2d369a182778\\Presentation 3a0c6aa6c6b64a3b8dd35671fa86efa7.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\The before a2b44ccea0a341ee88e194a528467687\\first routine (old) 4b9055cbabbb46cca47e2d369a182778\\Presentation 3a0c6aa6c6b64a3b8dd35671fa86efa7.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "Presentation\nPresentation\n===\n1.9",
+    "score": 0.12352941176470586
+  },
+  {
+    "id": "705efd3e9f041428a3ec42ed661d2b08307b46df|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Thinking lab To be brave and straightforward here 00c6eef31ac644d2b1229eef6a630438\\point 821d664ccfee4e9b95ba2a9f02894793\\Outlooks （自私、多标不公平不对等、无道德、不尊男女德、绝不温良恭俭让、万物为工具、天下为驱 d1391b726e83426ba287f21393395024.html|4",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Thinking lab To be brave and straightforward here 00c6eef31ac644d2b1229eef6a630438\\point 821d664ccfee4e9b95ba2a9f02894793\\Outlooks （自私、多标不公平不对等、无道德、不尊男女德、绝不温良恭俭让、万物为工具、天下为驱 d1391b726e83426ba287f21393395024.html",
+    "title": "",
+    "chunk_id": 4,
+    "text": "ay.\nCorrections:",
+    "score": 0.12352941176470586
+  },
+  {
+    "id": "b91422620a04074f05ec675228b2f4fd973c95c5|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Data ca825b1da3a94929b40d84466a7b9511\\school passport 207c6684d364802f9579f54452a4ac32.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Data ca825b1da3a94929b40d84466a7b9511\\school passport 207c6684d364802f9579f54452a4ac32.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "school passport\nschool passport",
+    "score": 0.12031249999999999
+  },
+  {
+    "id": "7a7a5036b0c1ecfcc270fff536c1d2dffad17739|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\\English study 426883119e3846c2a2b863dfc85edcbd\\Chat b9fcb44425264524a13b80e3800f5e1c.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\\English study 426883119e3846c2a2b863dfc85edcbd\\Chat b9fcb44425264524a13b80e3800f5e1c.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "Chat\nChat\nInformation\nactivities\npreface",
+    "score": 0.1195121951219512
+  },
+  {
+    "id": "6e72c9bc48ebeb20bf2a39f180efd4ce24f0abac|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Data ca825b1da3a94929b40d84466a7b9511\\QQ memo 645787ae82bc43a4a829fd70be494ee1\\主题： ae390cb095354e3e8e45afbb5139ed46.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\Data ca825b1da3a94929b40d84466a7b9511\\QQ memo 645787ae82bc43a4a829fd70be494ee1\\主题： ae390cb095354e3e8e45afbb5139ed46.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "主题：\n主题：\nfreedom、nature and original",
+    "score": 0.11886792452830189
+  },
+  {
+    "id": "b4679bbfbdbb288f66cce9c9ef4c116363cdad78|C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\CET 6 d94dfd9672ad4514879a858e04624b54.html|0",
+    "path": "C:\\MyNotion\\MyNotion20251007\\General\\8e013ea47a3f41239c340faf1b0128ac\\CET 6 d94dfd9672ad4514879a858e04624b54.html",
+    "title": "",
+    "chunk_id": 0,
+    "text": "CET 6\nCET 6",
+    "score": 0.11666666666666667
+  }
+]

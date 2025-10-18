@@ -11,7 +11,7 @@ ocr_merge_into_text: true # OCR 文本合并到文本块；false 则生成独立
 
 ollama:
   host: "http://127.0.0.1:11434"
-  timeout: 30
+  timeout: 30000
   retries: 2
 
 models:
@@ -42,7 +42,7 @@ query_defaults:
   folder_neighbors: 2
   link_hop: true
   link_depth: 2
-  top_k: 20
+  top_k: 5
   num_ctx_tokens: 20000
   ctx_chars_per_chunk: 1200
   wtext: 1.0

@@ -1,0 +1,8 @@
+{
+  "model": "qwen3:4b-instruct-2507-q4_K_M",
+  "temperature": 0.2,
+  "num_ctx": 32768,
+  "num_predict": 1536,
+  "timeout": 600,
+  "host": "http://127.0.0.1:11434"
+}

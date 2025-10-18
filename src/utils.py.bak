@@ -1,0 +1,63 @@
+from __future__ import annotations
+import os, re, json, hashlib
+
+def path_normalize(p: str) -> str:
+    if not p:
+        return p
+    p = os.path.abspath(os.path.normpath(p))
+    # strip \\?\ prefix if present
+    if p.startswith('\\\\?\\'):
+        p = p[4:]
+    return p
+
+def safe_io_path(p: str) -> str:
+    """Return a Windows long-path-safe path for file I/O when needed."""
+    if not p:
+        return p
+    p = os.path.abspath(os.path.normpath(p))
+    if os.name == 'nt':
+        # add \\?\ if very long and has drive letter prefix
+        if (not p.startswith('\\\\?\\')
+            and len(p) >= 248
+            and re.match(r'^[A-Za-z]:\\', p)):
+            return '\\\\?\\' + p
+    return p
+
+def try_stat(p: str):
+    try:
+        return os.stat(p)
+    except OSError:
+        return None
+
+def write_jsonl(path: str, rows: list[dict], ensure_ascii: bool = False) -> None:
+    path = safe_io_path(path)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w', encoding='utf-8', newline='\n') as f:
+        for r in rows:
+            f.write(json.dumps(r, ensure_ascii=ensure_ascii, separators=(',', ':')) + '\n')
+
+def load_file_text(path: str) -> str:
+    path = safe_io_path(path)
+    with open(path, 'rb') as f:
+        b = f.read()
+    # UTF-8 BOM
+    if b.startswith(b'\xef\xbb\xbf'):
+        return b.decode('utf-8-sig', errors='ignore')
+    for enc in ('utf-8', 'gb18030', 'gbk', 'utf-16'):
+        try:
+            return b.decode(enc)
+        except UnicodeDecodeError:
+            continue
+    return b.decode('utf-8', errors='ignore')
+
+def sha1_of_path(p: str) -> str:
+    h = hashlib.sha1()
+    p2 = safe_io_path(p)
+    try:
+        with open(p2, 'rb') as f:
+            for chunk in iter(lambda: f.read(65536), b''):
+                h.update(chunk)
+    except OSError:
+        # fallback: hash the path string
+        h.update(p.encode('utf-8', errors='ignore'))
+    return h.hexdigest()
