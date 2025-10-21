@@ -1,0 +1,18 @@
+{
+  "turn_dir": "chat_sessions\\my-session-20251021-152140\\turn-0004",
+  "effective_question": "总结上面内容？有几次对话，每次摘要是什么？",
+  "answer_txt": "chat_sessions\\my-session-20251021-152140\\turn-0004\\answer.txt",
+  "returncode": 0,
+  "python_exec": "C:\\MyNotion\\.venv\\Scripts\\python.exe",
+  "built_cmd": "(conversation summarizer; no query_cli)",
+  "filtered_json": null,
+  "candidates_json": null,
+  "stage0_keywords": null,
+  "console_log": null,
+  "turn_files_jsonl": "chat_sessions\\my-session-20251021-152140\\turn-0004\\turn_files\\rag_clean.jsonl",
+  "turn_files_md": "chat_sessions\\my-session-20251021-152140\\turn-0004\\turn_files\\rag_clean.md",
+  "turn_summary": "chat_sessions\\my-session-20251021-152140\\turn-0004\\turn_summary.txt",
+  "chat_summary": "chat_sessions\\my-session-20251021-152140\\summary.txt",
+  "transcript": "chat_sessions\\my-session-20251021-152140\\transcript.jsonl",
+  "parsed_json": "chat_sessions\\my-session-20251021-152140\\turn-0004\\parsed.json"
+}

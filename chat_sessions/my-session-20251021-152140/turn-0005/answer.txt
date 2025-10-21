@@ -1,0 +1,64 @@
+要点：
+
+1. **提到的人**：  
+   - tula（多次出现，作为自我表达和思考的主体）  
+   - 张雪峰（被提及作为教育背景的反例）  
+   - 罗璇（被提及与“处女情结”相关）  
+   - 学校导师（被提及作为潜在的学术指导者）  
+   - LLM小组成员（被提及作为技术讨论的潜在参与者）  
+   - 朋友、父母的朋友（被提及作为学术思路的来源）  
+   - “非处女”或“处女”女性（在“我对部分人的报复”中被作为对象讨论）  
+
+2. **提到的事**：  
+   - 颈椎病（c3-5椎间盘突出，小关节磨损）  
+   - 左脚中指麻木（作为身体异常的记录）  
+   - 3点面试（具体时间点的事件）  
+   - 空窗期（在招聘中被提及，作为职业中断的解释）  
+   - 英语学习与社交（作为主要学习路径）  
+   - 招聘简历投递（计划投递5份以上AI相关简历）  
+   - 具身智能（embodied AI）的研究计划与学习路径  
+   - AI Agent的构建（包括项目开发、功能设计、工具使用）  
+   - 项目复盘（每周、每月、每年的复盘模板）  
+   - 技术学习路径（如PyTorch、RAG、LangChain）  
+   - 与导师沟通、论文撰写、实验参与（学术路径）  
+   - 买彩票的决定（双色球、大乐透的戒断）  
+   - 与父母的沟通（“告我父书”中提及）  
+
+3. **提到的话题**：  
+   - 自主神经系统（交感神经与迷走神经）  
+   - 学习效率与状态切换（白天与夜晚的节奏）  
+   - 工具主义哲学（将道德、人性、欲望、恶等视为可利用的工具）  
+   - 人性与欲望的利用（性欲、征服欲、贪婪、自私等）  
+   - 情绪管理与“动弹阈值”（行动意愿的提升）  
+   - 真实性与实用主义（反对虚假、浮华，追求真实、规律）  
+   - 学习方法论（频繁轻松开始、自然状态、复盘机制）  
+   - 职业发展路径（AI方向、科研、创业、就业）  
+   - 语言与表达的局限性（言语表达是工具也是镣铐）  
+   - 个人价值观（婚姻、处女情结、性与权力的关系）  
+   - 科研腐败与学术诚信（对“小学生”参与论文的批判）  
+   - 技术趋势判断（RL是否被淘汰、LLM+RL方向）  
+   - 人生规划与长期路线（主干路线、分叉路径、树状结构）  
+   - 与外部世界的反馈机制（亲密关系、社交、检验系统）  
+
+归纳：  
+用户在上下文中提到了具体人物（如tula、张雪峰、罗璇、导师等）、具体事件（如颈椎病、3点面试、空窗期、买彩票等）以及广泛而深刻的话题，涵盖生理健康、职业发展、学习方法、哲学思辨、人际关系、技术路径与自我认知。这些内容围绕“真实、工具、效率、成长”展开，体现了一种高度自我驱动、理性化、工具主义导向的个人发展体系，同时包含对人性、欲望、社会结构的批判性思考。
+
+参考：[1] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87.html
+
+参考：
+[1] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87.html
+[2] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Data ca825b1da3a94929b40d84466a7b9511\QQ memo 645787ae82bc43a4a829fd70be494ee1\工具 自信、调众（尊重大众）、成熟（和光同尘）、抽象能力、自然 86884229a29d41719528bf23f90857c5.html
+[3] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\prompt 191c6684d36480ae857ec3aa831cee61.html
+[4] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\工作&简历（准备ai agent的项目，很多公司都在招，还能拿去写论文。2025 8-2026 4  24bc6684d364806d8b94fe072e7fa6d3\招聘问空窗期 262c6684d36480c5b7dafafa13e4d481.html
+[5] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Thinking lab To be brave and straightforward here 00c6eef31ac644d2b1229eef6a630438\point 821d664ccfee4e9b95ba2a9f02894793\Outlooks （自私、多标不公平不对等、无道德、不尊男女德、绝不温良恭俭让、万物为工具、天下为驱 d1391b726e83426ba287f21393395024.html
+[6] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\To the consultation be8f2c87b22f4049a866c4ed1170a9f2.html
+[7] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\告我父书 70646c46e7984851b9e57aa7faf044b6.html
+[8] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Workstation (ie Current Projects) (看一眼就知道找事情做的事项)  ba9557536a814e84babcce393e0695c1\复习、复盘 ( 现在开始，一直不中断的是学习具身智能大模型需要的知识以及做这方面的研究。尽可能在每年 15609b6395e744c1b6b7ea91dd5b333f\3 25-3 31 401ee57ca9b442e58c4109e79e5d33b1.html
+[9] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Workstation (ie Current Projects) (看一眼就知道找事情做的事项)  ba9557536a814e84babcce393e0695c1\复习、复盘 ( 现在开始，一直不中断的是学习具身智能大模型需要的知识以及做这方面的研究。尽可能在每年 15609b6395e744c1b6b7ea91dd5b333f\4 8-4 14 5ad3e0e6a3b040ab986d0017533a234a.html
+[10] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Workstation (ie Current Projects) (看一眼就知道找事情做的事项)  ba9557536a814e84babcce393e0695c1\复习、复盘 ( 现在开始，一直不中断的是学习具身智能大模型需要的知识以及做这方面的研究。尽可能在每年 15609b6395e744c1b6b7ea91dd5b333f\Preface b64e1e25ca3c4411a2686087b6cf6079.html
+[11] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Workstation (ie Current Projects) (看一眼就知道找事情做的事项)  ba9557536a814e84babcce393e0695c1\复习、复盘 ( 现在开始，一直不中断的是学习具身智能大模型需要的知识以及做这方面的研究。尽可能在每年 15609b6395e744c1b6b7ea91dd5b333f\每周复盘模板 37aa703dcd9d48068c0af1dea77def5d.html
+[12] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Workstation (ie Current Projects) (看一眼就知道找事情做的事项)  ba9557536a814e84babcce393e0695c1\复习、复盘 ( 现在开始，一直不中断的是学习具身智能大模型需要的知识以及做这方面的研究。尽可能在每年 15609b6395e744c1b6b7ea91dd5b333f\每年复盘模板 cae63a3ed518463da748a0c3ff6ba156.html
+[13] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\Diary （准备ai agent的项目，很多公司都在招，还能拿去写论文。2025 8-2026 4 297f5afec8224f8f913a0d8b3d428d41.html
+[14] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\“动弹”的阈值增加 2c5463bfddda428ab79272fe997cd20d.html
+[15] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\慢慢来最快，按自己的角色行事最省成本 a27c7ba8135747d496e6885ccf644a6a.html
+[16] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\我对部分人的报复 281f7ff9a67642c2b860e77f58fdb793.html

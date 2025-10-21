@@ -1,0 +1,18 @@
+{
+  "turn_dir": "chat_sessions\\my-session-20251021-152140\\turn-0005",
+  "effective_question": "我提到了那些人？那些事情？那些话题？",
+  "answer_txt": "chat_sessions\\my-session-20251021-152140\\turn-0005\\answer.txt",
+  "returncode": 0,
+  "python_exec": "C:\\MyNotion\\.venv\\Scripts\\python.exe",
+  "built_cmd": "'C:\\MyNotion\\.venv\\Scripts\\python.exe' -X utf8 -m src.query_cli --mode hybrid --smart-query --sqw 1.25 --text-first 8 --wtext 1.2 --wimg 0.25 --wbool 0.6 --wfuzzy 0.5 --neighbors 1 --folder-neighbors 2 --link-hop --link-depth 1 --expand-parent --sibling-span 1 --post-filter --pf-model qwen2.5:3b-instruct --pf-workers 6 --pf-timeout 15 --pf-min-keep 6 --top 4 --num-ctx 20000 --ctx-chars 1200 --embed-model bge-m3:latest --gen-timeout 180000 --temperature 0.2 --llm-query-clean --qc-model qwen3:4b-instruct-2507-fp16 --qc-timeout 90 --qc-max-keys 8 --qc-prompt-file 'prompts\\keyword_extractor_zh.txt' --llm-num-ctx 48192 --gen-max-tokens 12000 --ollama-host http://127.0.0.1:11434 --model qwen3:4b-instruct-2507-fp16 --debug-dir 'C:\\MyNotion\\new_multimodal_agentic_graphrag\\chat_sessions\\my-session-20251021-152140\\turn-0005' '我提到了那些人？那些事情？那些话题？'",
+  "filtered_json": "chat_sessions\\my-session-20251021-152140\\turn-0005\\filtered.json",
+  "candidates_json": "chat_sessions\\my-session-20251021-152140\\turn-0005\\candidates.json",
+  "stage0_keywords": "chat_sessions\\my-session-20251021-152140\\turn-0005\\stage0_keywords.json",
+  "console_log": "chat_sessions\\my-session-20251021-152140\\turn-0005\\console.log",
+  "turn_files_jsonl": "chat_sessions\\my-session-20251021-152140\\turn-0005\\turn_files\\rag_clean.jsonl",
+  "turn_files_md": "chat_sessions\\my-session-20251021-152140\\turn-0005\\turn_files\\rag_clean.md",
+  "turn_summary": "chat_sessions\\my-session-20251021-152140\\turn-0005\\turn_summary.txt",
+  "chat_summary": "chat_sessions\\my-session-20251021-152140\\summary.txt",
+  "transcript": "chat_sessions\\my-session-20251021-152140\\transcript.jsonl",
+  "parsed_json": "chat_sessions\\my-session-20251021-152140\\turn-0005\\parsed.json"
+}

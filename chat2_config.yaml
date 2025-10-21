@@ -1,0 +1,109 @@
+session_root: "chat_sessions"
+session_naming: name_and_timestamp
+project_root: "."
+
+ollama_host: "http://127.0.0.1:11434"
+model_parser: "qwen3:4b-instruct-2507-fp16"
+model_summarize: "qwen2.5:3b-instruct"
+llm_timeout: 45
+llm_max_ctx: 4096
+enable_llm_parser: true
+enable_llm_summarize: true
+
+enable_pronoun_coref: true
+coref_pronouns: ["她", "他", "TA", "ta", "她们", "他们", "二人", "两人", "两者", "两个人", "他们两个"]
+
+default_enable_rag: true
+default_enable_history_search: true
+
+query_cli_flags:
+  - --mode
+  - hybrid
+  - --smart-query
+  - --sqw
+  - "1.25"
+  - --text-first
+  - "8"
+  - --wtext
+  - "1.2"
+  - --wimg
+  - "0.25"
+  - --wbool
+  - "0.6"
+  - --wfuzzy
+  - "0.5"
+  - --neighbors
+  - "1"
+  - --folder-neighbors
+  - "2"
+  - --link-hop
+  - --link-depth
+  - "1"
+  - --expand-parent
+  - --sibling-span
+  - "1"
+  - --post-filter
+  - --pf-model
+  - qwen2.5:3b-instruct
+  - --pf-workers
+  - "6"
+  - --pf-timeout
+  - "15"
+  - --pf-min-keep
+  - "6"
+  - --top
+  - "4"
+  - --num-ctx
+  - "20000"
+  - --ctx-chars
+  - "1200"
+  - --embed-model
+  - bge-m3:latest
+  - --gen-timeout
+  - "180000"
+  - --temperature
+  - "0.2"
+  - --llm-query-clean
+  - --qc-model
+  - qwen3:4b-instruct-2507-fp16
+  - --qc-timeout
+  - "90"
+  - --qc-max-keys
+  - "8"
+  - --qc-prompt-file
+  - prompts\keyword_extractor_zh.txt
+  - --llm-num-ctx
+  - "48192"
+  - --gen-max-tokens
+  - "12000"
+  - --ollama-host
+  - http://127.0.0.1:11434
+  - --model
+  - qwen3:4b-instruct-2507-fp16
+
+env:
+  OLLAMA_HOST: "http://127.0.0.1:11434"
+
+turn_files:
+  min_chars: 50
+  max_items: 60
+  from_filtered_only: true
+  include_scores: true
+  prioritize_dual_entity: true
+
+history_search:
+  max_hits: 12
+  keyword_window: 8
+  score_threshold: 0.2
+
+chat_summary_max_turns: 24
+summarize_context_turns: 18
+summarize_include_chat_summary: true
+summarize_include_turn_files: true
+summarize_turn_files_per_turn: 2
+
+dry_run: false
+verbose: true
+
+force_rag: true
+require_rag_success: true
