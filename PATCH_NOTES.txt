@@ -1,0 +1,29 @@
+Graphrag Hotfix (2025-10-14)
+============================
+Changed files (only these need to be overwritten in your repo):
+  - src/cli.py
+  - src/embed_index.py
+  - src/image_index.py
+  - src/char_index.py
+  - src/query_cli.py
+  - src/utils.py
+  - scripts/commands_cheatsheet.ps1
+  - scripts/quick_audit.ps1
+  - tools/coverage.py
+  - prompts/keyword_extractor_zh.txt
+
+Highlights:
+  1) CLI subcommands restored: ingest / embed / imgindex / charindex / graph / all
+  2) tqdm import fixes; __future__ import at top of image_index.py
+  3) Ollama embeddings arg fix: use `input` (fallback to `input_texts` if needed)
+  4) Incremental flags threaded through and progress bars added
+  5) query_cli: ImageIndex import fix; parent/sibling expansion; keyword-clean hook
+  6) scripts: quoting/UTF-8 fixes; quick_audit now always populates coverage
+  7) prompts: Chinese keyword extractor prompt (LLM cleans noisy terms)
+
+How to apply:
+  1) Extract zip to the project root, allowing overwrite of the paths above.
+  2) Re-run: ingest -> embed -> imgindex -> charindex -> graph.
+  3) Use commands from scripts/commands_cheatsheet.ps1 (regenerated).
+
+If anything fails, check your debug dir (e.g. debug/session-01) and error.log.

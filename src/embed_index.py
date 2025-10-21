@@ -1,65 +1,90 @@
-import os, json, math
+# -*- coding: utf-8 -*-
+from __future__ import annotations
+import os, json, math, time
+from typing import List, Dict, Tuple, Optional
 import numpy as np
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from tqdm import tqdm
-from .utils import ensure_dir, get_logger, norm_win_abs
 from .ollama_client import OllamaClient
 
-def read_jsonl(path):
+IDX_DIR = "index"
+TEXT_VECS = os.path.join(IDX_DIR, "text_vecs.npy")
+TEXT_IDS = os.path.join(IDX_DIR, "text_ids.jsonl")
+META_JSON = os.path.join(IDX_DIR, "text_index_meta.json")
+
+def _read_jsonl(path: str) -> List[Dict]:
+    rows = []
+    if not os.path.exists(path):
+        return rows
     with open(path, "r", encoding="utf-8") as f:
         for line in f:
-            if line.strip():
-                yield json.loads(line)
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rows.append(json.loads(line))
+            except Exception:
+                pass
+    return rows
 
-def run_embed(cfg, logger):
-    data_dir = cfg["data_dir"]
-    chunks_path = os.path.join(data_dir, "chunks.jsonl")
-    ids_path = os.path.join(data_dir, "ids.json")
-    meta_path = os.path.join(data_dir, "embed_meta.json")
-    emb_npy = os.path.join(data_dir, "embeddings.npy")
+def _write_json(path: str, data: dict):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
-    base = cfg["ollama_base_url"]
-    model = cfg["embed_model"]
-    batch = int(cfg.get("embed_batch", 128))
-    concurrency = int(cfg.get("embed_concurrency", 2))
-    timeout = int(cfg.get("embed_timeout", 120))
-    keep_alive = cfg.get("embed_keep_alive", "10m")
+def _read_meta() -> dict:
+    if os.path.exists(META_JSON):
+        try:
+            return json.load(open(META_JSON, "r", encoding="utf-8"))
+        except Exception:
+            return {}
+    return {}
 
-    client = OllamaClient(base, timeout=timeout, keep_alive=keep_alive)
-    texts = []
-    ids = []
-    for rec in read_jsonl(chunks_path):
-        ids.append(rec["id"])
-        texts.append(rec["text"] if rec["text"].strip() else " ")
-    n = len(texts)
-    if n == 0:
-        logger.warning("chunks.jsonl 为空")
+def _save_meta(meta: dict):
+    _write_json(META_JSON, meta)
+
+def load_text_index() -> Tuple[Optional[np.ndarray], List[Dict], dict]:
+    """安全加载文本向量索引。返回 (vecs, ids_rows, meta)"""
+    meta = _read_meta()
+    ids_rows = _read_jsonl(TEXT_IDS)
+    if not os.path.exists(TEXT_VECS):
+        return None, ids_rows, meta
+    try:
+        vecs = np.load(TEXT_VECS, mmap_mode="r")
+    except Exception:
+        # 不可读则尝试普通读取
+        vecs = np.load(TEXT_VECS)
+    if vecs.ndim != 2 or vecs.shape[0] != len(ids_rows):
+        # 形状不匹配，放弃语义召回
+        return None, ids_rows, meta
+    return vecs, ids_rows, meta
+
+def _batched(seq, bs):
+    for i in range(0, len(seq), bs):
+        yield seq[i:i+bs]
+
+def build_text_index(chunks_path: str, embed_model: str, ollama_host: Optional[str], batch_size: int = 128, logger=None):
+    """重建文本向量索引，写出 vecs/ids/meta。"""
+    rows = _read_jsonl(chunks_path)
+    if not rows:
+        if logger: logger.warning("没有可用文本块，跳过文本向量构建。")
         return
-
-    # 试探维度
-    dim = len(client.embeddings(model, ["test"])[0])
-
-    # memmap 逐批写入
-    mm = np.memmap(emb_npy, dtype=np.float32, mode="w+", shape=(n, dim))
-    order = list(range(0, n, batch))
-
-    def work(start):
-        end = min(n, start + batch)
-        sub = texts[start:end]
-        emb = client.embeddings(model, sub)
-        return start, np.array(emb, dtype=np.float32)
-
-    with ThreadPoolExecutor(max_workers=concurrency) as ex:
-        futures = [ex.submit(work, s) for s in order]
-        pbar = tqdm(total=n, desc="embedding", unit="chunk")
-        for fut in as_completed(futures):
-            s, arr = fut.result()
-            mm[s:s+arr.shape[0], :] = arr
-            pbar.update(arr.shape[0])
-        pbar.close()
-    mm.flush()
-
-    with open(ids_path, "w", encoding="utf-8") as f:
-        json.dump(ids, f, ensure_ascii=False, indent=2)
-    with open(meta_path, "w", encoding="utf-8") as f:
-        json.dump({"model":model, "dim":dim, "count":n}, f, ensure_ascii=False, indent=2)
+    client = OllamaClient(host=ollama_host, timeout=120, retries=1, logger=logger)
+    texts = [r.get("text","")[:1200] for r in rows]
+    vecs_all = []
+    if logger: logger.info(f"文本向量：共 {len(texts)} 块，batch={batch_size}，model={embed_model}")
+    for batch in _batched(texts, batch_size):
+        emb = client.embeddings(model=embed_model, texts=batch)
+        if not emb:
+            continue
+        vecs_all.extend(emb)
+    if not vecs_all:
+        raise RuntimeError("未得到任何文本向量，请检查 Ollama embeddings 是否可用。")
+    vecs = np.asarray(vecs_all, dtype=np.float32)
+    os.makedirs(os.path.dirname(TEXT_VECS), exist_ok=True)
+    np.save(TEXT_VECS, vecs)
+    # 写 ids（与 chunks 对齐）
+    with open(TEXT_IDS, "w", encoding="utf-8") as f:
+        for r in rows:
+            f.write(json.dumps({"id": r.get("id"), "path": r.get("path"), "title": r.get("title",""), "chunk_id": r.get("chunk_id",0)}, ensure_ascii=False) + "\n")
+    _save_meta({"model": embed_model, "dim": int(vecs.shape[1]), "ts": time.time()})
+    if logger: logger.info(f"文本索引完成：vecs={vecs.shape} → {TEXT_VECS}")
+    return vecs

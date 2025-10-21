@@ -1,0 +1,469 @@
+项目总览（环境与目标）
+
+OS & Shell：Windows 10/11，PowerShell
+
+Python：3.12.x（64-bit），推荐虚拟环境
+
+GPU：NVIDIA（PyTorch CUDA 可用，自动 CPU fallback）
+
+本地模型服务：Ollama at http://127.0.0.1:11434
+
+核心目标：三段式 RAG（召回 → 轻量并行过滤 → 最终 LLM 生成），支持文本 + 图片（OCR/VLM），对 Notion HTML 导出优化（分块、链接、邻居、上/下级扩展）。
+
+目录结构（稳定，不要重命名/移动）
+new_multimodal_agentic_graphrag/
+├─ README.md
+├─ requirements.txt
+├─ config.yaml
+├─ .env.example
+├─ prompts/
+│  ├─ keyword_extractor_zh.txt           # 关键词清洗 Prompt
+│  └─ summary_system_zh.txt              # 多轮摘要 Prompt（chat 用）
+├─ scripts/
+│  ├─ quickstart.ps1
+│  ├─ sanity_checks.ps1
+│  └─ chat.ps1                           # 多轮对话一键启动
+├─ src/
+│  ├─ cli.py                             # 统一入口: ingest/embed/imgindex/charindex/links/graph/all
+│  ├─ query_cli.py                       # 三段式查询（召回→过滤→生成）
+│  ├─ ingest.py
+│  ├─ html_cleaner.py
+│  ├─ embed_index.py                     # 文本嵌入索引（Ollama embeddings）
+│  ├─ image_index.py                     # OpenCLIP 图像向量（本地模型路径）
+│  ├─ char_index.py                      # 中文 char/n-gram 倒排（模糊召回）
+│  ├─ link_graph.py
+│  ├─ rerank.py                          # 可选交叉重排（可关闭）
+│  ├─ post_filter.py                     # 轻量 LLM 并行判别器（qwen2.5:3b-instruct）
+│  ├─ ollama_client.py                   # 统一封装：generate/embeddings，带超时、重试、禁代理
+│  ├─ utils.py                           # 路径归一化/JSONL/并发/日志等工具
+│  ├─ chat_cli.py                        # 新增：多轮会话壳（每轮调用 query_cli）
+│  └─ tests/                             # 单元测试（路径、HTML、ingest产物、过滤、引用等）
+├─ data/                                 # （运行时生成）中间/索引数据
+│  ├─ chunks.jsonl
+│  ├─ images.jsonl
+│  ├─ links.jsonl
+│  └─ nodes.jsonl
+├─ index/                                # （运行时生成）向量索引/缓存
+│  ├─ text_vecs.npy / text_ids.npy
+│  ├─ image_vecs.npy / image_ids.npy
+│  └─ （可选）倒排等
+└─ chat_sessions/                        # （运行时生成）多轮会话记录
+   └─ session-YYYYMMDD-HHMMSS/
+      ├─ summary.txt
+      ├─ transcript.jsonl
+      └─ turn-0001/turn-0002/...        # 每轮独立 debug 与结果（见下文）
+
+
+扩展规则：
+
+只在 src/ 下新增模块，或在 scripts/ 新增脚本；
+
+不要修改/删除已存在文件的函数签名/参数名/行为；
+
+若需新功能入口，建议做独立 CLI（参考 chat_cli.py 的做法：调用既有模块/命令）；
+
+新增配置请写入独立 yaml 或在 config.yaml 增加新字段（保持旧字段语义不变）。
+
+稳定 CLI（面向外部的“公开 API”）
+1) 构建/索引
+python -m src.cli ingest [--enable-ocr] [--incremental]
+
+输入：config.yaml 的根目录列表（Notion 导出根）
+
+输出：
+
+data/chunks.jsonl（文本分块，见数据结构）
+
+data/images.jsonl（图片清单）
+
+data/links.jsonl（链接边）
+
+data/nodes.jsonl（节点元信息）
+
+可选：
+
+--enable-ocr：对图片/PDF 进行 OCR
+
+--incremental：增量（只处理新增/修改/删除的文件，依据 mtime/size/hash）
+
+python -m src.cli embed
+
+功能：根据 data/chunks.jsonl 生成文本向量索引
+
+输出：index/text_vecs.npy / index/text_ids.npy
+
+注意：向量维度与查询向量严格一致；若不匹配，query_cli 会跳过语义召回并在 debug 落盘告警。
+
+python -m src.cli imgindex --clip-local "<OpenCLIP目录>"
+
+功能：OpenCLIP 生成图像向量（自动 GPU/CPU fallback）
+
+输出：index/image_vecs.npy / index/image_ids.npy
+
+python -m src.cli charindex
+
+功能：构建中文 char/n-gram 倒排结构（模糊召回增强）
+
+python -m src.cli all [--enable-ocr] [--incremental] [--clip-local "..."]
+
+功能：依次执行上述所有步骤；打印阶段进度。
+
+契约：若某阶段失败，不中断全流程（能做多少做多少，错误落盘到 debug）。
+
+2) 三段式检索与回答
+python -m src.query_cli [FLAGS] "你的问题"
+
+阶段：
+
+召回：语义（文本/图像）+ 布尔（标题/路径/文本）+ 模糊（char-gram），并做链接 hop 扩展与父级/兄弟扩展；
+
+并行过滤：qwen2.5:3b-instruct，宁可多留；
+
+最终回答：默认文本 LLM（qwen3:4b-instruct-2507-fp16），保证只有一个“参考：”段，编号从 [1]。
+
+关键 FLAGS（稳定，不要移除/改名）：
+
+召回控制
+
+--mode hybrid --smart-query --sqw <float>
+
+--text-first <int>（文本首取数量提示）
+
+--wtext <float> --wimg <float> --wbool <float> --wfuzzy <float>
+
+--neighbors <int> --folder-neighbors <int>
+
+--link-hop --link-depth <int>
+
+--expand-parent --sibling-span <int>
+
+--top <int>：honor 超大 top（内部最多放宽到 top×4，上限=文档总数）
+
+过滤
+
+--post-filter --pf-model qwen2.5:3b-instruct
+
+--pf-workers <int> --pf-timeout <sec> --pf-min-keep <int>
+
+生成
+
+--model qwen3:4b-instruct-2507-fp16
+
+--gen-timeout <sec> --temperature <float> --llm-num-ctx <int>
+
+--num-ctx <chars> --ctx-chars <per-chunk chars>
+
+--vl-answer（多模态，走 qwen2.5vl；如启用，受限于 VLM 能力）
+
+嵌入/服务
+
+--embed-model bge-m3:latest（Ollama embeddings）
+
+--ollama-host http://127.0.0.1:11434
+
+关键词清洗（可选）
+
+--llm-query-clean --qc-model qwen3:4b-instruct-2507-fp16 --qc-timeout <sec> --qc-max-keys <n> --qc-prompt-file prompts/keyword_extractor_zh.txt
+
+调试
+
+--debug-dir "<abs path>"（所有中间产物落在此目录）
+
+中间产物（约定/契约）（都写入 --debug-dir）
+
+stage0_keywords.json：清洗后的关键词 JSON
+
+stage1_sem_text.json：语义召回评分列表
+
+stage1_bool.json：布尔/模糊评分列表
+
+stage1_expanded_paths.json：通过链接 hop/父级/兄弟扩展出的实际路径
+
+candidates.json：候选合并去重（进入过滤前的规范化集）
+
+filtered.json：并行过滤后的结果（含 reason/clean_text）
+
+gen_error.json：仅当生成阶段失败时出现，含错误详情
+
+answer.txt：最终回答（正文 + 唯一“参考：”段，绝对路径，无 \\?\ / \?）
+
+错误回退
+
+语义向量维度不匹配 → 跳过语义召回，保留布尔/模糊；
+
+生成模型不可用/超时 → 控制台与 answer.txt 打印“（提示）生成模型不可用，本次仅返回命中的参考材料。”并给出参考列表。
+
+3) 多轮聊天（不改现有 RAG，聊天层是独立新增）
+python -m src.chat_cli --config chat_config.yaml
+
+或：
+
+.\scripts\chat.ps1 [-Session "my-session"]
+
+机制：每轮对话都调用 src.query_cli，并将本轮问答压缩为摘要（写 summary.txt），下一轮自动在问题前拼入 [对话摘要] ... 作为先验。
+
+持久化结构：
+
+chat_sessions/<session>/
+  summary.txt
+  transcript.jsonl
+  turn-0001/
+    console.log        # 本轮 query_cli 控制台输出
+    answer.txt         # 最终回答（若生成失败则可能为空）
+    ...                # 其它 debug 同 query_cli 规范
+
+
+配置（chat_config.yaml）：
+
+ollama_host：传给 query_cli 及摘要 LLM
+
+query_cli_flags：逐项列出要传给 query_cli 的 flags（保持旧行为不变）
+
+summarizer_model：摘要使用的本地 LLM（默认 qwen3:4b-instruct-2507-fp16）
+
+summary_prompt_file：prompts/summary_system_zh.txt
+
+memory_max_chars：摘要长度上限
+
+keep_last_turns：摘要纳入的最近轮数
+
+数据结构（JSON/JSONL 契约）
+data/chunks.jsonl
+
+每行一个文本块：
+
+{
+  "id": "sha1|path|offset",
+  "path": "C:\\abs\\file.html",
+  "title": "页面标题",
+  "rel": "根内相对路径",
+  "mtime": 1690000000,
+  "chunk_id": 0,
+  "text": "……分块后的正文……"
+}
+
+
+约束：
+
+path 必为 Windows 绝对路径；对外输出时不得带 \\?\\ 前缀（内部 I/O 允许临时使用）。
+
+过短/占位页默认不写入文本块，但仍可能在链接边中出现。
+
+data/images.jsonl
+{
+  "path": "C:\\abs\\img.png",
+  "mime": "image/png",
+  "width": 1280,
+  "height": 720,
+  "sha1": "..."
+}
+
+data/links.jsonl
+{ "src": "C:\\abs\\A.html", "dst": "C:\\abs\\B.html", "type": "link" }
+{ "src": "C:\\abs\\A.html", "dst": "C:\\abs\\img.png", "type": "image" }
+
+
+读取时视为无向边用于邻居扩展；上/下级扩展通过 --expand-parent / --sibling-span 以及 --link-hop --link-depth 控制。
+
+index/text_vecs.npy / index/text_ids.npy
+
+text_vecs.npy：float32，形状 (N, D)
+
+text_ids.npy：int64 / int32，与 chunks 行号对齐
+
+约束：查询向量维度必须与 D 一致；否则 query_cli 会跳过语义召回并在 debug 标记。
+
+查询阶段中间文件
+
+stage1_sem_text.json：[{"idx": <int>, "score": <float>}, ...]
+
+stage1_bool.json：同上，布尔/模糊分
+
+candidates.json：对象数组，元素至少包含：
+
+{
+  "id": "...",
+  "path": "C:\\abs\\xxx.html",
+  "title": "...",
+  "chunk_id": 0,
+  "text": "...",
+  "score": 1.23
+}
+
+
+filtered.json：在 candidates.json 基础上附加过滤结果（如果过滤开启）：
+
+{
+  "id": "...",
+  "path": "C:\\abs\\xxx.html",
+  "title": "...",
+  "chunk_id": 0,
+  "text": "...",
+  "score": 1.23,
+  "keep": true,
+  "reason": "与'刘晓玲'弱相关（昵称/指代）",
+  "clean_text": "..."
+}
+
+模块级“公开函数”（给新功能复用；签名不要改）
+
+这些函数对外可直接 import 复用。如需新增能力，请新增模块，调用这些函数；不要改其签名与默认行为。
+
+src.ollama_client.OllamaClient
+OllamaClient(host: Optional[str], timeout: int = 60, retries: int = 2, logger=None)
+
+.generate(model: str, prompt: str, stream: bool = False, options: Optional[dict] = None) -> dict
+.embeddings(model: str, texts: List[str]) -> List[List[float]]
+
+
+行为：禁代理、超时、重试、健康检查，embeddings() 会自动分批提交。
+
+src.embed_index.build_text_index
+build_text_index(chunks_path: str = "chunks.jsonl",
+                 embed_model: str = "bge-m3:latest",
+                 ollama_host: Optional[str] = None,
+                 batch_size: int = 128,
+                 out_dir: str = "index")
+
+
+产物：index/text_vecs.npy & index/text_ids.npy
+
+不要更改输出文件名；其它新产物请放于 index/ 下自命名。
+
+src.image_index.build_image_index
+build_image_index(images_path: str = "images.jsonl",
+                  clip_local: Optional[str] = None,
+                  batch_size: int = 32,
+                  device_prefer: Optional[str] = None,
+                  out_dir: str = "index")
+
+src.post_filter.parallel_filter
+parallel_filter(candidates: List[dict],
+                model: str = "qwen2.5:3b-instruct",
+                workers: int = 4,
+                timeout: int = 15,
+                min_keep: int = 6,
+                ollama_host: Optional[str] = None,
+                debug_dir: Optional[str] = None) -> List[dict]
+
+
+其它模块（ingest.py/html_cleaner.py/char_index.py/link_graph.py）也可直接 import，但请遵守其现有输入/输出文件契约，不要改变字段名与含义。
+
+行为与不变量（扩展必须遵守）
+
+路径：对外展示的任何路径必须为 Windows 绝对路径，且不能包含 \\?\ / \?；内部 I/O 可临时使用 \\?\ 以绕过长路径限制。
+
+参考段：最终回答严格只有一个“参考：”段，编号 [1] 起、递增且去重。
+
+增量：ingest 可按 mtime/size/hash 做增量；请不要更改增量判定逻辑；如要新策略，请以新增配置开关形式添加。
+
+离线优先：默认不访问外网；如需第三方模型，必须允许本地路径/离线缓存、并提供可关闭选项。
+
+稳健性：任何阶段失败不得中断整个流水线；错误必须记录到 debug 而不是直接抛出到顶层。
+
+兼容性：新增参数一律采用显式 --flag value 风格；布尔开关用 --flag/--no-flag 或成对的显式开关，不要引入“未定义属性”。
+
+测试：保持 src/tests/ 的用例可通过。新增功能请增加独立测试文件，不要改动现有断言。
+
+可扩展点（推荐做法）
+
+新增检索器/重排器
+
+新建 src/plugins/你的模块.py，提供函数 rank(question, chunks, cfg) -> List[(idx, score)]；
+
+在你自建的新 CLI 中合并结果（不要改 query_cli.py 的内部合并逻辑）；
+
+或在 query_cli 外包一层（仿 chat_cli），将你新增的排序结果写入一个 增量评分 JSON 再交给 query_cli 作为附加候选（推荐写到 --debug-dir 下让运维可见）。
+
+新增 Prompt/工具
+
+把 Prompt 放到 prompts/，通过新 flag 引入；默认关闭，避免影响旧路径。
+
+新增多轮/代理/工作流
+
+仿 src/chat_cli.py：独立 CLI，每轮内部调用既有 CLI（query_cli 或 cli.py 子命令），不要改主流程。
+
+新增数据源
+
+扩展 ingest.py 时，不改变现有 JSONL 字段的含义；新字段请以附加字段出现（读取端忽略未知字段）。
+
+新增索引格式
+
+保留现有 .npy 文件；新索引存为并行文件（例如 text_vecs.faiss），加载时通过新 flag 选择，默认仍用 old 行为。
+
+PowerShell 使用要点（避免常见误操作）
+
+不支持 Bash 的 << here-doc：
+
+✅ python -c 'print("OK")'
+
+✅ 这里字符串：$code = @" ... "@; Set-Content _t.py $code; python _t.py
+
+不要在 PowerShell 直接敲 Python 语句（如 from ... import ...），那是 Python REPL 语法。
+
+print 在 PS 里是老式打印机命令，不等于 Python 的 print()。
+
+典型命令（安全拷贝）
+
+全量构建（可带 OCR / OpenCLIP 本地路径）
+
+python -m src.cli all --enable-ocr --incremental `
+  --clip-local "C:\MyNotion\new_multimodal_agentic_graphrag\models\openclip\CLIP-ViT-L-14-laion2B-s32B-b82K"
+
+
+重建文本索引（当维度不匹配或升级模型时）
+
+python -c 'from src.embed_index import build_text_index; build_text_index("data/chunks.jsonl", embed_model="bge-m3:latest", ollama_host="http://127.0.0.1:11434", batch_size=128); print("✅ 文本索引已重建")'
+
+
+文本问答（最终 LLM：qwen3 4B）
+
+python -m src.query_cli `
+  --mode hybrid --smart-query --sqw 1.2 `
+  --text-first 6 --wtext 1.0 --wimg 0.25 --wbool 0.7 --wfuzzy 0.6 `
+  --neighbors 2 --folder-neighbors 2 --link-hop --link-depth 2 `
+  --expand-parent --sibling-span 1 `
+  --post-filter --pf-model "qwen2.5:3b-instruct" --pf-workers 6 --pf-timeout 15 --pf-min-keep 6 `
+  --top 4 --num-ctx 20000 --ctx-chars 1200 `
+  --embed-model "bge-m3:latest" `
+  --gen-timeout 18000 --temperature 0.2 `
+  --llm-query-clean --qc-model "qwen3:4b-instruct-2507-fp16" --qc-timeout 90 --qc-max-keys 8 `
+  --qc-prompt-file "prompts\keyword_extractor_zh.txt" `
+  --llm-num-ctx 48192 `
+  --ollama-host "http://127.0.0.1:11434" `
+  --debug-dir "C:\MyNotion\new_multimodal_agentic_graphrag\debug\moweifen-01" `
+  --model "qwen3:4b-instruct-2507-fp16" `
+  "刘晓玲"
+
+
+多轮聊天（每轮都会调用 RAG）
+
+python -m src.chat_cli --config chat_config.yaml
+# 或
+.\scripts\chat.ps1
+
+版本与分支建议（防误删/误改）
+
+分支策略：所有新增功能请以 feature/<模块>-<简述> 分支进行；修复以 fix/<模块>-<简述>；紧急救火用 rescue/<tag>。
+
+合并规则：只允许新增文件或在配置文件中新增字段；禁止修改既有函数签名/行为、重命名文件或目录。
+
+提交信息：必须描述是否影响默认行为（默认必须不变）。
+
+回滚锚点：每次合并前在 rescue/vX.Y.Z 打 tag，便于随时回滚。
+
+最后：给后续 GPT-5 的开发提示
+
+若要“增强召回/重排/引用格式”，请新建模块 + 新 CLI/包装器，通过**文件中间件（JSON/JSONL）**与主流程对接；不要修改主流程内部的排序/过滤/引用拼接逻辑。
+
+如果必须向 query_cli 传递你的附加候选或裁剪结果，请写入 --debug-dir 下的并行文件，并在你自建 CLI 中先合并，再调用一次 query_cli 完成最终生成（参考 chat_cli 设计）。
+
+对于新增模型或外部资源，一律提供本地/离线路径与开关，默认关闭；避免破坏“离线优先”。
+
+任何新增输出，务必落盘到你本轮/本会话的独立目录；不要污染现有数据契约。
+
+—
+
+这份规范就是当前项目的“公开 API”与契约。后续只要遵守“只增不改、不破坏默认行为、所有变更可控开关、所有中间产物可追溯”四条，就能安全地在此基础上扩展而不把现有流程搞挂。
+
+请认真理解上面内容，之后我需要做一些开发任务

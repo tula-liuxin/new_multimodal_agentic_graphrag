@@ -1,71 +1,139 @@
-import argparse, os
-from .utils import load_cfg, get_logger
-from .ingest import run_ingest
-from .embed_index import run_embed
-from .tfidf_index import run_tfidf
-from .char_index import run_char_tfidf
-from .links import run_links
-from .graph_build import run_graph
-from .image_encoder import run_imgindex
-from .audit import run_audit
-from .imgaudit import run_imgaudit
+# -*- coding: utf-8 -*-
+from __future__ import annotations
+import os, argparse
+from .utils import load_yaml, setup_logger, norm_path
+from .ingest import ingest
+from .embed_index import build_text_index
+from .image_index import build_image_index
+from .char_index import build_char_index
+from .link_graph import build_graph
+
+def _device_auto():
+    try:
+        import torch
+        return "cuda" if torch.cuda.is_available() else "cpu"
+    except Exception:
+        return "cpu"
 
 def main():
-    parser = argparse.ArgumentParser(description="new_multimodal_agentic_graphrag: CLI 入口")
-    sub = parser.add_subparsers(dest="cmd", required=True)
+    ap = argparse.ArgumentParser(prog="cli.py")
+    sub = ap.add_subparsers(dest="cmd", required=True)
 
-    p_ing = sub.add_parser("ingest", help="采集/切片")
-    p_ing.add_argument("--config", default="config.yaml")
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--config", type=str, default="config.yaml", help="YAML 配置文件路径")
 
-    p_emb = sub.add_parser("embed", help="文本嵌入（Ollama）")
-    p_emb.add_argument("--config", default="config.yaml")
+    # ingest
+    p_ing = sub.add_parser("ingest", parents=[common])
+    p_ing.add_argument("--enable-ocr", dest="enable_ocr", action="store_true")
+    p_ing.add_argument("--no-ocr", dest="enable_ocr", action="store_false")
+    p_ing.add_argument("--incremental", action="store_true", help="仅处理变更文件/文件夹")
+    p_ing.set_defaults(enable_ocr=None)
 
-    p_img = sub.add_parser("imgindex", help="图像索引（OpenCLIP）")
-    p_img.add_argument("--config", default="config.yaml")
+    # embed
+    p_emb = sub.add_parser("embed", parents=[common])
+    p_emb.add_argument("--embed-model", type=str, default=None)
+    p_emb.add_argument("--incremental", action="store_true", help="仅向量化新增/变更文本")
 
-    p_tfidf = sub.add_parser("charindex", help="词面/字 n-gram TF-IDF 索引")
-    p_tfidf.add_argument("--config", default="config.yaml")
+    # imgindex
+    p_img = sub.add_parser("imgindex", parents=[common])
+    p_img.add_argument("--clip-local", type=str, default=None)
+    p_img.add_argument("--incremental", action="store_true", help="仅向量化新增/变更图片")
 
-    p_links = sub.add_parser("links", help="解析 .md/.html 链接")
-    p_links.add_argument("--config", default="config.yaml")
+    # charindex
+    p_char = sub.add_parser("charindex", parents=[common])
 
-    p_graph = sub.add_parser("graph", help="构建 GraphRAG 最小图谱")
-    p_graph.add_argument("--config", default="config.yaml")
+    # links -> graph
+    p_links = sub.add_parser("links", parents=[common])
+    sub.add_parser("graph", parents=[common])
 
-    p_audit = sub.add_parser("audit", help="文本审计")
-    p_audit.add_argument("--config", default="config.yaml")
-    p_audit.add_argument("--term", required=True)
-    p_audit.add_argument("--alt", default=None)
-    p_audit.add_argument("--trad", action="store_true")
+    # all
+    p_all = sub.add_parser("all", parents=[common])
+    p_all.add_argument("--embed-model", type=str, default=None)
+    p_all.add_argument("--clip-local", type=str, default=None)
+    p_all.add_argument("--enable-ocr", dest="enable_ocr", action="store_true")
+    p_all.add_argument("--no-ocr", dest="enable_ocr", action="store_false")
+    p_all.add_argument("--incremental", action="store_true", help="对全流程启用增量处理")
+    p_all.set_defaults(enable_ocr=None)
 
-    p_iaudit = sub.add_parser("imgaudit", help="图像审计")
-    p_iaudit.add_argument("--config", default="config.yaml")
-    p_iaudit.add_argument("--term", required=True)
-    p_iaudit.add_argument("--mode", choices=["ocr","caption","clip"], default="clip")
+    args = ap.parse_args()
+    cfg = load_yaml(args.config)
 
-    args = parser.parse_args()
-    cfg = load_cfg(args.config)
-    logger = get_logger()
+    log_dir = cfg.get("debug_dir", "debug")
+    os.makedirs(log_dir, exist_ok=True)
+    logger = setup_logger(os.path.join(log_dir, "console.log"))
 
-    if args.cmd == "ingest":
-        run_ingest(cfg, logger)
-    elif args.cmd == "embed":
-        run_embed(cfg, logger)
-    elif args.cmd == "imgindex":
-        run_imgindex(cfg, logger)
-    elif args.cmd == "charindex":
-        run_tfidf(cfg, logger)
-        run_char_tfidf(cfg, logger)
-    elif args.cmd == "links":
-        run_links(cfg, logger)
-    elif args.cmd == "graph":
-        run_graph(cfg, logger)
-    elif args.cmd == "audit":
-        run_audit(cfg, logger, term=args.term, alt=args.alt, trad=args.trad)
-    elif args.cmd == "imgaudit":
-        run_imgaudit(cfg, logger, term=args.term, mode=args.mode)
-    else:
-        parser.print_help()
+    roots = [norm_path(p) for p in cfg.get("roots", [])]
+    data_dir = cfg.get("data_dir", "data")
+    os.makedirs(data_dir, exist_ok=True)
+
+    ollama_host = cfg.get("ollama", {}).get("host", "http://127.0.0.1:11434")
+    index_dir = cfg.get("index", {}).get("save_dir", "index")
+    os.makedirs(index_dir, exist_ok=True)
+
+    # switches / params
+    enable_ocr = cfg.get("enable_ocr", False) if getattr(args, "enable_ocr", None) is None else bool(getattr(args, "enable_ocr"))
+    embed_model = (getattr(args, "embed_model", None)) or cfg.get("models", {}).get("embed_model", "bge-m3:latest")
+    clip_local = (getattr(args, "clip_local", None)) or cfg.get("image", {}).get("clip_local", None)
+    incremental = bool(getattr(args, "incremental", False))
+
+    # Ingest
+    if args.cmd in ("ingest", "all"):
+        print(f"[阶段] Ingest 开始 ... （增量={incremental}）")
+        ingest(roots=roots,
+               data_dir=data_dir,
+               enable_ocr=enable_ocr,
+               ocr_tesseract_cmd=cfg.get("ocr_tesseract_cmd"),
+               ocr_merge_into_text=cfg.get("ocr_merge_into_text", True),
+               logger=logger,
+               io_workers=cfg.get("io_workers", 8),
+               incremental=incremental)
+
+    # Text embeddings
+    if args.cmd in ("embed", "all"):
+        print(f"[阶段] 文本向量 开始 ... （增量={incremental}）")
+        build_text_index(
+            os.path.join(data_dir, "chunks.jsonl"),
+            index_dir=index_dir,
+            host=ollama_host,
+            model=embed_model,
+            batch=cfg.get("index", {}).get("batch", 64),
+            use_faiss=True,
+            logger=logger,
+            incremental=incremental,
+            delta_json=os.path.join(data_dir, "delta.json")
+        )
+
+    # Image embeddings
+    if args.cmd in ("imgindex", "all"):
+        print(f"[阶段] 图像向量 开始 ... （增量={incremental}）")
+        build_image_index(
+            os.path.join(data_dir, "images.jsonl"),
+            index_dir=index_dir,
+            clip_local=clip_local,
+            device=_device_auto(),
+            logger=logger,
+            batch=cfg.get("image", {}).get("batch", 32),
+            incremental=incremental,
+            delta_json=os.path.join(data_dir, "delta.json")
+        )
+
+    # Char/N-gram index（体量小，直接重建）
+    if args.cmd in ("charindex", "all"):
+        print("[阶段] 字符倒排 开始 ...")
+        build_char_index(
+            os.path.join(data_dir, "chunks.jsonl"),
+            index_dir,
+            cfg.get("char_index", {}).get("n_min", 1),
+            cfg.get("char_index", {}).get("n_max", 3)
+        )
+
+    # Links & graph
+    if args.cmd in ("links", "all"):
+        print("[阶段] 链接图 开始 ...")
+        build_graph(
+            os.path.join(data_dir, "links.jsonl"),
+            os.path.join(data_dir, "adj.json")
+        )
 
 if __name__ == "__main__":
     main()

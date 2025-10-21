@@ -1,0 +1,60 @@
+ollama_host: "http://127.0.0.1:11434"
+
+decision_model: "qwen3:4b-instruct-2507-fp16"
+summarizer_model: "qwen3:4b-instruct-2507-fp16"
+embed_model: "bge-m3:latest"
+
+chat_base_dir: "chat_record"
+
+normalizer:
+  model: "qwen3:4b-instruct-2507-fp16"
+  prompt_file: "prompts/query_normalizer_zh.txt"
+
+planner:
+  model: "qwen3:4b-instruct-2507-fp16"
+  prompt_file: "prompts/plan_router_zh.txt"
+
+rag_b:
+  top_k: 8
+  scope: "session"
+  max_ctx_chars: 12000
+
+rag_a:
+  query_cli_flags:
+    - ["--mode", "hybrid"]
+    - "--smart-query"
+    - ["--sqw", "1.2"]
+    - ["--text-first", "6"]
+    - ["--wtext", "1.0"]
+    - ["--wimg", "0.25"]
+    - ["--wbool", "0.7"]
+    - ["--wfuzzy", "0.6"]
+    - ["--neighbors", "2"]
+    - ["--folder-neighbors", "2"]
+    - "--link-hop"
+    - ["--link-depth", "2"]
+    - "--expand-parent"
+    - ["--sibling-span", "1"]
+    - "--post-filter"
+    - ["--pf-model", "qwen2.5:3b-instruct"]
+    - ["--pf-workers", "6"]
+    - ["--pf-timeout", "15"]
+    - ["--pf-min-keep", "8"]     # 可以根据需要再调大（更宽松）
+    - ["--top", "8"]             # 扩大候选，结合“宁可多留”
+    - ["--num-ctx", "20000"]
+    - ["--ctx-chars", "1200"]
+    - ["--embed-model", "bge-m3:latest"]
+    - ["--gen-timeout", "18000"]
+    - ["--temperature", "0.2"]
+    - "--llm-query-clean"
+    - ["--qc-model", "qwen3:4b-instruct-2507-fp16"]
+    - ["--qc-timeout", "90"]
+    - ["--qc-max-keys", "8"]
+    - ["--qc-prompt-file", "prompts/keyword_extractor_zh.txt"]
+    - ["--llm-num-ctx", "48192"]
+    - ["--ollama-host", "http://127.0.0.1:11434"]
+    - ["--model", "qwen3:4b-instruct-2507-fp16"]
+
+summary:
+  keep_last_turns: 20
+  memory_max_chars: 20000

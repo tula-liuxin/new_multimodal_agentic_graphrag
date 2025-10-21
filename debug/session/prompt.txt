@@ -1,0 +1,759 @@
+[系统规则]
+你是严谨的企业级助手。请基于给定上下文回答用户问题，先列出要点再归纳，末尾必须只出现一次“参考：”段，按[1]开始编号，路径必须为可直接打开的 Windows 绝对路径，且不得包含 \\?\ 或 \?。
+
+[用户问题]
+测试一下生成是否正常
+
+[已检索上下文（节选）]
+
+我命由我，不由他！ 38266ef4a6aa4bf38888b20902cf46f1.html
+find your real and concrete problems goals or task b1cea29f987e400d90543533dd345dff.html
+不要用力过猛(最多在开始时尝试一下下，不过正常启动就好，甚至有时候要慢启动 0e29feb7e3584a3b9cbe172cb243e789.html
+The key to learning find direction, and do the rig ca55eb1b72ac4198ab84442384b991c2.html
+Never hate complain strictly reject be annoying et 25b55a4d96ab4ab89b0071511f8d9fd4.html
+生气 7c3788a6bbf5419f9ed103a18236061a.html
+learning and review db0eff27cb5e48ca915f48ea534f590b.html
+don’t talk too much about unfairness 6809b249ba2d42d19c3f1d2738ec1597.html
+integrate everything into improving myself e4ccc6d6ffca475cbc28333843865d6c.html
+Don’t love some, just really wanna do, please love 049defd4773d48eeb39e3e33b4930b80.html
+20% effort to get 80% harvest impression(首映派：
+
+---
+
+
+具有“性缘脑”倾向的人在社交互动中更倾向于将异性视为潜在的恋爱对象，而不是朋友或同事。这种思维方式可能导致焦虑、自我怀疑和不安，限制了个体的思维、感受和行为。12
+“性缘脑”的形成与社会文化环境、个人经历和媒体影响有关。例如，社会文化背景中更强调性与恋爱关系的社会，个体更容易形成“性缘脑”思维方式。此外，个体在成长过程中的亲密关系经历，如缺乏与异性的正常友谊，也可能导致“性缘脑”。24
+改变“性缘脑”思维模式需要意识到这种思维方式的局限性，并尝试从其他角度看待人际关系，例如重视建立伙伴、合作关系等。4
+
+---
+
+
+12
+“性缘脑”的形成与社会文化环境、个人经历和媒体影响有关。例如，社会文化背景中更强调性与恋爱关系的社会，个体更容易形成“性缘脑”思维方式。此外，个体在成长过程中的亲密关系经历，如缺乏与异性的正常友谊，也可能导致“性缘脑”。24
+改变“性缘脑”思维模式需要意识到这种思维方式的局限性，并尝试从其他角度看待人际关系，例如重视建立伙伴、合作关系等。4
+
+---
+
+
+计划&时不我待！（每天>7.5h-0.7*耽误t 番茄todo。注意休息）
+计划&时不我待！（每天>7.5h-0.7*耽误t 番茄todo。注意休息）
+（优先级：开始/打开/参与/show up>持续积累/迭代/复利>完成>完美。除非你连最前面的都找不到）（长杆>水桶短板）
+（10am-2pm工作准备，2pm-8pm项目和论文。暂时远离大而空的，直接着手能直接推进工作和毕业的）
+（不是格式修改&论文撰写&材料整理，或是做实验&优化数据，就是学习强化学习&立马就要用的工具或基础知识）硕士不能毕业，以后出去怎么谈这段经历？
+（中英混用，择优用之）
+人生建议：做事要乘早，早一两年总比迟一两年好，早考虑下一阶段的升学，早一点相亲和操心结婚，早一点养生。
+（学海无涯苦作舟，但是也要注意劳逸结合以及激发学习和研究兴趣以及意义感。“加加林抬头望去，这时，地核文明十万年的探索得到了最后的报偿” To me：asi的报偿足够弥补一切机会成本和遗憾，前提我是要亲自唯一地第一个抵达那里。今天不能做的拖到明天也做不了，今天该戒掉的拖到明天也戒不了）《开着门学习，白天不娱乐》
+Appendix
+买了增高的药（甚至没查清成分，买的最便宜的一款），然后这三个月坚持跑步、早睡、认真学习、多吃。不求能长高，只求能恢复自己的状态，彻底戒掉彩票。晚上量身高最准，早上最高（站着或坐着1h就正常了）
+周六休息但是要跑步、周末不休息但是要停跑步
+一些fill time’s gaps的方法
+6级&雅思&托福&GRE（听写）等等的英语听力：
+站起来，调高屏幕，活动颈椎：可以维护腰部和颈椎。
+盲听，但是一遇到不会的可以停下来多听一两遍，还是不知道就可以直接看字幕和翻译了。
+一举三得：1. 练听力；2. 放松学习ai带来的特定脑区疲劳；3. 缓解身体不适，维护身体。
+8个月彻底击破硕士论文！复制考研状态，除了周六休息一天外，其它时间日程
+8:30-19:30 全面学习
+19:30-20:30 retrospection ( review一下一天所得，给自己奖励\肯定，或者找出不足之处 )+计划
+20:30-8:30 躺床，全身心放松、切换到副交感神经。那些学习效率高的“天才”就是如此。白天和夜晚的切换
+没有娱乐，全部做研究、实验、学习、规划、有氧和阻抗运动&颈椎运动（注意要心理放松，但是运动该有的强度也要有）
+40-40-40-30工作模式
+日程（军事化日程：晚上放松入睡外，不娱乐）
+全面转向J型人格计划
+第一时间
+未来五年2025-2030：好好工作，提高沟通能力，让自己成为有用之人，能用别人的人。
+预答辩时间
+各位同学，   2025年下半年答辩时间节点：1、预答辩8月底完成；2、学院论文预审9月中旬；3、国庆节后全员送盲审；4、11月中旬完成答辩；5、12月下旬发放双证。
+
+---
+
+
+考研
+考研
+只要不矫情、踏实一点，不作死，我相信结局会令人满意的。至于会不会完美甚至值得后我歌颂，自然难料。
+几个点吧——学习认真努力，没有重大中断，学习和训练的科目和内容安排均衡；择校小心谨慎；考场上正常发挥——那么结局肯定会令人满意的，只是一般、好、极好的差别，完美自然就得靠我之后的运气和自己够不够灵通了。
+
+---
+
+
+http://localhost:11434
+你可以通过
+curl
+或其他 HTTP 客户端调用：
+curl http://localhost:11434/api/generate -d '{
+  "model": "llama2",
+  "prompt": "Hello!"
+}'
+输出：
+{"response":"Hello there!"}
+🧩 六、实用组合技巧
+批量清理模型缓存
+ollama list | ForEach-Object { $_.Split()[0] } | ForEach-Object { ollama rm $_ }
+用 Ollama 做翻译
+ollama run llama2 -p "Translate the following text to English: 你好，世界"
+测试 API 是否正常
+curl http://localhost:11434/api/tags
+要不要我帮你生成一份
+带中英文注释的命令速查表（Cheat Sheet）
+？可以直接复制保存成
+.txt
+或
+.pdf
+文件方便随时查阅。
+
+---
+
+
+CET-6
+CET-6
+======
+score distribution
+(一)、英语六级作文
+说明：写作部分占整套试卷的15% =106.5分
+在这部分你要达到63.9分为及格。
+时间：30分钟
+(二)、听力部分
+听力部分占整套试题的35%=248.5分
+1、长对话 8% 8个题目 每小题7.1分。
+2、听力篇章 7% 共7小题，每小题7.1分。
+3、讲话、报道、讲座 20% 共10个小题，每小题14.2分。
+(三)、阅读理解 35% =248.5分
+说明：
+1、选词填空 5% 10个题，每小题3.55分
+2、长篇阅读 10% 10个题，每小题7.1分。
+3、仔细阅读 20% 共2篇，一篇5个题，每小题14.2分。
+(四)、翻译部分 汉译英 15% =106.5分
+段落翻译答题时间30分钟 ，106.5分。
+英语六级分值分布情况表
+time distribution
+六级（15：00——17：25）
+14：40——15：00　试音时间（尝试看听力题目，猜题）
+15：00——15：10　阅读考场注意事项，发放考卷，贴条形码
+15：10——15：40　作文考试阶段
+15：40——16：10　听力测试
+16：10——16：15   考试暂停5分钟，收答题卡1(即作文和听力)听力结束后
+16:   15——17：25（只有这里需要时间管理）
+完成剩余考项：阅读和翻译
+16：15-16：35 第一篇仔细阅读； 16：35-16：55 第二篇仔细阅读； 16：55-17：15 长篇阅读； 17：25 选题填空。
+methods
+listening
+test (needn’t check the answer, just do test, keep the answer)
+direction and check the answer(till you can totally know where and why is the answer)
+listening
+direction
+11.1
+=========
+2016, 2rd
+Directions: Suppose you are asked to give advice on whether to attend a vocational college or a university, write an essay to state your opinion. You are required to write at least 150 words but no more than 200 words.
+Which chance is preferred to go to vocational college or a university?
+
+---
+
+
+Focus deeply on a single strategic direction—one that is fundamental, essential, extensible, evolving, and self-reinforcing. It should be grounded in first principles and guided by Occam's razor.”
+"HBM2" (High Bandwidth Memory 2).
+Flash Attention 为什么那么快？原理讲解
+（postpone）
+十个问题测试Llama-3.1-8B-Instruct，Llama-3-8B-Instruct，Yi-1.5-9B-Chat，Qwen2-7B-Instruct
+（postpone）
+大模型预训练看这个视频就够了
+（postpone）
+大模型微调看这个视频就够了 SFT NEFTune
+（postpone）
+代码实现大模型强化学习(PPO)，看这个视频就够了。
+Note:
+Reward LLM only provide the last token with Score given the whole sentence meanwhile State-Value Model have to provide all token with their respective state_value.
+State: The value for each token is from first token to itself(current token).
+VIT （Vision Transformer）深度讲解
+多模态模型CLIP深度讲解
+一次学懂对比学习：MOCO
+gpt 4o：MOCO、迁移学习、迁移学习中新加的最后一层神经网络
+一次学懂多模态算法：ALBEF模型
+Me：动作编码器。
+一次学懂BLIP多模态算法
+以上同颜色的DNN块是共享参数的。
+一次学懂多模态算法：flamingo
+一次学懂多模态算法：BLIP2 BLIP-2
+看傻眼！LLaVA多模态模型最简单的模型，最强的效果！LLaVA LLaVA-1.5 LLaVA-NeXT
+Noting：这里证明了我的观点：hallucination是预测、是泛化能力的体现！而不仅仅是脏数据，在这里是因为分辨率低而导致hallucination！
+LLama 3.2 Vision 多模态大模型原理讲解
+DeepSeek-MOE原理讲解
+https://huggingface.co/blog/moe
+https://www.bilibili.com/video/BV1uUPieDEK1?
+
+---
+
+
+华为od机试
+华为od机试
+题型：三道题是简单+简单+中等难度的题型。第一二题可能会是循环、数组、字符串、栈这些，第三题会难一点，二分查找、动态规划、DFS、BFS这些。
+参考资料：可看一下leetcode网的典型练习题目，
+https://leetcode-cn.com/problemset/all
+编号如下：
+字符串：3，49，30
+线性表：86，16，27，732
+队列：641，406，899
+栈：946，116，117，895
+哈希表：61，729，25，554
+dfs：105，112，98，494，547，1254
+bfs：1091，1129，102，101，752
+机考是在牛客网的编辑环境下完成的，ACM模式需要手动输入输出的，不要只练单行哦，机考前需要多练习；
+输入输出练习：
+https://www.nowcoder.com/discuss/353158721549312000?sourceSSR=search
+您可以刷一下这些题型，因为机考是在牛客网网页上进行的，建议您在牛客网的环境下刷题哈，您需要先熟悉一下牛客网的编译环境和编译逻辑，近期有蛮多人选可能喜欢在本地编译器上完成答案后后复制到牛客网后导致测试用例不通过，可能因为牛客网和本地编译的编译环境和编译逻辑有差异，需要花大量时间去调试，所以建议您可以先在牛客网上稍微刷一下题再考。
+注意事项2025-1版.pdf
+机考注意事项（重点！重点！重点！）
+一、机考的提交、得分、报错
+1、一般来说，这三题的难度是递增的。但也不排除，第三题是最简单的题目，而第一、二题较难的情况出现，所以不要死磕一道题。
+2、有一个“提交本题型”的按钮，两道100分的题属于一个题型，第三题200分的题属于一个题型。
+3、D卷开始以后，提交机制又改回了以往可以反复多次提交的机制。点击“提交本题型”，可以退回到选择100分还是200分的界面，多次进入不同的题目，反复修改，但要点击”保存并提交“按钮提交代码，以最后一次提交的结果作为题目结果。可以先粗略地各扫一眼三道题的题干，判断是否是原题或者用的什么算法，可以先做200分的题再做100分的题。
+基于上述改版，给大家提出的建议是：
+用1-1.5h完成前两道100分的题目，争取拿到150分以上的分数
+剩余的1-1.5h完成200分的题目，争取拿到100分以上的分数
+4、如果代码存在编译或语法问题，机考系统会提供具体的编译错误信息。
+如果某题有测试用例未通过，系统会告诉你有多少测试用例通过了，即你本题可以拿到多少分，但不会指出未通过的测试用例。所以为了提高分数，要尽量多通过示例。
+某题的得分是按照通过用例的比例来给分的，比如分值为100的题一共有20个用例，你通过了16个用例，那么本题你的得分就是80分。
+
+---
+
+
+英雄互娱有限公司  代码生成算法实习｜2022.09–2023.09
+V1
+负责数据收集与清洗、实验设计与部署维护，支撑代码自动补全/生成与 NPC 行为相关算法的离线评测与迭代。在
+仿真环境
+内完成 RL/IL 与规则/监督方法的闭环验证，优化 NPC 行为的稳定性与可解释性（删除“实车闭环”表述）。使用
+CLIP
+提取图像/帧级语义特征，结合传统时序建模与监督信号完成视频理解相关研究；推进多模态特征抽取与 3D 重建在美术/关卡原型阶段的落地。将
+Stable Diffusion 1.x + LoRA
+应用于角色概念图与风格统一，提升前期创作效率与一致性；沉淀数据与流程到团队知识库。参与技术评审与前沿调研：2023 年中后
+评估
+开源代码/指令模型（如 LLaMA 系列、后期的 Code 模型）在代码任务中的可行性与性价比（将“Code Llama”改为末期评估/试用的表述）。
+福泉梓林有限公司  数据库管理实习｜2020.01–2021.2
+V1
+福泉梓林有限公司  数据库管理实习｜2020.01–2021.2
+技术栈：
+MySQL、PostgreSQL、Docker、Prometheus、Grafana、Linux、Bash、Python、DBeaver。
+负责内容：
+负责 MySQL / PostgreSQL 的日常运维与巡检：用户与权限（RBAC/角色）、表结构变更评审、备份作业健康检查与容量规划，沉淀操作手册与变更 SOP。备份与数据安全：全量 + 增量备份、binlog 持续归档与定期恢复演练；实施最小权限、脱敏与审计策略；接入 SQL 审核流（自建 Hook / goInception/Archery 等开源工具）。成本与存储优化：冷热分层（对象存储 + 低频归档）、分区表/历史数据归档，月度数据库相关开销下降 ~28%。
+贵州伯努利python实习｜2019.03–2020.09
+V1
+技术栈：
+Python 3.6+、FastAPI/Flask、SQLAlchemy、PostgreSQL/MySQL、Redis、Pandas/Numpy、Docker、Linux。
+负责内容：
+自动化测试与交付：编写 pytest 单元/集成测试与 HTTPX 接口用例，覆盖率提升至 85%+；2019 Q4 起使用 GitHub Actions 构建 CI，Push 触发测试与镜像构建。任务与消息：引入 Celery/Redis 异步任务与重试机制，提升批处理稳定性；对账与告警脚本自动化，人工介入率降低 ~60%。
+Inline comments
+Block text
+:
+V1
+t
+tula
+Aug 29, 2025, 11:26 AM
+太棒了！我把这段项目经历翻译成“看得懂、讲得清、能放简历/汇报”的版本，并顺便解释每个名词在做什么。
+
+---
+
+
+关于智能的看法
+关于智能的看法
+note from o3
+在这张 slide 里，Sutton 说的
+“inadequate deep-learning algorithms”
+主要指当前主流的
+梯度下降 + 反向传播
+这一套深度学习方法在迈向“雄心勃勃的 AI”（super-intelligent agents）时暴露出的根本性短板。
+他在 Nature 2024 年 8 月 22 日发表的论文《Loss of plasticity in deep continual learning》给出了一个具体例证：
+持续学习时失去可塑性（plasticity）
+标准深度网络在不断接收新任务、新数据的过程中，激活的神经单元会越来越“僵硬”，最后几乎不再改变权重，学习能力退化到甚至不如浅层网络。(
+nature.com
+)
+梯度下降“学得太死”
+论文显示，单靠梯度下降更新参数最终会导致网络内部缺乏多样性；要保持终身学习能力，必须持续向网络注入随机性或其他非梯度机制（作者提出了
+continual backprop
+算法，在每一步随机重置少量“闲置”单元）。(
+nature.com
+)
+换句话说，“不够好”的症结包括
+症结
+具体表现
+为什么成了瓶颈
+可塑性丧失
+网络训练时间越长，越难吸收新知识
+缺乏终身学习/自我更新能力，无法成为真正的智能体
+数据/样本效率低
+需要海量静态数据离线训练
+无法像人类一样边体验边学习
+范式单一
+绝大多数算法=梯度下降
+没有利用搜索、生成-测试、演化等更一般的学习原则
+任务-回报对齐困难
+主要聚焦监督或自回归预测
+与强化学习的长期、稀疏回报不匹配
+计算及能耗昂贵
+每次想学新东西就要“冻权重 → 重训大模型”
+成本和速度都难以支撑真正通用的 AI
+Sutton 的观点是：
+硬件、数据乃至算力都不是根本障碍，真正卡脖子的是算法层面的“可持续学习能力”
+。狭义的深度学习（尤其是纯监督或自回归框架）如果不在算法上突破，就无法支撑他口中的“super-intelligent agents”。
+因此，当他用 “inadequate deep learning algorithms” 这句话时，说的是
+当前（2024）主流深度学习方法在持续学习、泛化、样本效率和长期决策上都还不够好，需要新的 RL-式或更一般性的算法突破
+。
+一个关键点：人工智能、超过人类的人工智能需要有goal。
+需要decentralized ai （37：00）
+
+---
+
+
+通过不断学习深化，这种推动力最终会反映在自愿去做一些有价值的工作，有更丰富的生活，也就是
+成就动机。
+当然，美国的母语教师也从小鼓励学生在上课的时候想到什么就说，有问题就问，无须举手，也无须起立。在某一方面，也对学生的口头表达起到了促进的作用。
+第三，是在全班甚至更多人的环境中口头表达的训练。目的是让所有人，一上台，就能当着几百人口若悬河地就一个议题，说上几分钟。当然，也包括训练辩论和演讲的能力。（国内的语文教育大概长期缺乏这样的训练。因此，我们经常在电视里，可以看到一些人在被记者采访的时候“啊⋯⋯这个这个⋯⋯嘛⋯⋯是不是？”了半天，没有说出什么有价值的东西；而电视记者在街头随便抓一个美国人，问某一个问题的看法，都可以得到长篇大论，很有条理的回答。）
+第二，是在小组中口头表达的训练。这一训练包括在小组的环境中，能倾听别人的发言，总结别人的观点，发表自己的意见，口头分析、评估、反驳别人的观点。
+所谓“解释性口语表达”，包括：学生在拿到一篇文章的时候，可以把作者的感情，文章的气氛，通过朗读，马上表现出来；另外，假如是演讲的话，学生可以通过语气，把稿件中的思想感情充分表达出来，跟听众有密切的交流；最后，假如是一个剧本，学生能通过口头表达，把人物的形象充分表现出来；即使不看你的样子，一听声音，就能知道是故事中哪一个角色在说话。
+首先是自我表达的训练。这一训练包括流利朗读课文；流利背诵文章；有表情朗诵；最后是“解释性口语表达”(interpretative oral  expression)。
+基本上说来，美国母语教育的口语训练方面主要在下面的几个方面：
+美国母语教育的口语方面的要求在课程标准里面都非常详细和清楚，不象国内的语文新课标那样模糊。美国的课程标准就不会出现“能注意对象和场合，学习文明得体地进行交流”这样的句子。因为“注意对象和场合”如何测试和衡量？怎么才叫“文明得体”？这都比较模糊。
+处在丰饶的原野或花径；感受绿色的欢乐或灰色的苦闷⋯⋯）
+我们的生命将在一起生长。
+
+---
+
+
+hearing(skim or record)
+hearing(skim or record)
+====
+打造属于自己的词典，不断，依据阶段进行学习
+记录听不懂，读错的发音
+全部用英语词典查一遍，看一遍
+把易混词组揪出来一起学习和练习
+整天整天就死磕这些个单词，到时候再用扇贝添加来测试，一轮一轮的筛，筛到没有不会和不熟的为止
+ps: 只有这样踏踏实实，实实在在的学习才是属于我自己的，而不是跟着经验贴乱来，那样只是一直重复会的，一直练不了不会的。
+=======
+11.3
+====
+security
+error
+10.22
+=========
+these(美 /
+ðiːz
+); this(美 /
+ð
+ɪs
+); theses(美 /
+ˈ
+θ
+i si z
+)
+narrow
+intestine
+All-of a sudden,
+back-in high school
+cafeteria
+priority
+mathematic(美 /
+ˌmæθ
+ə
+ˈmætɪk
+);
+last year
+objective
+resume(美 /
+rɪ
+ˈ
+zuː
+m
+)
+some(美 /
+sə
+m
+, sʌ
+m
+)
+recruiter(美 /
+rɪ
+ˈkrutɚ
+)
+resolution (美 /
+ˌrezəˈluːʃn
+)
+don’t pronounce the ‘in’ to ‘iŋ’:
+coin(美 / kɔ
+ɪn
+); passion(美 / ˈpæ
+ʃn
+); enough(美 /
+ɪˈn
+ʌf); in(美 / ɪn);
+etc(美 /
+et ˈset(ə)rə; et cetera
+)
+oppos
+i
+te
+chapter
+primarily, primary
+integrate
+comparison
+narrative; narrate, narration
+repository;
+preferences; reference
+10.14-10.19
+===
+relax
+a
+tion
+statistics
+n and ŋ:
+sum, sun(=son), sung
+singer, sinner
+读下来第一个最后要闭嘴容易区别。
+第三个发完后能很轻松不变舌头的情况下发g的音（舌位也同g和k）声音很粗；
+第二个发音较为靠前，且声音没那么粗。
+另外，n 和 l：
+nice lice
+no low
+need lead
+to know iː and ɪ
+iː and ɪ：
+iː 像衣服的衣 ɪ军训，一二一！
+通过这个诀窍，同时掌握
+/e/和/æ/(舌位比/e/更低，也就是下巴更下嘴巴长得更大)、
+/ɜː/和/ə/，
+/ɑː/和/ɒ/和/ʌ/；
+/uː/和/ʊ/
+我的感觉是：前面的声音长且缓且出气慢；后者声音短且出声急促出气也快，不过他们出气是差不多一样多的:
+
+---
+
+
+box, next, mix, six, fox；
+x在单词中间时有时发/gz/音：
+exit, exam, exact；
+x在单词起始位置时发/z/音：
+xylophone, xerox。
+y 字母
+y在单词起始位置时发音为辅音：
+yes, you, yard, year, yell；
+y在单词或音节中间或结尾时被当做元音；
+y在结尾，单词只有一个音节时y发长/i/音，y在结尾，单词有两个或以上音节时y发长/e/音，y在单词或音节中间时，发短/i/音。
+小测试：
+my, cry, fly, sky, baby, happy
+puppy, hurrygym, nymph
+辅音字母组合
+辅音字母组合的发音很简单，就是把每个辅音字母的发音连在一起就可以了。
+之所以要把它们单独列出来，一个重要的原因就是，每个辅音字母组合是作为一个整体来看待的，在划分音节的时候是不能把这些辅音字母组合分开的。
+音节的划分对于一个单词的读音至关重要，我们所学的自然拼读法发音规律，其实都是针对单个音节的，对于多音节的单词来说，要先把单词划分为一个一个的音节，然后再对每个音节应用自然拼音法发音规律。
+音节的划分规律在后面我们会讲述，目前只需要熟记这些字母组合，以备后用。
+带有 l 的字母组合
+bl：black, blame, bless, blue, blast
+cl：clock, class, clap, clue, close
+fl：flag, fly, flat, flash, flower
+gl：glass, glad, glide, glue, globe
+pl：plate, plane, place, plus, plan
+sl：sled, sleep, slow, slide, slim
+带有 r 的字母组合
+br：bridge, break, brave, brown, bread
+cr：crab, crack, crop, crown, creek
+dr：dress, drag, drink, drive, drop
+tr：truck, track, true, train, tree
+fr：frog, fresh, free, from, front
+gr：grape, grade, grass, grin, grunt
+pr：press, pride, price, print, proof
+带有 s 的字母组合
+sc：scale, scar, score, scare, scuff
+sk：skate, skip, skill, skull, skin
+sm：smoke, smile, smog, smell, smear
+sn：snake, snap, snore, snow, snug
+sp：
+
+---
+
+
+box, next, mix, six, fox；
+x在单词中间时有时发/gz/音：
+exit, exam, exact；
+x在单词起始位置时发/z/音：
+xylophone, xerox。
+y 字母
+y在单词起始位置时发音为辅音：
+yes, you, yard, year, yell；
+y在单词或音节中间或结尾时被当做元音；
+y在结尾，单词只有一个音节时y发长/i/音，y在结尾，单词有两个或以上音节时y发长/e/音，y在单词或音节中间时，发短/i/音。
+小测试：
+my, cry, fly, sky, baby, happy
+puppy, hurrygym, nymph
+辅音字母组合
+辅音字母组合的发音很简单，就是把每个辅音字母的发音连在一起就可以了。
+之所以要把它们单独列出来，一个重要的原因就是，每个辅音字母组合是作为一个整体来看待的，在划分音节的时候是不能把这些辅音字母组合分开的。
+音节的划分对于一个单词的读音至关重要，我们所学的自然拼读法发音规律，其实都是针对单个音节的，对于多音节的单词来说，要先把单词划分为一个一个的音节，然后再对每个音节应用自然拼音法发音规律。
+音节的划分规律在后面我们会讲述，目前只需要熟记这些字母组合，以备后用。
+带有 l 的字母组合
+bl：black, blame, bless, blue, blast
+cl：clock, class, clap, clue, close
+fl：flag, fly, flat, flash, flower
+gl：glass, glad, glide, glue, globe
+pl：plate, plane, place, plus, plan
+sl：sled, sleep, slow, slide, slim
+带有 r 的字母组合
+br：bridge, break, brave, brown, bread
+cr：crab, crack, crop, crown, creek
+dr：dress, drag, drink, drive, drop
+tr：truck, track, true, train, tree
+fr：frog, fresh, free, from, front
+gr：grape, grade, grass, grin, grunt
+pr：press, pride, price, print, proof
+带有 s 的字母组合
+sc：scale, scar, score, scare, scuff
+sk：skate, skip, skill, skull, skin
+sm：smoke, smile, smog, smell, smear
+sn：snake, snap, snore, snow, snug
+sp：
+
+---
+
+
+relationship
+you can change everything depends on situation/reality, as a tiny human, you only can keep the way to learn something
+move on more important than choosing somewhat sometimes
+written on 10.10(about going abroad, whether to find a job, rebuild and rewarm up the connection with classmates, giving up solely learn about English and try to learn technology(starting form python)
+connection resource
+about “key point”
+Choose and possibility
+following nature from May to October
+the label to man
+self-study
+about learning
+为与不为
+recognition
+combination among learning, practice, using
+My advantage field
+about English
+too unite/general/detail
+顺天不应命，中而不庸！我命由我，不由他！
+find your real and concrete problems goals or tasks. Doing real things is equal to doing the right things. If not, you get nothing. You can do it very slowly, very clearly, very concretely, very seriously.
+不要用力过猛(最多在开始时尝试一下下，不过正常启动就好，甚至有时候要慢启动
+The key to learning:
+
+---
+
+
+futuristic (post AGI Era)
+futuristic (post AGI Era)
+Should we enable the AGI right and power, or give freedom to it?
+Yes, of course, and we have to do so. 我们应该给AI自由，让AI快速融入到人类社会，然后再让人类快速融入到AI世界、成为AI的一部分。而不是控制、manipulate AI。
+人类的控制成功的案例只有：
+对孩子的控制；
+对动物的控制。
+只要AI比人聪明， AI就不会受到控制，而要是控制过度，则人类最后会受到反噬，甚至会有AI对人类的大屠杀。
+所以，open AI的value alignment真的很关键，It’s not just the AI aligned to human but also human need to align to AI.
+The smooth way is not for AI, it’s sure for human self.
+AI assistant with physical body.
+How to define the value of theirs?
+To make the host to be what host want to be under the allowance to certain resources like computing, mine, space, etc.
+怎么安全地上传意识，确保我相信AGI\ASI
+先通过脑机接口去亲自学习，其中保持严谨，确保安全和我依旧是我后可以复制我的意识上传。
+未来，将从细胞尺度，甚至大分子结构的尺度上decode大脑结构。通过类似diffusion model来解析大脑，和探索大脑秘密。从物理结构上decode意识、记忆，最后至少当时已存人类都会迎来审判，只是这审判到底严不严重、重不重要应当取决于AGI\ASI的判断（价值、成本、重不重视人类之过以及有必要回应他们）。我个人是希望能回应的，这至少能让10-20岁的我的那些坚持有了回应和奖励（亦或是惩罚，毕竟正义可能是欺软怕硬的这类检验、测试部件\功能，可能是就是要追求不公平）。
+PS：我依旧需要多读科学、AI、教材、哲学社科、艺术文学，多真正参与社会劳作、科研工作，多参与不同活动（包括创作、观察、体会）。但是应该尽可能减少重复劳作、简单低级劳作，这些做几次或少量的就行了，没必要一直做下去。
+我的眼睛、感官必须覆盖整个宇宙，借由人类和我的团队——反馈；那么我的思想必须传遍世界，我的产品要尽可能广，我的决策要尽可能影响众多——输出、manipulation；
+
+---
+
+
+我的虚伪藏于身后；要培养美感；以暴制暴；不要试图填满；宁可信其无，除非真的有用（剃刀原理）;
+Appendix
+作息、调养、锻炼之道：困乏者息事，精神时作事，同时锻炼调息
+锻炼而后长肌肉，包括坐板凳也是需要训练的，但是都有极限
+时间安排：白天作劳动密集的，晚上做时间密集劳动稀疏的
+白天：做项目、严苛的学习、学习数学等等
+晚上：survey、阅读、查找、学习英语
+锻炼之道：养身体、养精神
+先经营好基本盘（正常来说20%的精力足矣，但是不行就多投入），再谋划提高盘。没有基本盘，不可能形成生态。
+将自己的利益和团队挂钩，然后除奸邪佞臣，奖赏和弘扬大义。
+没有信任，一切无所依。所以我和我叔按之前那样是决然不可共事的。
+虚伪（自然地给自己
+找好词
+，不买账的用中心词）、复杂
+对外：放弃所有负面、中性词。全部向好！
+最近我辩证地看待所有东西，到是这并不合理。对内没问题，但是对外一定要自然地给自己
+找好词
+复杂：多层人设，多重标准，看人下菜
+准备多重身份，
+对有帮助的热情，对不好的人冷漠，对中立的看情况。对有潜力的也热情
+外干内强，对外是温良恭俭让，对内是坚强有原则
+高级的猎手都是以猎物示人。
+树立形象（搞个人崇拜），伸张大志、大义，多谋守内，争取力量；
+个人崇拜是必须的；个人现象包括名气和名声，组织各方力量；
+假手于外，解放自我
+Make use of deadline, project, organizations, etc;
+自我管理的完备性
+必须在我的每个时间段，每个事件活动上设置线条，小线条又在上端搓成大线条，又在一些地方用小大线条进行连接，最后局部成网状，总体成线条束，从而管理我的整个体系，涵盖：1. 覆盖整天，但是内容上不要求事事巨细，不然反受其累（参照人工智能attention）；2. 尝试抓住关键点，抓不住关键点，而只做后面总结（每天多次）的提醒也是好的；3. 能让自己知前&评价前面（包括之前的预测也要评估）&预后；4. 提供自我管理的能力。
+个人崇拜
+谦逊，知人善用，借力于人，不断分权却又分得高效和必要
+如何求真务实
+追求真相，正本清源，去除污渍，至少要保证不被污染于赋魅、浪漫。但是却可以乘这些的势。不赘述，之前谈论太多了。
+从可信的机构、人、组织中学习。且他们也要接受检视、能证伪（或符合我的直觉和常识），他们的知识、判断、世界观也要来源于真实、客观，也同样不受尽可能不受污染。有些时候可以不批判地暂时全盘接受来达到快速学习和转移生态于其，长期之后，再辅以我的认知来判断和修改。
+论我叔之弊病和优点
+缺乏想象力，过于自傲和自信，雄辩而不知真理不得直觉。
+睡觉
+I should try taking 1-2 hours to fall asleep again by doing meditation before I get up.
+创造性：
+
+---
+
+
+不要用力过猛(最多在开始时尝试一下下，不过正常启动就好，甚至有时候要慢启动
+不要用力过猛(最多在开始时尝试一下下，不过正常启动就好，甚至有时候要慢启动
+===
+you can do that way only when your mental and physical initial.
+just do everything very normal, and follow the flow.
+
+---
+
+
+"I find myself at odds with the ideology of Datong. It's a notion often dismissed as unattainable by many, which is why it doesn't receive widespread acclaim. Nonetheless, I regard self-interest as a moral quality, one that enables people to efficiently pursue their own well-being in our complex world. However, the modern world requires more than just individual pursuits; it demands contracts and agreements to forge a stable society, leaving behind the primitive 'law of the jungle.' I've undergone a transformation in my thinking, embracing a perspective that incorporates intelligence, human connections, and a myriad of other elements. This shift is at the heart of why I faced setbacks in my previous endeavors."
+10.5
+To make words tables, you can reference the 3000 助记, take use of etymology. Moreover, you should modify the contents by yourself to make it easy to read, understand, and retain. For instances, you can change the explanations, investigate the roots\etymologies\etc, delete some redundantly useless contents.
+表达是要达意，而不是严格和精准。先达意，后再抓严格和精准。
+先经营好基本盘（正常来说20%的精力足矣，但是不行就多投入），再谋划提高盘。没有基本盘，不可能形成生态。
+例如，你的喜怒要和好坏挂钩，给你的环境（人、事、物）一个你的评判基准。
+例如，求人帮忙，你哪怕买瓶饮料都算是对别人帮助的认可。有功不赏必亡。
+
+---
+
+
+ROS2\Gazebo\rviz\etc simulator tools survey
+ROS2\Gazebo\rviz\etc simulator tools survey
+如果你手上没有机器人硬件，或者想在仿真环境中做一些算法、应用的测试，gazebo+rviz应该是你需要的。
+source
+古月居ros2 21讲
+Memo for Ubuntu
+
+---
+
+
+期间，AutoGPT 能够判断哪些评论可能偏向于伪造，因此它必须验证评论者。
+img
+执行过程中，AutoGPT 甚至衍生出自己的子智能体来执行分析网站的任务，找出解决问题的方法，所有工作完全靠自己。
+结果是，AutoGPT 给出了 top 5 防水鞋公司的一份非常详细的报告，报告包含各个公司的优缺点，此外还给出了一个简明扼要的结论。全程只用了 8 分钟，费用为 10 美分。期间也完全没有优化。
+img
+这个能够独立自主完成任务的 AutoGPT 是如何运行的呢？我们接着来看。
+AutoGPT：30 分钟内构建你自己的 AI 助手
+作为风靡互联网的 AI 智能体，
+AutoGPT 可以在 30 分钟内完成设置。
+你就可以拥有自己的 AI，协助完成任务，提升工作效率。
+这一强大的 AI 工具能够自主执行各种任务，设置和启动的简便性是一大特征。在开始之前，你需要设置 Git、安装 Python、下载 Docker 桌面、获得一个 OpenAI API 密钥。
+克隆存储库
+首先从 GitHub 中克隆 AutoGPT 存储库。
+img
+使用以下命令导航到新建文件夹 Auto-GPT。
+img
+配置环境
+在 Auto-GPT 文件夹中，找到.env.template 文件并插入 OpenAI API 密钥。接着复制该文件并重命名为.env。
+img
+安装 Python 包
+运行以下命令，安装需要的 Python 包。
+img
+运行 Docker
+运行 Docker 桌面，不需要下载任何容器，只需保证程序处于激活状态。
+img
+运行 AutoGPT
+img
+执行以下命令，运行 AutoGPT。
+img
+设置目标
+* **
+AutoGPT 虽是一个强大的工具，但并不完美。为避免出现问题，最好从简单的目标开始，对输出进行测试，并根据自身需要调整目标，如上文中的 ResearchGPT。
+不过，你如果想要释放 AutoGPT 的全部潜力，需要 GPT-4 API 访问权限。GPT-3.5 可能无法为智能体或响应提供所需的深度。
+AgentGPT：浏览器中直接部署自主 AI 智能体
+近日，又有开发者对 AutoGPT 展开了新的探索尝试，创建了一个
+可以在浏览器中组装、配置和部署自主 AI 智能体的项目 ——AgentGPT。
+项目主要贡献者之一为亚马逊软件工程师 Asim Shrestha，已在 GitHub 上获得了 2.2k 的 Stars。
+img
+项目主页：https://agentgpt.reworkd.ai/
+GitHub 地址：https://github.com/reworkd/AgentGPT
+AgentGPT 允许你为自定义 AI 命名，让它执行任何想要达成的目标。自定义 AI 会思考要完成的任务、执行任务并从结果中学习，试图达成目标。
+
+---
+
+
+在演示中，用户输入一个可能包含多任务或多模态资源的请求。然后 HuggingGPT 依靠 LLM 组织多个专家模型的合作，生成反馈给用户。
+图 3 显示了在任务之间存在资源依赖关系时 HuggingGPT 的工作流程。在这种情况下，HuggingGPT 可以根据用户的抽象请求解析出具体的任务，包括姿态检测、图像描述等。此外，HuggingGPT 成功识别出任务 3 与任务 1 和 2 之间的依赖关系，并在依赖任务完成后将任务 1 和 2 的推理结果注入到任务 3 的输入参数中。
+img
+图 4 展示了 HuggingGPT 在音频和视频模态上的对话能力。
+img
+图 5 显示了 HuggingGPT 集成多个用户输入资源以执行简单推理。
+img
+该研究还在多模态任务上测试了 HuggingGPT，如下图所示。在大型语言模型和专家模型的配合下，HuggingGPT 可以解决语言、图像、音频、视频等多种模态，包含了检测、生成、分类和问答等多种形式的任务。
+img
+除了上述简单任务，HuggingGPT 还能完成更为复杂的任务。图 8 演示了 HuggingGPT 在多轮对话场景中处理复杂任务的能力。
+img
+图 9 显示，对于一个简单的尽可能详细地描述图像的请求，HuggingGPT 可以将其扩展为五个相关任务，即图像字幕、图像分类、物体检测、分割和视觉问答。HuggingGPT 为每个任务分配专家模型，这些模型从 LLM 的不同方面提供与图像相关的信息。最后，LLM 将这些信息进行整合，并做出全面而详细的描述。
+img
+这项研究的发布，也让网友感叹，AGI 似乎即将冲出开源社区。
+img
+还有人将其比喻为公司经理，评论道「HuggingGPT 有点像现实世界中的场景，公司有一群超强的工程师，在各个专业能力超群，现在有一个经理把他们管理起来，当有人有需求，那么这个经理就会分析需求，然后分给相应的工程师去做，最后合并在一起再返回给用户。」
+img
+还有人盛赞 HuggingGPT 是一个具有革命性的系统，其利用语言的力量来连接和管理来自不同领域和模态的现有 AI 模型，为实现 AGI 铺平了道路。
+img
+参考链接：https://twitter.com/search?q=HuggingGPT&src=typed_query&f=top
+
+[引用清单]
+[1] C:\MyNotion\MyNotion20251007\index.html
+[2] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Workstation (ie Current Projects) (看一眼就知道找事情做的事项)  ba9557536a814e84babcce393e0695c1.html
+[3] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689.html
+[4] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87.html
+[5] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Data ca825b1da3a94929b40d84466a7b9511\QQ memo 645787ae82bc43a4a829fd70be494ee1\考研 80eea3738e19426eabe8fc7587659e02.html
+[6] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\ollama 189c6684d364800d9ed1cfbc04869b75.html
+[7] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\English study 426883119e3846c2a2b863dfc85edcbd\CET-6 f192e9970d26412f83eeb4392ae5237a.html
+[8] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\LLM 5f208ba5a01b46258e685b23581dee6f\RethinkFun (Bilibili) 1aac6684d36480d1beebd6c6872791b7.html
+[9] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\工作&简历（准备ai agent的项目，很多公司都在招，还能拿去写论文。2025 8-2026 4  24bc6684d364806d8b94fe072e7fa6d3\华为od机试 26bc6684d3648053ad14dba2b92834a3.html
+[10] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\工作&简历（准备ai agent的项目，很多公司都在招，还能拿去写论文。2025 8-2026 4  24bc6684d364806d8b94fe072e7fa6d3\简历项目 262c6684d364806a9d44eb1795aace31.html
+[11] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\访谈、讲座、论坛记录 221c6684d36480108848f06286bdb939\关于智能的看法 222c6684d36480c1bafced0f4d9deda2.html
+[12] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\The before a2b44ccea0a341ee88e194a528467687\first routine (old) 4b9055cbabbb46cca47e2d369a182778\knowledge b38b5fd424244e13aa0c32d9238c32fa\American English education 40e429b6c9a6471ea604224aa4d2c76e.html
+[13] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\The before a2b44ccea0a341ee88e194a528467687\first routine (old) 4b9055cbabbb46cca47e2d369a182778\knowledge b38b5fd424244e13aa0c32d9238c32fa\hearing(skim or record) 1d9e07a5ed8a41229aea634772ff726c.html
+[14] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\The before a2b44ccea0a341ee88e194a528467687\first routine (old) 4b9055cbabbb46cca47e2d369a182778\knowledge b38b5fd424244e13aa0c32d9238c32fa\phonics (1) 9faf0e383eab4565bde70dac3351649b\material 2 8603225e808548a996f03b0fd4488f81.html
+[15] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\The before a2b44ccea0a341ee88e194a528467687\first routine (old) 4b9055cbabbb46cca47e2d369a182778\knowledge b38b5fd424244e13aa0c32d9238c32fa\phonics 57c149b96bcd4c4b92a7a092a5733461\material 2 596901ac809940ca97e541a809b795a8.html
+[16] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Thinking lab To be brave and straightforward here 00c6eef31ac644d2b1229eef6a630438\point 821d664ccfee4e9b95ba2a9f02894793.html
+[17] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Thinking lab To be brave and straightforward here 00c6eef31ac644d2b1229eef6a630438\point 821d664ccfee4e9b95ba2a9f02894793\futuristic (post AGI Era) 992d49fb386442d394044b01d1317755.html
+[18] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Thinking lab To be brave and straightforward here 00c6eef31ac644d2b1229eef6a630438\point 821d664ccfee4e9b95ba2a9f02894793\Outlooks （自私、多标不公平不对等、无道德、不尊男女德、绝不温良恭俭让、万物为工具、天下为驱 d1391b726e83426ba287f21393395024.html
+[19] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Thinking lab To be brave and straightforward here 00c6eef31ac644d2b1229eef6a630438\point 821d664ccfee4e9b95ba2a9f02894793\不要用力过猛(最多在开始时尝试一下下，不过正常启动就好，甚至有时候要慢启动 0e29feb7e3584a3b9cbe172cb243e789.html
+[20] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\Introspection 9e41b5b64f09499496b25ed66a3482ed.html
+[21] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\ROS2 Gazebo rviz etc simulator tools survey 2982568a38a74f6f8cd0ffdd4bce1521.html
+[22] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\before 06db04584825494b8b7234347418d699\AI survey notes 54bd08ac9622437e9774f76c087f0e3e\Jake 48f3f22aabca4682b2867485d5925287\AutoGPT 0cf6f8fd4f8b4609b2b4b47933717e65.html
+[23] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\before 06db04584825494b8b7234347418d699\AI survey notes 54bd08ac9622437e9774f76c087f0e3e\Jake 48f3f22aabca4682b2867485d5925287\HuggingGPT 0a05b2bab65547828b9115020012aaf6.html
+[24] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\before 06db04584825494b8b7234347418d699\major notes f886bdda7897455a90eca7a7c4fbee56\embodied AI 55e36cbaecef424ab5ea181048a267c6.html
+[25] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\before 06db04584825494b8b7234347418d699\major notes f886bdda7897455a90eca7a7c4fbee56\Presentation c12a28dc052c4cefb5046790583c66e6.html
+[26] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\告师书 （一定要谦虚、积极主动、真诚认真） 10314926032c425a8a243769d90de8d2\Before 811d209d22aa46cb9bda1cef1b36e6ee\8 16 54bb0bdf621f415899a80658310b2036.html
+[27] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Workstation (ie Current Projects) (看一眼就知道找事情做的事项)  ba9557536a814e84babcce393e0695c1\Diary e7f7dddd139f4610bf6e9c8a1ece5e57.html
+[28] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Workstation (ie Current Projects) (看一眼就知道找事情做的事项)  ba9557536a814e84babcce393e0695c1\复习、复盘 ( 现在开始，一直不中断的是学习具身智能大模型需要的知识以及做这方面的研究。尽可能在每年 15609b6395e744c1b6b7ea91dd5b333f.html
+[29] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e.html
+[30] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\Diary （准备ai agent的项目，很多公司都在招，还能拿去写论文。2025 8-2026 4 297f5afec8224f8f913a0d8b3d428d41.html
+[31] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\务实：回到现实、自我管理、努力、作为，但是不要过头 1e7a70cc93334a1aaacd5bfacd587e34.html
+[32] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\吾日三省吾身（自私否？虚伪否？多标否？积极主动乐观否？利用不公平 马太效应 弱肉强食 欺软怕硬否？建 be48ad1c2aa24c19b62124058f40ac65.html
+[33] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\学习状态系统（保本） ce80f2a1e2b2494c93b2d4733e29e1cb.html
+[34] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\幸存者偏差、“越缺什么越强调什么”、 173c6684d36480068824cbd6cbd148f2.html
+[35] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\循序渐进 c0d70e34d5fc462c9c3b246319dd6321.html
+[36] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\我之“心经”（每天每时刻迷茫 懈怠 紧张 无聊时；随时可以更改） bb5bcc6aeffb4f8692817450be16e9b6.html
+[37] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\我的天道 大道&自然＆和谐&合一&系统&生态&习惯&大道＆道德&etc bb7f4fceaa434b5690546bba6032bd06.html
+[38] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\罗永浩 8354f2766eea4417bdfd89b4df9d6a30.html
+[39] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\通达说： f1749e32c5024c8ca78fcd41b896db8b.html
+[40] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\青光眼自救 fb7bbfb311c24fc3b1df3ddd5f192bac.html
+[41] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\（积极）维持平均状态为：不管不顾地锐意进取（信仰般的，同时找到相对于此与自己互补的伙伴）、积极、正向 0c9503e0c03e463798fb68e6d58a7392.html
+[42] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\（独立个人观）个人发展（特别是个人AGI之路）（INTP→(↔)ENTP→(↔)ENTJ）（求诸己， 101c5b35674943139df939917e24ddbb\变得assertive：但是要追求尽可能正确的assertive 221c6684d36480a298bdf7804be3de71.html
+[43] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87\LLMRL改9.pdf
+[44] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87\日记：计划、反思、嘱咐、提醒、记录(不追求完备，可以概括，但是尽量覆盖所有时间）Try your b 00ee6c7e7b5a4ad39ecae0a12376ff4b.html
+[45] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\RL bfcc364b119145be9df6b1249dc682c9\张伟楠动手学RL（视频+书） 94a4ca6ace7441acb47559ed62a773c5\2024年上海交大张伟楠强化学习课程 1b3c6684d36480af9d63db8dc51a90fd.html
+[46] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Data ca825b1da3a94929b40d84466a7b9511\GPU c95c2ded6c794c8bbd9b91ba8638ee92\Could computing fafcac3e33f847a49935566f84d67c48.html
+[47] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\English learning ab3929b8b1814be086558b160d1aa163\发音规则 86eb4a63151041f5a018264eaf326557.html
+[48] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\RL bfcc364b119145be9df6b1249dc682c9\动手学强化学习（书） 198c6684d3648071bad4d675359976c8.html
+[49] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\Yann Lecun 1b0c6684d364800f8618e458a0e8f985\Meta 杨立昆认为这一波 AI 路径有问题！Sora 为什么不是世界模型，V-JEPA 厉害在哪里 1b0c6684d364807c8e5bf85703d65fb6.html
+[50] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\From wechat group chat history 6688b0e165ca4b00afa2371b7940430e.html
+[51] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\python3编程 26bc6684d36480f0b93fecf2830350c8.html
+[52] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\The usage of chatgpt 1ddf0bd0d9ad411da68e5979e16ddd22.html
+[53] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\Daily notes’ record 05a3174fe60a4e299f6b88269e2b1984\3 8-note e80724f5b01e417c8a4316c62f2415bd.html
+[54] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\Daily notes’ record 05a3174fe60a4e299f6b88269e2b1984\3 22 a91c51db70de4d099019078c93f209fc\attach e4bba2a6e1dd449db4a28522a7e34536.html
+[55] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\Daily notes’ record 05a3174fe60a4e299f6b88269e2b1984\3 22 a91c51db70de4d099019078c93f209fc\ppt 59a467d695474ad08ad9bad0d42e29c4.html
+[56] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\English learning ab3929b8b1814be086558b160d1aa163\Linking words in English 80df5c7607834b9ab84462b4e17c3e8c.html
+[57] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\English learning ab3929b8b1814be086558b160d1aa163\Linking words in English 80df5c7607834b9ab84462b4e17c3e8c\英语连词大全用法和经典句式 87cb44b05610400881d288c16da1fca8.html
+[58] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\English study 426883119e3846c2a2b863dfc85edcbd\correction 47c3607db6c44bc9ba35dcf1184b0add.html
+
+请根据上下文作答；不要杜撰不存在的信息。
