@@ -1,0 +1,36 @@
+要点：
+
+1. 作者并非传统意义上的文学或哲学人物，而是具有强烈技术导向与个人价值观建构的现代知识实践者。其身份融合了AI研究者、技术工程师、自我成长探索者与系统性思维构建者。
+
+2. 作者展现出高度的理性主义与工具理性特征，强调“积累”“基础”“核心知识”“可复用性”和“系统性”，尤其重视数学、逻辑、强化学习、大模型等底层技术的掌握，体现出对技术本质的执着追求。
+
+3. 价值观上，作者表现出明显的“去中心化”与“反主流”倾向：拒绝集体道德、国家/民族价值观的裹挟，主张“自私自利”“关注自身与家人”“万物为工具”，强调个体意志与系统控制，体现出一种冷峻、务实、甚至带有工具主义色彩的生存哲学。
+
+4. 思维方式上，作者具备高度的系统性、结构化与工程化思维，擅长拆解复杂问题（如强化学习、大模型训练流程），注重可操作性、实验验证与迭代优化，体现出典型的“工程思维+理论探索”结合的特征。
+
+5. 作者具有强烈的自我驱动与目标导向，设定清晰的长期目标（如触发并控制ASI），并围绕此目标制定详细的学习路径、时间表与技术路线，表现出极强的自律性与执行力。
+
+6. 在人际与社会层面，作者主张“整体利益优先”“交朋友看合作者”“不讲私德”“情绪脱离世事”，强调现实中的策略性与生存智慧，如“外圆内方”“不自证”“不被裹挟”，体现出一种成熟而冷峻的世故判断。
+
+7. 作者对“人性”“情感”“道德”持批判性态度，认为“爱是不公平的”“感情是能量来源的消耗”，主张通过“分别心”“情绪分割”来实现心理稳定，体现出一种去情感化、去理想化的现实主义立场。
+
+8. 作者对“真理”“探索”“AI发展”抱有终极追求，将“AGI”“ASI”视为人生核心使命，其价值底色是“拓展域”“追寻真理”“人工智能”“自我实现”，而非传统意义上的社会贡献或道德理想。
+
+归纳：
+
+该作者是一个以技术为核心驱动力、以个体价值为锚点、以系统思维和工程实践为方法论的现代理性实践者。其人格特征表现为高度理性、冷峻务实、反主流、工具导向、自我驱动，兼具深刻的系统思维与现实生存智慧。他并非传统意义上的“文人”或“哲人”，而是一个在人工智能与自我成长交叉领域中不断探索、构建个人价值体系的“技术-哲学-生存”复合型实践者。
+
+参考：[1] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\The before a2b44ccea0a341ee88e194a528467687\first routine (old) 4b9055cbabbb46cca47e2d369a182778\knowledge b38b5fd424244e13aa0c32d9238c32fa\American English education 40e429b6c9a6471ea604224aa4d2c76e.html
+
+参考：
+[1] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\The before a2b44ccea0a341ee88e194a528467687\first routine (old) 4b9055cbabbb46cca47e2d369a182778\knowledge b38b5fd424244e13aa0c32d9238c32fa\American English education 40e429b6c9a6471ea604224aa4d2c76e.html
+[2] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Thinking lab To be brave and straightforward here 00c6eef31ac644d2b1229eef6a630438\point 821d664ccfee4e9b95ba2a9f02894793\Outlooks （自私、多标不公平不对等、无道德、不尊男女德、绝不温良恭俭让、万物为工具、天下为驱 d1391b726e83426ba287f21393395024.html
+[3] C:\MyNotion\MyNotion20251007\index.html
+[4] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\弦网，人生&宇宙冥想：The whole workspace Roadmaps links wind 870faa7c9fb847c283c1e4facf375689\ecosystem framework healthy habit-loop for all (gl 9ad8fe8535bf4341a98230471f82b90e\应世事：一定要注意到版本更新和自己的微调（我还要追asi梦呢）。世俗、超脱、去私心、积极主动正向、伪 c993da432a974f1f924da3155dd2f451.html
+[5] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87\LLMRL改9.pdf
+[6] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\计划&时不我待！（每天 7 5h-0 7 耽误t 番茄todo。注意休息） 3db5f55d097f415f82342fb4ed318a87.html
+[7] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\LLM 5f208ba5a01b46258e685b23581dee6f\RethinkFun (Bilibili) 1aac6684d36480d1beebd6c6872791b7.html
+[8] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\LLM 5f208ba5a01b46258e685b23581dee6f\推理大模型与普通大模型的区别是什么？ - TopGeeky的回答 - 知乎 1b3c6684d36480a986bee10338f16c2b.html
+[9] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\prompt 191c6684d36480ae857ec3aa831cee61\Untitled 191c6684d3648034810eec668be4c03d.html
+[10] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\RL bfcc364b119145be9df6b1249dc682c9\动手学强化学习（书） 198c6684d3648071bad4d675359976c8.html
+[11] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Thinking lab To be brave and straightforward here 00c6eef31ac644d2b1229eef6a630438\point 821d664ccfee4e9b95ba2a9f02894793\Outlooks (1) 953f7abdaea441f69afe40ec2615dd09.html

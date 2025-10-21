@@ -1,0 +1,36 @@
+{
+  "parsed": {
+    "intent": "qa",
+    "need_rag": false,
+    "need_history": false,
+    "actions": [
+      "answer"
+    ],
+    "entities": [],
+    "keywords": [
+      "色情",
+      "态度"
+    ],
+    "coref": null,
+    "pairs": [],
+    "topics": [
+      "态度",
+      "色情"
+    ],
+    "history_scopes": []
+  },
+  "keywords": [
+    "色情",
+    "态度"
+  ],
+  "entities": [],
+  "effective_question": "我关于色情是什么态度？",
+  "used_history": {},
+  "focus": "莫维芬",
+  "last_entities": [
+    "莫维芬",
+    "asi",
+    "他们",
+    "我的三观"
+  ]
+}

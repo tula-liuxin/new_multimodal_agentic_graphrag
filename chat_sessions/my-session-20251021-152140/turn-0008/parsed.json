@@ -1,0 +1,53 @@
+{
+  "parsed": {
+    "intent": "qa",
+    "need_rag": true,
+    "need_history": false,
+    "history_scopes": [],
+    "actions": [
+      "retrieve",
+      "answer"
+    ],
+    "entities": [
+      "作者",
+      "通达说",
+      "弦网"
+    ],
+    "keywords": [
+      "通达说",
+      "弦网",
+      "作者的理论",
+      "评价"
+    ],
+    "coref": null,
+    "pairs": [],
+    "topics": [
+      "作者的理论",
+      "通达说",
+      "弦网"
+    ]
+  },
+  "keywords": [
+    "通达说",
+    "弦网",
+    "作者的理论",
+    "评价"
+  ],
+  "entities": [
+    "作者",
+    "通达说",
+    "弦网"
+  ],
+  "effective_question": "作者的通达说、弦网等理论是怎么样的？你评价一下",
+  "used_history": {},
+  "focus": "作者",
+  "last_entities": [
+    "莫维芬",
+    "asi",
+    "他们",
+    "我的三观",
+    "作者",
+    "通达说",
+    "弦网"
+  ]
+}
