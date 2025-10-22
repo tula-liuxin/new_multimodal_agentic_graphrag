@@ -1,0 +1,39 @@
+{
+  "parsed": {
+    "intent": "qa",
+    "need_rag": true,
+    "need_history": true,
+    "history_scopes": [
+      "turn_files",
+      "turn_summary",
+      "chat_summary"
+    ],
+    "actions": [
+      "retrieve",
+      "answer"
+    ],
+    "entities": [
+      "失眠",
+      "颈椎病"
+    ],
+    "keywords": [
+      "失眠",
+      "颈椎病",
+      "三观",
+      "实体",
+      "人",
+      "事情",
+      "状态",
+      "思想"
+    ],
+    "coref": null,
+    "pairs": [],
+    "topics": [
+      "健康问题",
+      "个人价值观",
+      "实体关系"
+    ]
+  },
+  "effective_question": "帮我找一下失眠、颈椎病相关的信息。同时总结截至目前的各类实体（人、事情、状态、思想）是否符合我的三观",
+  "saved_at": "2025-10-22T10:03:38.942090"
+}

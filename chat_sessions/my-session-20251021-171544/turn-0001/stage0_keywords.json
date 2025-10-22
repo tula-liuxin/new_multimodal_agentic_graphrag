@@ -1,0 +1,14 @@
+{
+  "question": "莫维芬是谁？asi是什么？agent呢？",
+  "qc": {
+    "clean": "莫维芬 asi agent",
+    "keywords": [
+      "莫维芬",
+      "asi",
+      "agent"
+    ],
+    "expanded": [
+      "ASI"
+    ]
+  }
+}

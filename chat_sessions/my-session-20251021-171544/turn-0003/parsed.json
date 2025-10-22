@@ -1,0 +1,41 @@
+{
+  "parsed": {
+    "intent": "qa",
+    "need_rag": true,
+    "need_history": true,
+    "history_scopes": [
+      "turn_files",
+      "turn_summary",
+      "chat_summary"
+    ],
+    "actions": [
+      "retrieve",
+      "answer"
+    ],
+    "entities": [
+      "资金",
+      "财务情况"
+    ],
+    "keywords": [
+      "债务",
+      "借款",
+      "贷款"
+    ],
+    "coref": null,
+    "pairs": [],
+    "topics": [
+      "资金",
+      "财务情况"
+    ]
+  },
+  "keywords": [
+    "债务",
+    "借款",
+    "贷款"
+  ],
+  "entities": [
+    "资金",
+    "财务情况"
+  ],
+  "effective_question": "没有债务、借款、贷款信息？"
+}

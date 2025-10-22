@@ -1,0 +1,37 @@
+{
+  "parsed": {
+    "intent": "summarize_conversation",
+    "need_rag": false,
+    "need_history": true,
+    "history_scopes": [
+      "turn_files",
+      "turn_summary",
+      "chat_summary"
+    ],
+    "actions": [
+      "summarize_conversation"
+    ],
+    "entities": [
+      "刘晓玲",
+      "莫维芬",
+      "失眠",
+      "颈椎病"
+    ],
+    "keywords": [
+      "恋爱对象",
+      "人生伴侣备胎",
+      "社交策略",
+      "情感依赖",
+      "未来发展方向"
+    ],
+    "coref": null,
+    "pairs": [],
+    "topics": [
+      "刘晓玲作为潜在恋爱对象的角色与工作背景",
+      "莫维芬在个人生活中的定位及其对未来发展的影响",
+      "失眠与颈椎病的提及背景"
+    ]
+  },
+  "effective_question": "不要做检索了，请总结目前的所有话题、结论",
+  "saved_at": "2025-10-22T10:10:40.169785"
+}

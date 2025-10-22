@@ -1,0 +1,39 @@
+{
+  "parsed": {
+    "intent": "qa",
+    "need_rag": true,
+    "need_history": false,
+    "history_scopes": [],
+    "actions": [
+      "retrieve",
+      "answer"
+    ],
+    "entities": [
+      "资金",
+      "财务情况",
+      "彩票"
+    ],
+    "keywords": [
+      "资金",
+      "财务",
+      "彩票"
+    ],
+    "coref": null,
+    "pairs": [],
+    "topics": [
+      "财务状况",
+      "彩票"
+    ]
+  },
+  "keywords": [
+    "资金",
+    "财务",
+    "彩票"
+  ],
+  "entities": [
+    "资金",
+    "财务情况",
+    "彩票"
+  ],
+  "effective_question": "我的资金、财务情况？彩票？"
+}

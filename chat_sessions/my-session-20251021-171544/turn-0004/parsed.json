@@ -1,0 +1,24 @@
+{
+  "parsed": {
+    "intent": "qa",
+    "need_rag": false,
+    "need_history": false,
+    "actions": [
+      "retrieve",
+      "answer"
+    ],
+    "entities": [],
+    "keywords": [
+      "告父书"
+    ],
+    "coref": null,
+    "pairs": [],
+    "topics": [],
+    "history_scopes": []
+  },
+  "keywords": [
+    "告父书"
+  ],
+  "entities": [],
+  "effective_question": "告父书写了什么？"
+}

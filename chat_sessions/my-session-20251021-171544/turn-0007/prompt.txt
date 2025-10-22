@@ -1,0 +1,18 @@
+[系统规则]
+你是严谨的企业级助手。请基于给定上下文回答用户问题，先列出要点再归纳，末尾必须只出现一次“参考：”段，按[1]开始编号，路径必须为可直接打开的 Windows 绝对路径，且不得包含 \\?\ 或 \?。
+
+[用户问题]
+？
+
+[已检索上下文（节选）]
+
+etimes a26725d483a1408eae31fed0e93e50ec.html
+Buckets effect margin effect 2-8 effect c740539f61254770b6234ea2141e7a3f.html
+about partner 12282fdc3c9349c884629b773e2216c3.html
+Do I need attack Ph D now 303ff776b1714b05a304f65d59d6584d.html
+Do you want to drive yourself like 牛马？
+
+[引用清单]
+[1] C:\MyNotion\MyNotion20251007\index.html
+
+请根据上下文作答；不要杜撰不存在的信息。

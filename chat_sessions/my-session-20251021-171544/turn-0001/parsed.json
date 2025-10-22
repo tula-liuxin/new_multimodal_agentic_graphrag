@@ -1,0 +1,39 @@
+{
+  "parsed": {
+    "intent": "qa",
+    "need_rag": true,
+    "need_history": false,
+    "history_scopes": [],
+    "actions": [
+      "retrieve",
+      "answer"
+    ],
+    "entities": [
+      "莫维芬",
+      "asi",
+      "agent"
+    ],
+    "keywords": [
+      "莫维芬",
+      "asi",
+      "agent"
+    ],
+    "coref": {},
+    "pairs": [],
+    "topics": [
+      "人物介绍",
+      "技术术语"
+    ]
+  },
+  "keywords": [
+    "莫维芬",
+    "asi",
+    "agent"
+  ],
+  "entities": [
+    "莫维芬",
+    "asi",
+    "agent"
+  ],
+  "effective_question": "莫维芬是谁？asi是什么？agent呢？"
+}

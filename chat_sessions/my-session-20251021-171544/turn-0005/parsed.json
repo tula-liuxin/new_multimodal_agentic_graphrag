@@ -1,0 +1,59 @@
+{
+  "parsed": {
+    "intent": "analyze_relation",
+    "need_rag": true,
+    "need_history": true,
+    "history_scopes": [
+      "turn_files",
+      "turn_summary",
+      "chat_summary"
+    ],
+    "actions": [
+      "retrieve",
+      "analyze_relation"
+    ],
+    "entities": [
+      "苏雅芳",
+      "刘晓玲",
+      "莫维芬"
+    ],
+    "keywords": [
+      "相似之处",
+      "区别",
+      "关系"
+    ],
+    "coref": {
+      "单数": {
+        "pronoun": "她们",
+        "target": "苏雅芳,刘晓玲"
+      }
+    },
+    "pairs": [
+      {
+        "a": "苏雅芳",
+        "b": "莫维芬",
+        "relation": "相似之处和区别"
+      },
+      {
+        "a": "刘晓玲",
+        "b": "莫维芬",
+        "relation": "相似之处和区别"
+      }
+    ],
+    "topics": [
+      "人物关系",
+      "相似与区别"
+    ]
+  },
+  "keywords": [
+    "相似之处",
+    "区别",
+    "关系"
+  ],
+  "entities": [
+    "苏雅芳",
+    "刘晓玲",
+    "莫维芬"
+  ],
+  "effective_question": "苏雅芳、刘晓玲等是谁？她们和莫维芬有什么相似之处和区别？"
+}

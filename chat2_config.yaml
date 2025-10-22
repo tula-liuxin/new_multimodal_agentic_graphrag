@@ -1,13 +1,16 @@
 session_root: "chat_sessions"
 session_naming: name_and_timestamp
 project_root: "."
+schema_version: 2
 
 ollama_host: "http://127.0.0.1:11434"
-model_parser: "qwen3:4b-instruct-2507-fp16"
-model_summarize: "qwen2.5:3b-instruct"
+model_parser: "qwen3:4b-instruct-2507-fp16"     # 问题解析
+model_coref: "qwen3:4b-instruct-2507-fp16"      # 指代消解
+model_summarize: "qwen2.5:3b-instruct"          # 摘要/压缩
 llm_timeout: 45
 llm_max_ctx: 4096
 enable_llm_parser: true
+enable_llm_coref: true
 enable_llm_summarize: true
 
 enable_pronoun_coref: true

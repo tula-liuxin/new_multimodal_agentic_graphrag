@@ -1,0 +1,36 @@
+{
+  "parsed": {
+    "intent": "qa",
+    "need_rag": true,
+    "need_history": true,
+    "history_scopes": [
+      "turn_files",
+      "turn_summary",
+      "chat_summary"
+    ],
+    "actions": [
+      "retrieve",
+      "answer"
+    ],
+    "entities": [
+      "刘晓玲"
+    ],
+    "keywords": [
+      "评价",
+      "她"
+    ],
+    "coref": {
+      "single": {
+        "pronoun": "她",
+        "target": "刘晓玲"
+      }
+    },
+    "pairs": [],
+    "topics": [
+      "人际评价",
+      "情感关系"
+    ]
+  },
+  "effective_question": "怎么评价她？",
+  "saved_at": "2025-10-21T21:35:18.151157"
+}

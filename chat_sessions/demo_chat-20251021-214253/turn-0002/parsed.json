@@ -1,0 +1,39 @@
+{
+  "parsed": {
+    "intent": "qa",
+    "need_rag": true,
+    "need_history": true,
+    "history_scopes": [
+      "turn_files",
+      "turn_summary",
+      "chat_summary"
+    ],
+    "actions": [
+      "retrieve",
+      "answer"
+    ],
+    "entities": [
+      "刘晓玲"
+    ],
+    "keywords": [
+      "刘晓玲",
+      "人设",
+      "性格",
+      "特点"
+    ],
+    "coref": {
+      "pronoun": "她",
+      "target": "刘晓玲",
+      "targets": [
+        "刘晓玲"
+      ]
+    },
+    "pairs": [],
+    "topics": [
+      "刘晓玲的性格",
+      "个人特征"
+    ]
+  },
+  "effective_question": "你觉得刘晓玲是怎么样的人？（注：她指代：刘晓玲）",
+  "saved_at": "2025-10-21T21:46:50.285429"
+}

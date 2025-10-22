@@ -1,0 +1,60 @@
+{
+  "parsed": {
+    "intent": "summarize_conversation",
+    "need_rag": false,
+    "need_history": true,
+    "history_scopes": [
+      "turn_files",
+      "turn_summary",
+      "chat_summary"
+    ],
+    "actions": [
+      "summarize_conversation"
+    ],
+    "entities": [
+      "莫维芬",
+      "asi",
+      "agent",
+      "资金",
+      "财务情况",
+      "彩票",
+      "苏雅芳",
+      "刘晓玲"
+    ],
+    "keywords": [
+      "莫维芬",
+      "asi",
+      "agent",
+      "资金",
+      "财务情况",
+      "彩票"
+    ],
+    "coref": null,
+    "pairs": [],
+    "topics": [
+      "莫维芬的身份",
+      "asi和agent的含义",
+      "资金与财务情况",
+      "彩票"
+    ]
+  },
+  "keywords": [
+    "莫维芬",
+    "asi",
+    "agent",
+    "资金",
+    "财务情况",
+    "彩票"
+  ],
+  "entities": [
+    "莫维芬",
+    "asi",
+    "agent",
+    "资金",
+    "财务情况",
+    "彩票",
+    "苏雅芳",
+    "刘晓玲"
+  ],
+  "effective_question": "总结前面所有内容，我问了什么？"
+}

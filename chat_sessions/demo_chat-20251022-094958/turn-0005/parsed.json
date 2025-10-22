@@ -1,0 +1,23 @@
+{
+  "parsed": {
+    "intent": "qa",
+    "need_rag": false,
+    "need_history": false,
+    "actions": [
+      "retrieve",
+      "answer"
+    ],
+    "entities": [],
+    "keywords": [
+      "告父书"
+    ],
+    "coref": null,
+    "pairs": [],
+    "topics": [
+      "告父书"
+    ],
+    "history_scopes": []
+  },
+  "effective_question": "告父书是什么？",
+  "saved_at": "2025-10-22T12:08:39.079192"
+}

@@ -1,0 +1,34 @@
+{
+  "parsed": {
+    "intent": "summarize_conversation",
+    "need_rag": false,
+    "need_history": true,
+    "history_scopes": [
+      "turn_files",
+      "turn_summary",
+      "chat_summary"
+    ],
+    "actions": [
+      "summarize_conversation"
+    ],
+    "entities": [
+      "刘晓玲",
+      "莫维芬"
+    ],
+    "keywords": [
+      "讨论",
+      "话题",
+      "刘晓玲",
+      "莫维芬"
+    ],
+    "coref": null,
+    "pairs": [],
+    "topics": [
+      "刘晓玲的背景",
+      "刘晓玲的个人特征",
+      "潜在交往对象"
+    ]
+  },
+  "effective_question": "我们这次讨论了哪些话题？",
+  "saved_at": "2025-10-21T22:01:23.592447"
+}

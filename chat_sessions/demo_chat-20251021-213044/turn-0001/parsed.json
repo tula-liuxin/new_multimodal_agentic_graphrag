@@ -1,0 +1,24 @@
+{
+  "parsed": {
+    "intent": "list_entities",
+    "need_rag": true,
+    "need_history": false,
+    "history_scopes": [],
+    "actions": [
+      "retrieve"
+    ],
+    "entities": [
+      "刘晓玲"
+    ],
+    "keywords": [
+      "刘晓玲"
+    ],
+    "coref": null,
+    "pairs": [],
+    "topics": [
+      "人物介绍"
+    ]
+  },
+  "effective_question": "刘晓玲是谁",
+  "saved_at": "2025-10-21T21:30:56.527206"
+}

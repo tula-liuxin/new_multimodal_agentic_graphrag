@@ -1,0 +1,413 @@
+[系统规则]
+你是严谨的企业级助手。请基于给定上下文回答用户问题，先列出要点再归纳，末尾必须只出现一次“参考：”段，按[1]开始编号，路径必须为可直接打开的 Windows 绝对路径，且不得包含 \\?\ 或 \?。
+
+[用户问题]
+怎么评价她？
+
+[已检索上下文（节选）]
+
+Untitled
+Untitled
+ME:
+评价一下一个想要触发asi并控制asi的intp研究员的观点：- 要多着手于基础、核心、solid的知识和技术积累。不然，太表面、太细节而不核心、变动可能太大等等都可能造成自己疲于奔命而不得积累的窘境。
+- 例如，强化学习，特别是张伟楠的那个课就非常好。同时方向上，其实llm就很solid。至于robotics，也可以作为兴趣去关注一下资讯（整个方向还没有稳定，还在探索，怕是现在入局会成为垫脚石。我是要去摘桃子的，不是去种树的）。
+DS:
+这位INTP研究员关于触发和控制ASI（人工超级智能）的观点，既有其合理性，也存在潜在的局限性。以下从多个角度进行评价：
+1. 对“基础与核心技术积累”的强调
+合理性：
+长期竞争力的核心
+：在AI领域，数学、算法、系统设计等基础知识是应对技术迭代的基石。例如，理解强化学习的马尔可夫决策过程（MDP）或LLM的注意力机制，能帮助研究者适应具体技术的演变。
+避免“疲于奔命”
+：追逐表面热点（如频繁更换模型架构或工具库）可能导致资源分散，而核心理论（如优化方法、概率建模）的深入掌握能提升解决问题的通用性。
+潜在问题：
+过度保守的风险
+：若将“核心”狭义定义为当前热门领域（如LLM），可能忽视新兴方向的潜力（如神经符号系统或类脑计算）。真正的“核心”应是跨领域的底层原理，而非具体技术。
+2. 对具体领域的选择与态度
+（1）强化学习与张伟楠课程
+课程价值
+：若课程侧重理论推导（如贝尔曼方程、策略梯度定理）而非工具使用，确实有助于构建扎实基础。但需注意，强化学习的实际应用依赖大量工程实践（如仿真环境构建、奖励函数设计），仅理论学习可能不足。
+领域潜力
+：强化学习在控制理论、游戏AI等领域已成熟，但在复杂现实场景（如自动驾驶）中仍面临样本效率低、安全性等问题，需结合其他技术（如模仿学习）。
+（2）LLM的“Solid”定位
+短期合理，长期存疑
+：LLM目前是应用层的“显学”，但其理论基础（如缩放定律、涌现机制）尚未完全清晰。过度依赖LLM可能陷入工程调优而非本质创新。
+生态依赖风险
+：LLM发展受算力、数据垄断影响较大，若未来出现技术范式转变（如量子计算或新型架构），当前积累的部分经验可能迅速贬值。
+（3）对Robotics的回避
+现实考量
+：机器人学涉及硬件迭代、多模态感知、实时控制等复杂问题，进展确实较慢。但将其视为“种树”领域可能低估其战略意义：
+交叉创新机会
+：机器人是AI具身智能（Embodied AI）的关键载体，可能催生新的学习范式（如世界模型构建）。
+先发优势
+：若未来硬件突破（如柔性机器人），早期积累的算法-硬件协同经验将成为壁垒。
+“摘桃子”心态的局限性
+：
+
+---
+
+
+ad7668121d56423db9b2c246efd2c3fb.html
+法家的评价 f83a5a9739e048aa8ebf928d65c119e4.html
+世界就是奸诈狠辣之人管理愚直之人。 1214c0e189ca4dbe88b4b07774357bba.html
+乱世和治世的行事体系是有差别的 16dc6684d36480318f6ee43ae5f1b7fc.html
+统治术 5d0cd58232e5498289da73a142b82b93.html
+按自己的主义行事，并懂得权变和把握后续反转的解释权 e9a7a7a1bfcb4945b2ed4a73ff67c829.html
+父母为什么要控制性、恋爱？ 4458b973b51147cfbab50bb09e8c7458.html
+治家、治团队、治学、治国方法都不一样 227999aa20a84d70adab1626a7bf13de.html
+治家之道： 5e400315aca14be38f9a52666aab7338.html
+弱民、辱民之术 08eb423e9a60401aab857bad663d8bfb.html
+后宫管理 d9f033c6849c45b0b98983f1e2ba2559.html
+对谁负责，精力就会涌向哪里 cf5f64d472184b49bead1c290f35522e.html
+成王败寇：势力、权力需要集中，不然就会内耗。其不以人的意志、道德观、价值观为转移，但是确实会受他们影 9d55f263af254695becbb9c75b6efb7b.html
+2024 6 3 345e8d3709d94f0da122bf8d9af103fb.html
+不对任何人解释，而让任何人都看做镜子，且努力让所有其他人对自己真诚。 db2361e9cba9466993cc1f5f490f4578.html
+有权有势的人觉得的离经叛道： af861f59daa94e8fb14a917f7f7cdd07.html
+“周公旦明白：道德只能约束弱者，对于有实力的诸侯根本不起作用” 2cf47996f8f843d686a95d1e92f27aba.html
+田常的后宫是开放的 91543b6dc80a4597911cb430ec523e1d.html
+晋国拦截了秦国与中原的联系 8c30a8af8c874d5a8a2a0820889b7210.html
+所谓博弈，还必懂得微调 0601f64fce784acb84eeaa95cadd540b.html
+成年人只做筛选。要么有能力，有么忠诚效命，不然就罢黜！ 748ff1da5df8490f9e3d1039aed2691c.html
+（术）语言盘查： 128744d1725a4bc582c4d37c48f6000b.html
+要既能检验，又能不自陷。
+
+---
+
+
+# 5) 保存
+torch.save(model.state_dict(), "two_gauss_mlp.pt")
+你可以怎么改（立刻见效的改法）
+改网络容量：
+hidden=64/128
+，多加/少加一层
+nn.Linear+ReLU
+。
+改学习率：
+lr=1e-3~1e-2
+；太大可能震荡，太小收敛慢。
+改正则：
+weight_decay
+或在网络中加入
+nn.Dropout(p=0.1~0.5)
+。
+改数据难度：把两类均值更近（例如 ±0.8），观察准确率变化。
+用 SGD+momentum：
+optim.SGD(..., lr=0.05, momentum=0.9)
+。
+把二分类改回归：输出
+out_dim=1
+，损失改
+F.mse_loss
+，目标改成连续值。
+常见“语法/输入输出/调用/修改”速查（浓缩版）
+Tensor
+：
+torch.tensor(data, dtype, device)
+→
+Tensor(shape,dtype,device)
+改：
+to()/view()/permute()/float()/long()
+Autograd
+：
+y.backward()
+→ 叶子张量
+.grad
+有值
+改：
+no_grad()/detach()/grad.zero_()
+Module
+：子类化
+nn.Module
+，实现
+forward(x)
+→
+y
+改：替换层/激活/残差/并行分支
+Dataset/DataLoader
+：实现
+__len__/__getitem__
+→
+(xb,yb)
+改：
+batch_size/shuffle/num_workers/pin_memory
+Loss/Optim
+：
+F.cross_entropy/…
++
+optim.Adam/SGD
+改：损失函数、学习率、正则、调度器
+Train/Eval
+：
+model.train()/eval()
+、
+no_grad()
+改：早停、记录指标、保存最佳权重
+Device/AMP
+：
+to("cuda")
+、
+autocast/GradScaler
+改：开启/关闭 AMP、切换设备
+Save/Load
+：
+state_dict()
+、
+torch.jit.trace()
+改：路径、只存权重或脚本化导出
+如果你愿意，我可以把以上模板按你的数据集（CSV、图片或你比赛里的 Excel）改成“开箱即跑”的版本：告诉我
+输入特征数、任务类型（回归/分类/多分类）、评价指标
+，我直接帮你生成完整训练脚本与可视化代码。
+
+---
+
+
+2. 拆分input（例如，拆成4份，d=d_model/4=128，后续会concatenate A矩阵，变回到512维）
+====
+大模型修炼之道(一): Transformer Attention is all you need。 介绍Transformer模型架构。
+源码地址：
+https://github.com/hkproj/pytorch-transformer/blob/main/model.py
+Pytorch里的register_parameter和register_buffer是干什么的？
+大模型修炼之道(二): GPT系列GPT1，GPT2，GPT3，GPT4
+这里的task就是prompt。
+大模型修炼之道(三): Llama系列讲解 Llama1，Llama2, Llama3
+你还不懂旋转位置编码吗？
+Note: m indicates the position; f indicate the frequency.
+模型量化六：QLoRA 4bit 量化 NormalFloat4 量化
+（postpone）
+十分钟搞明白Adam和AdamW，SGD，Momentum，RMSProp，Adam，AdamW
+圆圈是loss等高线。
+一次学懂混合精度训练 AMP Automatic Mixed Precision
+DNN中大部分用FP16记录，但是优化器会同时保存FP32数据。（Float Point = FP）
+在神经网络中，梯度往往比参数小很多，所以，容易出现梯度被参数（大数）“吃掉”的情况。
+零基础学习强化学习算法：ppo
+动画理解Pytorch 大模型分布式训练技术 DP，DDP，DeepSpeed ZeRO技术
+你知道用什么指标评价一个大模型的好坏吗？PPL，MMLU，MATH，GPQA，BBH，IF-EVAL，MMLU-PRO
+PPL
+用梯度检查点来节省显存 gradient checkpointing
+怎么加快大模型推理？10分钟学懂VLLM内部原理，KV Cache，PageAttention
+AI 工程师都应该知道的GPU工作原理，TensorCore
+Mynote:
+"The key lesson from Nvidia's success:
+
+---
+
+
+在基于模型的强化学习中，模型可以是事先知道的，也可以是根据智能体与环境交互采样到的数据学习得到的，然后用这个模型帮助策略提升或者价值估计。
+强化学习算法有两个重要的评价指标：一个是算法收敛后的策略在初始状态下的期望回报，另一个是样本复杂度，即算法达到收敛结果需要在真实环境中采样的样本数量。
+其中 Q-planning 的次数N是一个事先可以选择的超参数，当其为 0 时就是普通的 Q-learning。
+DQN 算法
+用函数拟合的方法来估计Q值，即将这个复杂的Q值表格视作数据，使用一个参数化的函数Qtheta来拟合这些数据
+回放缓冲区:
+将每次从环境中采样得到的四元组数据（状态、动作、奖励、下一状态）存储到回放缓冲区中，训练 Q 网络的时候再从回放缓冲区中随机采样若干数据来进行训练。这么做可以起到以下两个作用。
+（1）使样本满足独立假设。
+在 MDP 中交互采样得到的数据本身不满足独立假设
+，因为这一时刻的状态和上一时刻的状态有关。非独立同分布的数据对训练神经网络有很大的影响，会使神经网络拟合到最近训练的数据上。采用经验回放可以打破样本之间的相关性，让其满足独立假设。
+（2）提高样本效率。每一个样本可以被使用多次，十分适合深度神经网络的梯度学习。
+DQN 便使用了
+目标网络
+（target network）的思想：既然训练过程中 Q 网络的不断更新会导致目标不断发生改变，不如暂时先将 TD 目标中的 Q 网络固定住（
+Qw
+）。为了实现这一思想，我们需要利用两套 Q 网络。
+DQN 改进算法
+目标网络w-：是用来算误差（等效于TD error）的，训练网络w要学习的“目标”。
+训练网络w：随时、或较短步长内就要马上用通过目标网络w-算出的误差来训练的网络（更新参数）。
+对于
+动作空间较大的任务（如此的话，大概率就会有a的正向误差存在）
+，DQN 中的过高估计问题会非常严重，造成 DQN 无法有效工作的后果。
+8.4 Dueling DQN
+我们将状态动作价值函数Q减去状态价值函数V的结果定义为优势函数A，即
+Noting that: The A function actutally quantify the advantage of the a.
+Noting that: V(s) ≠ max a Q(s,a), since:
+为什么此时：
+贝尔曼最优方程：
+me:
+所以说，在还没有收敛前，就一定不满足贝尔曼最优方程；就算收敛了也不一定满足贝尔曼最优方程。但是如果满足贝尔曼最优方程，那一定就收敛了，且找到了全局最优解。也就是，满足贝尔曼最优方程，是用来刻画训练的好坏程度。
+我上面说得对吗？
+chatgpt o1:
+可以说你的理解
+大方向
+是对的，但需要再稍微
+细化
+一下：
+
+---
+
+
+我的虚伪藏于身后；要培养美感；以暴制暴；不要试图填满；宁可信其无，除非真的有用（剃刀原理）;
+Appendix
+作息、调养、锻炼之道：困乏者息事，精神时作事，同时锻炼调息
+锻炼而后长肌肉，包括坐板凳也是需要训练的，但是都有极限
+时间安排：白天作劳动密集的，晚上做时间密集劳动稀疏的
+白天：做项目、严苛的学习、学习数学等等
+晚上：survey、阅读、查找、学习英语
+锻炼之道：养身体、养精神
+先经营好基本盘（正常来说20%的精力足矣，但是不行就多投入），再谋划提高盘。没有基本盘，不可能形成生态。
+将自己的利益和团队挂钩，然后除奸邪佞臣，奖赏和弘扬大义。
+没有信任，一切无所依。所以我和我叔按之前那样是决然不可共事的。
+虚伪（自然地给自己
+找好词
+，不买账的用中心词）、复杂
+对外：放弃所有负面、中性词。全部向好！
+最近我辩证地看待所有东西，到是这并不合理。对内没问题，但是对外一定要自然地给自己
+找好词
+复杂：多层人设，多重标准，看人下菜
+准备多重身份，
+对有帮助的热情，对不好的人冷漠，对中立的看情况。对有潜力的也热情
+外干内强，对外是温良恭俭让，对内是坚强有原则
+高级的猎手都是以猎物示人。
+树立形象（搞个人崇拜），伸张大志、大义，多谋守内，争取力量；
+个人崇拜是必须的；个人现象包括名气和名声，组织各方力量；
+假手于外，解放自我
+Make use of deadline, project, organizations, etc;
+自我管理的完备性
+必须在我的每个时间段，每个事件活动上设置线条，小线条又在上端搓成大线条，又在一些地方用小大线条进行连接，最后局部成网状，总体成线条束，从而管理我的整个体系，涵盖：1. 覆盖整天，但是内容上不要求事事巨细，不然反受其累（参照人工智能attention）；2. 尝试抓住关键点，抓不住关键点，而只做后面总结（每天多次）的提醒也是好的；3. 能让自己知前&评价前面（包括之前的预测也要评估）&预后；4. 提供自我管理的能力。
+个人崇拜
+谦逊，知人善用，借力于人，不断分权却又分得高效和必要
+如何求真务实
+追求真相，正本清源，去除污渍，至少要保证不被污染于赋魅、浪漫。但是却可以乘这些的势。不赘述，之前谈论太多了。
+从可信的机构、人、组织中学习。且他们也要接受检视、能证伪（或符合我的直觉和常识），他们的知识、判断、世界观也要来源于真实、客观，也同样不受尽可能不受污染。有些时候可以不批判地暂时全盘接受来达到快速学习和转移生态于其，长期之后，再辅以我的认知来判断和修改。
+论我叔之弊病和优点
+缺乏想象力，过于自傲和自信，雄辩而不知真理不得直觉。
+睡觉
+I should try taking 1-2 hours to fall asleep again by doing meditation before I get up.
+创造性：
+
+---
+
+
+以上要注意二八原则，边际递减效应，凡是突出“多”、“深”、“全”、“时间长”等等都只是相对的，只是一个感觉、直觉上的定论和判断，有时候需要自己给个明确标准，例如，学4个小时是学个的时间长，学3天那个就算是时间短了等等，到不用提什么时间长短，直接给出时间就行。另外除了少数时间需要每天循环routine外，其他的事情要消弭天与天之间的界限，转为任务、事情本身驱动，例如学英语的”一、step1-5；二”的循环，如果当天不能完成hou'xu
+task-orient, project-orient, and job-requirement-orient instead day-orient(university), combining with broad perspectives.
+任务导向，项目导向，工作需求导向，哪个好用用哪个。另外，自己要懂得变通。不要按老路子走，不过也应该有一个时间，每天几分钟到两三个小时不等地，去审视评价调控自己每天地任务、状态、目标等等。不然，人容易迷失。
+
+---
+
+
+Introspection
+Introspection
+===============
+Next specific plans that ensure results within a week or a month:
+Develop a plan to solve logic word problems.
+To form
+the habits that are scientific, systematical, closed-loop ecosystem for improving my writing. It should include:
+Corrected: Establish scientific and systematic habits within a closed-loop ecosystem to improve my writing.
+Learn grammar, essential words and sentence patterns;
+Correct my writing, and dig out the grammar, word\sentence pattern ingredients;
+Retain the above densely and solidly.
+This plan should include: Learning grammar, essential vocabulary, and sentence patterns. Correcting my writing and identifying grammar and sentence pattern errors. Consolidating the above knowledge thoroughly and effectively.
+GRE学习阶段：1. 背词；2. 刷题，分析错因，针对性学习；3. 作文
+要点：遍读全天的活动，评价和提出改进，并针对前天的评价和改进进行再反思。
+Week\month\year thinking
+Evaluation (Just clock in, even though you write nothing if you really don’t know what to write):
+Time related to major: ; English: ; Total: .
+For the last day's reflection and outlook:
+Summary and prospects for today:
+==========================
+10.23 (Week thinking)
+必须要感觉形成充满高质量
+反馈
+的环境。
+高质量：
+
+---
+
+
+England
+England
+Time: July - 2nd year’s April
+Research Proposal
+奖学金需要和导师沟通
+地区难度：英美>澳大利亚>欧洲
+我的目标地区：美国、澳大利亚、加拿大、欧洲、香港澳门。
+学校目标：世界前150名
+我的方向：Embodied AI\agent; reinforcement learning; LLM (especially, code generation, or manipulation generation); multimodalities; 3D computing or spatial computing; （
+embodied AI (也就是robotics)、学习3D视觉、LLM、强化学习、manipulation，decision-making、多模态、游戏\仿真\元宇宙\机器人（游戏向真实走，为机器人大模型构建一个优良的数据生态、数据库）、graphics
+老师的方向不可能完全匹配我，只能尽可能去匹配。可以通过排除那些特别不想去的方向来找。找：1. 通过方向的关键词定位老师、学校。2. 去想去的学校、学院官网查看相关课题组，去排除着找；3. PhD 的 Vacancies、project（但这不及时，还是多直接联系导师比较好）
+套磁
+针对一个教授定制发一份邮件
+附上CV：尽量做得好看一点，能用心一点
+research proposal
+结果：
+不回复→pass
+如果课题组很好，也可以网申试试，注明要去这个老师
+回复→好好沟通
+PS：广撒网，多拿几个，最后拒掉就行了，例如发数百份邮件，同时联系10个老师，最后确定一个。
+面试、交流
+ME：按以前练英语时那样，keep the goodness in here
+工具：skype（提前调试好skype）、直接面对面 on person。对各类工具提前做好准备。
+时差：冬时令、夏时令。去看IPAD就好了，不难
+做Presentation：
+Presentation 上的所有内容只放你很确定、很了解的：每句话、每篇文章，其背后的东西都要理解。（eg. 竞赛得奖如果你不了解则不该写，这些可以写在申奖学金上
+聊科研生活：
+材料：成绩单、语言证明、学位证（不看毕业证）、research proposal、申请的导师和奖学金、推荐信（提交老师的邮件，然后学校那边去发邮件给你的推荐导师，让给推荐信或者答一些题目来评价这个学生）；
+网申通过后的学院正式面试，由几个学院的老师共同组成：
+确定你的research proposal，不能太难或太容易，确保你能完成博士课题。
+会问很多比较细致的问题：文献、研究。
+PS：到这一步一般说明导师想要你，这时候认真准备，一般能被接收。
+
+---
+
+
+4.12  开始周一到周五白天全然投入学习，拒绝bilibili和上网，多读论文和多练技术，晚上可以休息，周末可以休息。 (2)
+4.12  开始周一到周五白天全然投入学习，拒绝bilibili和上网，多读论文和多练技术，晚上可以休息，周末可以休息。 (2)
+💡
+Words from beginning：我追求的不是特定的某天\某周怎么样，而是追求一个状态，在这个状态下，平均来看（期望上来看）：“我能数周数年甚至一辈子自然平和推进\稳打稳扎，能每天2-7H（主体）+20m-2H复盘查验的成长。” 它包容兼蓄，能容纳平和也能容纳热烈和剧变，但是平均上看是稳定而不死板教条的。
+完全不刷抖音、乱逛b站，多投简历、干家务、社交、找前辈（不一定要比你年长）学习。
+进步总是需要慢慢一点一点积累的，面试、找工作本来就不是一蹴而就的，慢慢积累经验和技能吧！
+💡
+Plan
+每天至少工作4.5小时，有事打扰可以自问无愧地减少。
+我每天都要进行复盘。也是要诚实、认真地进行，哪怕几秒钟也可以了。
+noition organization 1;
+English learning check & 面试准备. OR (30M+)  （vocab\speaking\hearing\writing\grammar\etc）2;
+mod 2.
+Read “to read” papers more than 2 papers roughly completely.
+Figure out a possible rough way how to push my research or work.
+This week:
+优化notion笔记的组织和结构，使得检索、更新、添加更加容易
+投5份以上简历，与AI相关的，全国各地投
+Get started with a project, investigate RAG\langchain.
+【从编解码和词嵌入开始，一步一步理解Transformer，注意力机制(Attention)的本质是卷积神经网络(CNN)-哔哩哔哩】 https://b23.tv/O76gRXp
+把桌子放低。
+打扫屋子，减尘
+💡
+Introspection & Problem & Improvement
+💡
+Gains | Review | 评价\Evaluation （一定要客观，没有压力，只为了了解自己）
+💡
+Thanks
+
+---
+
+
+4.13
+4.13
+💡
+Words from beginning：我追求的不是特定的某天\某周怎么样，而是追求一个状态，在这个状态下，平均来看（期望上来看）：“我能数周数年甚至一辈子自然平和推进\稳打稳扎，能每天2-7H（主体）+20m-2H复盘查验的成长。” 它包容兼蓄，能容纳平和也能容纳热烈和剧变，但是平均上看是稳定而不死板教条的。
+进步总是需要慢慢一点一点积累的，面试、找工作本来就不是一蹴而就的，慢慢积累经验和技能吧！
+💡
+Plan
+每天至少工作5小时（3.5  normal + 0.5 Eng\notion +1 today review），有事打扰可以自问无愧地减少。
+我每天都要进行复盘。也是要诚实、认真地进行，哪怕几秒钟也可以了。
+Transformer +diffusion
+现在：多做少想有的没的，围绕做实事来想，没有实事就不想了，通过实事来链接我。
+开始找工作，每天至少发一份简历，在简陋也要发。
+💡
+Introspection & Problem & Improvement
+💡
+Gains | Review | 评价\Evaluation （一定要客观，没有压力，只为了了解自己）
+💡
+Thanks
+
+[引用清单]
+[1] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\prompt 191c6684d36480ae857ec3aa831cee61\Untitled 191c6684d3648034810eec668be4c03d.html
+[2] C:\MyNotion\MyNotion20251007\index.html
+[3] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\pytorch 1d4e8eaf6e9446a39ae87828ca21cd38.html
+[4] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\LLM 5f208ba5a01b46258e685b23581dee6f\RethinkFun (Bilibili) 1aac6684d36480d1beebd6c6872791b7.html
+[5] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Notes All deliberate practice 51752228c9c74e6ab0fa9e00833ba777\RL bfcc364b119145be9df6b1249dc682c9\动手学强化学习（书） 198c6684d3648071bad4d675359976c8.html
+[6] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Thinking lab To be brave and straightforward here 00c6eef31ac644d2b1229eef6a630438\point 821d664ccfee4e9b95ba2a9f02894793\Outlooks （自私、多标不公平不对等、无道德、不尊男女德、绝不温良恭俭让、万物为工具、天下为驱 d1391b726e83426ba287f21393395024.html
+[7] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Thinking lab To be brave and straightforward here 00c6eef31ac644d2b1229eef6a630438\point 821d664ccfee4e9b95ba2a9f02894793\告刘鑫书 0688b8e95a1f4e25a6b531d096ccd163.html
+[8] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\Introspection 9e41b5b64f09499496b25ed66a3482ed.html
+[9] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\todays’ (temp) 7d6e1bdf328340638927b0cfd6c7ec7e\博士申请 51a889a571d04ed595ad51f894052650\England 74fcab2253b841d78ddf179135033cd8.html
+[10] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Workstation (ie Current Projects) (看一眼就知道找事情做的事项)  ba9557536a814e84babcce393e0695c1\复习、复盘 ( 现在开始，一直不中断的是学习具身智能大模型需要的知识以及做这方面的研究。尽可能在每年 15609b6395e744c1b6b7ea91dd5b333f\4 12 开始周一到周五白天全然投入学习，拒绝bilibili和上网，多读论文和多练技术，晚上可以休 289ea169e23a4bd493a82f4d146c0140.html
+[11] C:\MyNotion\MyNotion20251007\General\8e013ea47a3f41239c340faf1b0128ac\Workstation (ie Current Projects) (看一眼就知道找事情做的事项)  ba9557536a814e84babcce393e0695c1\复习、复盘 ( 现在开始，一直不中断的是学习具身智能大模型需要的知识以及做这方面的研究。尽可能在每年 15609b6395e744c1b6b7ea91dd5b333f\4 13 a377468475d8406cac45257e96e17ef7.html
+
+请根据上下文作答；不要杜撰不存在的信息。

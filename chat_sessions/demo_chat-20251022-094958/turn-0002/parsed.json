@@ -1,0 +1,31 @@
+{
+  "parsed": {
+    "intent": "qa",
+    "need_rag": true,
+    "need_history": true,
+    "history_scopes": [
+      "turn_files",
+      "turn_summary",
+      "chat_summary"
+    ],
+    "actions": [
+      "retrieve",
+      "answer"
+    ],
+    "entities": [
+      "莫维芬"
+    ],
+    "keywords": [
+      "asi之梦",
+      "莫维芬"
+    ],
+    "coref": null,
+    "pairs": [],
+    "topics": [
+      "asi之梦",
+      "莫维芬的影响"
+    ]
+  },
+  "effective_question": "莫维芬会影响我的asi之梦吗",
+  "saved_at": "2025-10-22T09:53:34.315815"
+}

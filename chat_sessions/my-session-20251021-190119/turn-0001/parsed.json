@@ -1,0 +1,29 @@
+{
+  "parsed": {
+    "intent": "list_entities",
+    "need_rag": true,
+    "need_history": false,
+    "history_scopes": [],
+    "actions": [
+      "retrieve"
+    ],
+    "entities": [
+      "莫维芬"
+    ],
+    "keywords": [
+      "莫维芬是谁"
+    ],
+    "coref": null,
+    "pairs": [],
+    "topics": [
+      "人物介绍"
+    ]
+  },
+  "keywords": [
+    "莫维芬是谁"
+  ],
+  "entities": [
+    "莫维芬"
+  ],
+  "effective_question": "莫维芬是谁"
+}

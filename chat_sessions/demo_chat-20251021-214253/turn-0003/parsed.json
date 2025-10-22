@@ -1,0 +1,43 @@
+{
+  "parsed": {
+    "intent": "analyze_relation",
+    "need_rag": false,
+    "need_history": true,
+    "history_scopes": [
+      "turn_files",
+      "turn_summary",
+      "chat_summary"
+    ],
+    "actions": [
+      "analyze_relation"
+    ],
+    "entities": [
+      "莫维芬"
+    ],
+    "keywords": [
+      "莫维芬",
+      "作者的态度",
+      "她和作者发生了什么"
+    ],
+    "coref": {
+      "单数": {
+        "pronoun": "她",
+        "target": "莫维芬"
+      }
+    },
+    "pairs": [
+      {
+        "a": "刘晓玲",
+        "b": "莫维芬",
+        "relation": "关系"
+      }
+    ],
+    "topics": [
+      "莫维芬",
+      "作者的态度",
+      "人与人之间的互动"
+    ]
+  },
+  "effective_question": "莫维芬是怎么样的人？作者的态度？她和作者发生了什么？",
+  "saved_at": "2025-10-21T21:51:09.390755"
+}
